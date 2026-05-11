@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-key="pageTitle">KrishiMitra — Create Account</title>
+
+  <!-- Bootstrap 5 + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lottie Animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+
+  <!-- Particles.js for background -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <style>
+    
+    :root{
+      --primary:#2e8b57;
+      --primary-2:#1f7a46;
+      --accent:#8b4513;
+      --light-bg:#f7fff7;
+      --muted:#1c1c1c;
+      --glass:rgba(255,255,255,0.18);
+      --card-radius:20px;
+      --shadow:0 8px 32px rgba(34,50,34,0.12);
+    }
+
+    [data-theme="dark"]{
+      --primary:#48c075;
+      --primary-2:#2ea05a;
+      --accent:#d8a86b;
+      --light-bg:#07140d;
+      --muted:#d8e6d8;
+      --glass:rgba(255,255,255,0.04);
+      --shadow:0 10px 40px rgba(0,0,0,0.6);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial;background:var(--light-bg);color:var(--muted)}
+    body{position:relative}
+    body{background-image:url("./images/signup.jpg");background-size: cover;}
+
+    /* Particles background */
+    #particles-js { position:fixed; inset:0; z-index:0; }
+
+    /* header */
+    .site-header{position:fixed;top:0;left:0;right:0;height:56px;display:flex;align-items:center;padding:0 16px;z-index:1200;background:linear-gradient(90deg,var(--primary-2),var(--primary));color:#fff;box-shadow:var(--shadow);}
+    .site-header .brand{font-weight:700;font-size:1.05rem}
+    .site-header .controls{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+    /* container */
+    .signup-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 18px 40px;position:relative;z-index:1}
+
+    /* card */
+    .signup-card{width:520px;max-width:96%;border-radius:var(--card-radius);overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,255,255,0.92));backdrop-filter:blur(8px);box-shadow:var(--shadow);animation:cardIn .7s ease both}
+    [data-theme="dark"] .signup-card{background:linear-gradient(180deg,rgba(6,17,12,0.75),rgba(6,17,12,0.62));}
+
+    @keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+    .hero{padding:28px 22px;text-align:center;background:linear-gradient(90deg,var(--primary),var(--primary-2));color:#fff}
+    .brand-title{font-size:1.9rem;margin:0;font-weight:800}
+    .brand-sub{opacity:0.95;margin-top:8px}
+
+    #farmer-lottie{width:110px;height:110px;margin:18px auto 0}
+
+    .card-body{padding:26px 28px;background:transparent}
+
+    /* form styles */
+    .form-group{position:relative;margin-bottom:18px}
+    .form-control{border:none;border-bottom:2px solid rgba(0,0,0,0.06);border-radius:0;padding:12px 8px 8px;background:transparent;font-size:1rem;transition:all .22s}
+    [data-theme="dark"] .form-control{border-bottom-color:rgba(255,255,255,0.06);color:var(--muted)}
+    .form-control:focus{outline:none;box-shadow:none;border-bottom-color:var(--primary-2)}
+
+    .form-label{position:absolute;left:8px;top:12px;color:rgba(0,0,0,0.45);pointer-events:none;transition:all .18s;font-weight:600}
+    .form-control:focus ~ .form-label, .form-control:not(:placeholder-shown) ~ .form-label{top:-10px;font-size:0.78rem;color:var(--primary-2)}
+    [data-theme="dark"] .form-label{color:rgba(255,255,255,0.8)}
+
+    .input-icon{position:absolute;right:8px;top:12px;color:rgba(0,0,0,0.35)}
+    [data-theme="dark"] .input-icon{color:rgba(255,255,255,0.8)}
+
+    /* strength meter */
+    .strength-meter{height:6px;background:rgba(0,0,0,0.06);border-radius:999px;overflow:hidden;margin-top:8px}
+    .strength-fill{height:100%;width:0;transition:width .35s linear;background:var(--primary-2)}
+
+    /* buttons */
+    .btn-signup{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--primary),var(--primary-2));color:#fff;font-weight:700;box-shadow:0 12px 30px rgba(46,139,87,0.18);transition:transform .18s}
+    .btn-signup:active{transform:translateY(1px)}
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+    .text-link{color:var(--primary-2);font-weight:600}
+
+    /* dark mode toggle */
+    .toggle{background:rgba(255,255,255,0.12);border-radius:999px;padding:6px;cursor:pointer}
+    [data-theme="dark"] .toggle{background:rgba(255,255,255,0.06)}
+
+    /* responsive */
+    @media(max-width:520px){.signup-card{width:94%}.hero{padding:20px}}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <header class="site-header">
+    <div class="brand">KrishiMitra</div>
+    <div class="controls">
+      <div class="dropdown">
+        <button id="langBtn" class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          Language
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langBtn">
+          <li><a class="dropdown-item lang-option" href="#" data-lang="en">English</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="hi">हिन्दी (Hindi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="bn">বাংলা (Bengali)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="te">తెలుగు (Telugu)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="mr">मराठी (Marathi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="ta">தமிழ் (Tamil)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="or">ଓଡ଼ିଆ (Odia)</a></li>
+        </ul>
+      </div>
+
+      <div class="ms-2 toggle" id="themeToggle" title="Toggle dark mode" aria-pressed="false">
+        <i class="fa fa-moon" id="themeIcon"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="signup-container">
+    <div class="signup-card" role="dialog" aria-labelledby="title" aria-modal="true">
+      <div class="hero">
+        <div class="brand-title" data-key="siteName">KrishiMitra</div>
+        <div class="brand-sub" data-key="heroSubtitle">Join the farmer revolution 🌾</div>
+        <div id="farmer-lottie" aria-hidden="true"></div>
+      </div>
+
+      <div class="card-body">
+        <form id="signupForm" novalidate>
+          <div class="form-group">
+            <input type="text" id="name" class="form-control" placeholder=" " required>
+            <label class="form-label" for="name" data-key="labelName">Full Name</label>
+            <i class="fa fa-user input-icon" aria-hidden="true"></i>
+          </div>
+
+          <div class="form-group">
+            <input type="tel" id="phone" class="form-control" pattern="[0-9]{10}" maxlength="10" placeholder=" " required>
+            <label class="form-label" for="phone" data-key="labelPhone">Mobile Number</label>
+            <i class="fa fa-phone input-icon" aria-hidden="true"></i>
+          </div>
+
+          <div class="form-group">
+            <input type="password" id="password" class="form-control" minlength="8" placeholder=" " required>
+            <label class="form-label" for="password" data-key="labelPassword">Password (8+ chars)</label>
+            <i class="fa fa-lock input-icon" aria-hidden="true"></i>
+            <div class="strength-meter" aria-hidden="true"><div class="strength-fill" id="strengthFill"></div></div>
+          </div>
+
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="terms" required>
+            <label class="form-check-label text-muted" for="terms" data-key="termsText">I agree to the <a href="#" class="text-link">Terms & Conditions</a></label>
+          </div>
+
+          <button type="submit" class="btn-signup w-100" id="submitBtn">
+            <span data-key="signupBtn">Create Account</span>
+            <i class="fa fa-seedling ms-2" aria-hidden="true"></i>
+          </button>
+
+          <div class="text-center mt-4 text-muted">
+            <span data-key="haveAccount">Already have an account? </span>
+            <a href="login.html" class="text-link" data-key="signInLink">Sign In</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ---- UI: particles + lottie + translations + theme (same behaviour as before) ----
+    particlesJS("particles-js", {
+      particles: { number: { value: 60 }, color: { value: "#2e8b57" }, shape: { type: "circle" }, opacity: { value: 0.35 }, size: { value: 3 }, move: { enable: true, speed: 0.9 } },
+      interactivity: { events: { onhover: { enable: true, mode: "repulse" } } }
+    });
+
+    lottie.loadAnimation({ container: document.getElementById('farmer-lottie'), renderer: 'svg', loop: true, autoplay: true, path: 'https://assets10.lottiefiles.com/packages/lf20_kq5kddii.json' });
+
+    const translations = {
+      en: {
+        pageTitle: 'KrishiMitra — Create Account', siteName: 'KrishiMitra', heroSubtitle: 'Join the farmer revolution 🌾',
+        labelName: 'Full Name', labelPhone: 'Mobile Number', labelPassword: 'Password (8+ chars)', termsText: 'I agree to the Terms & Conditions', signupBtn: 'Create Account', haveAccount: 'Already have an account? ', signInLink: 'Sign In'
+      },
+      hi: {
+        pageTitle: 'कृषिमित्र — खाता बनाएं', siteName: 'कृषिमित्र', heroSubtitle: 'किसान क्रांति में शामिल हों 🌾',
+        labelName: 'पूरा नाम', labelPhone: 'मोबाइल नंबर', labelPassword: 'पासवर्ड (8+ अक्षर)', termsText: 'मैं नियम और शर्तें स्वीकार करता/करती हूँ', signupBtn: 'खाता बनाएं', haveAccount: 'पहले से खाता है? ', signInLink: 'साइन इन करें'
+      },
+      bn: {
+        pageTitle: 'কৃষি মিত্র — অ্যাকাউন্ট তৈরি করুন', siteName: 'কৃষি মিত্র', heroSubtitle: 'কৃষক বিপ্লবে যোগ দিন 🌾',
+        labelName: 'পূর্ণ নাম', labelPhone: 'মোবাইল নাম্বার', labelPassword: 'পাসওয়ার্ড (8+ অক্ষর)', termsText: 'আমি নিয়মাবলী ও শর্তাবলী মেনে নিচ্ছি', signupBtn: 'অ্যাকাউন্ট তৈরি করুন', haveAccount: 'ইতিমধ্যে একটি অ্যাকাউন্ট আছে? ', signInLink: 'সাইন ইন'
+      },
+      te: {
+        pageTitle: 'కృషిమిత్ర్ — ఖాతా సృష్టించండి', siteName: 'కృషిమిత్ర్', heroSubtitle: 'రైతుల విప్లవంలో చేరండి 🌾',
+        labelName: 'పూర్తి పేరు', labelPhone: 'మొబైల్ నంబర్', labelPassword: 'పాస్\u200cవర్డ్ (8+ అక్షరాలు)', termsText: 'నేను నియమాలు మరియు షరతులు قبولిస్తాను', signupBtn: 'ఖాతా సృష్టించండి', haveAccount: 'ఇప్పటికే ఖాతా ఉందా? ', signInLink: 'సైన్ ఇన్'
+      },
+      mr: {
+        pageTitle: 'कृषि मित्र — खाते तयार करा', siteName: 'कृषि मित्र', heroSubtitle: 'शेतकरी क्रांतीत सहभागी व्हा 🌾',
+        labelName: 'पूर्ण नाव', labelPhone: 'मोबाईल नंबर', labelPassword: 'पासवर्ड (8+ अक्षरे)', termsText: 'मी नियम व अटी मान्य करतो/करते', signupBtn: 'खाते तयार करा', haveAccount: 'आधीच खाते आहे? ', signInLink: 'साइन इन'
+      },
+      ta: {
+        pageTitle: 'கிரிஷி மித்ர் — கணக்கு உருவாக்கு', siteName: 'கிரிஷி மித்ர்', heroSubtitle: 'விவசாயி கிளிநிலையில் இணைக 🌾',
+        labelName: 'முழு பெயர்', labelPhone: 'மொபைல் எண்', labelPassword: 'கடவுச்சொல் (8+ எழுத்துகள்)', termsText: 'நான் விதிமுறைகள் மற்றும் கொள்கைகளை ஏற்கின்றேன்', signupBtn: 'கணக்கு உருவாக்கு', haveAccount: 'ஏற்கனவே கணக்கு உள்ளதா? ', signInLink: 'சைன் இன்'
+      },
+      or: {
+        pageTitle: 'କୃଷିମିତ୍ର — ଖାତା ସୃଷ୍ଟି କରନ୍ତୁ', siteName: 'କୃଷିମିତ୍ର', heroSubtitle: 'ଚାଷୀ ବିପ୍ଳବରେ ଯୋଗଦାନ କରନ୍ତୁ 🌾',
+        labelName: 'ପୂର୍ଣ୍ଣ ନାମ', labelPhone: 'ମୋବାଇଲ୍ ସଂଖ୍ୟା', labelPassword: 'ପାସୱାର୍ଡ (8+ ଅକ୍ଷର)', termsText: 'ମୁଁ ନିୟମ ଓ ଶରତଗୁଡ଼ିକୁ ମନ୍ୟ କରେ', signupBtn: 'ଖାତା ସୃଷ୍ଟି କରନ୍ତୁ', haveAccount: 'ଏହା ପୂର୍ବରୁ ଖାତା ଅଛି? ', signInLink: 'ସାଇନ୍ ଇନ୍'
+      }
+    };
+
+    function applyLanguage(lang){
+      const T = translations[lang] || translations.en;
+      document.querySelectorAll('[data-key]').forEach(el=>{
+        const k = el.getAttribute('data-key'); if(!k) return; if(T[k]) el.innerHTML = T[k];
+      });
+      document.title = T.pageTitle || translations.en.pageTitle;
+      document.documentElement.lang = lang;
+      try{ localStorage.setItem('site_language', lang); }catch(e){}
+    }
+
+    function applyTheme(theme){
+      if(theme === 'dark') document.documentElement.setAttribute('data-theme','dark');
+      else document.documentElement.removeAttribute('data-theme');
+      try{ localStorage.setItem('site_theme', theme); }catch(e){}
+      document.getElementById('themeIcon').className = theme==='dark' ? 'fa fa-sun' : 'fa fa-moon';
+      document.getElementById('themeToggle').setAttribute('aria-pressed', theme==='dark');
+    }
+
+    // ---- Main form & API logic ----
+    document.addEventListener('DOMContentLoaded', function() {
+      // expose translations globally
+      window.translations = translations;
+
+      // init language + theme like before
+      const savedLang = localStorage.getItem('site_language') || 'en'; applyLanguage(savedLang);
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const savedTheme = localStorage.getItem('site_theme') || (prefersDark ? 'dark' : 'light');
+      applyTheme(savedTheme);
+
+      // language dropdown handler
+      document.addEventListener('click', e=>{
+        const opt = e.target.closest('.lang-option'); if(!opt) return; e.preventDefault(); applyLanguage(opt.dataset.lang);
+      });
+      // theme toggle
+      document.getElementById('themeToggle').addEventListener('click', ()=>{
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      // elements
+      const form = document.getElementById('signupForm');
+      const nameInput = document.getElementById('name');
+      const phoneInput = document.getElementById('phone');
+      const passwordInput = document.getElementById('password');
+      const termsCheckbox = document.getElementById('terms');
+      const submitBtn = document.getElementById('submitBtn');
+
+      // Store original button HTML for reset
+      const originalBtnHTML = submitBtn.innerHTML;
+
+      // Ensure placeholders for floating labels
+      document.querySelectorAll('.form-control').forEach(inp=>{ if(!inp.getAttribute('placeholder')) inp.setAttribute('placeholder',' '); });
+
+      // Password strength visual
+      const strengthFill = document.getElementById('strengthFill');
+      passwordInput.addEventListener('input', ()=>{
+        const val = passwordInput.value; let score = 0;
+        if(val.length >= 8) score++;
+        if(/[A-Z]/.test(val)) score++;
+        if(/[0-9]/.test(val)) score++;
+        if(/[^A-Za-z0-9]/.test(val)) score++;
+        const pct = (score / 4) * 100; strengthFill.style.width = pct + '%';
+        if(pct < 50) strengthFill.style.background = '#e74c3c'; else if(pct < 75) strengthFill.style.background = '#f39c12'; else strengthFill.style.background = 'var(--primary-2)';
+      });
+
+      // small inline error styles
+      if (!document.querySelector('#error-styles')) {
+        const style = document.createElement('style');
+        style.id = 'error-styles';
+        style.textContent = `
+          .form-control.is-invalid { border-bottom-color: #dc3545 !important; }
+          .form-check-input.is-invalid { border-color: #dc3545 !important; }
+          .form-check-label.text-danger { color: #dc3545 !important; }
+        `;
+        document.head.appendChild(style);
+      }
+
+      // translation-aware messages
+      function getTranslations() {
+        const lang = localStorage.getItem('site_language') || 'en';
+        const t = (window.translations && window.translations[lang]) ? window.translations[lang] : translations.en;
+        return {
+          signupBtn: t.signupBtn || 'Create Account',
+          successMessage: (lang === 'hi') ? 'आपका खाता सफलतापूर्वक बनाया गया।' : 'Your account is successfully created',
+          errorMessage: (lang === 'hi') ? 'कृपया सभी फ़ील्ड सही ढंग से भरें और नियम स्वीकार करें।' : 'Please fill all fields correctly and accept terms.',
+          nameError: (lang === 'hi') ? 'कृपया अपना पूरा नाम दर्ज करें।' : 'Please enter your full name.',
+          phoneError: (lang === 'hi') ? 'कृपया मान्य 10-अंकों का मोबाइल नंबर दर्ज करें।' : 'Please enter a valid 10-digit mobile number.',
+          passwordError: (lang === 'hi') ? 'पासवर्ड कम से कम 8 अक्षर का होना चाहिए।' : 'Password must be at least 8 characters long.',
+          termsError: (lang === 'hi') ? 'कृपया नियम और शर्तों को स्वीकार करें।' : 'Please accept the Terms & Conditions.'
+        };
+      }
+
+      // validation
+      function validateForm(showAlerts = true) {
+        const T = getTranslations();
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const password = passwordInput.value;
+        const terms = termsCheckbox.checked;
+
+        // reset
+        [nameInput, phoneInput, passwordInput, termsCheckbox].forEach(el => el.classList.remove('is-invalid'));
+        const termsLabel = termsCheckbox.parentElement.querySelector('.form-check-label');
+        if (termsLabel) termsLabel.classList.remove('text-danger');
+
+        let isValid = true;
+        let firstError = null;
+
+        if (!name) {
+          nameInput.classList.add('is-invalid');
+          if (showAlerts && !firstError) firstError = T.nameError;
+          isValid = false;
+        }
+
+        if (!/^[0-9]{10}$/.test(phone)) {
+          phoneInput.classList.add('is-invalid');
+          if (showAlerts && !firstError) firstError = T.phoneError;
+          isValid = false;
+        }
+
+        if (password.length < 8) {
+          passwordInput.classList.add('is-invalid');
+          if (showAlerts && !firstError) firstError = T.passwordError;
+          isValid = false;
+        }
+
+        if (!terms) {
+          termsCheckbox.classList.add('is-invalid');
+          if (termsLabel) termsLabel.classList.add('text-danger');
+          if (showAlerts && !firstError) firstError = T.termsError;
+          isValid = false;
+        }
+
+        if (showAlerts && !isValid && firstError) {
+          alert(firstError);
+        }
+        return isValid;
+      }
+
+      // update submit disabled state (real-time)
+      function updateSubmitButton() {
+        const isValid = validateForm(false);
+        submitBtn.disabled = !isValid;
+      }
+
+      [nameInput, phoneInput, passwordInput].forEach(input => {
+        input.addEventListener('input', updateSubmitButton);
+        input.addEventListener('blur', updateSubmitButton);
+      });
+      termsCheckbox.addEventListener('change', updateSubmitButton);
+      updateSubmitButton();
+
+      // Helper: Fetch with timeout using AbortController
+      function fetchWithTimeout(url, opts = {}, timeout = 10000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        return fetch(url, { ...opts, signal: controller.signal }).finally(() => clearTimeout(id));
+      }
+
+      // submit handler -> posts name, phone_no, password to API and redirects on success
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!validateForm(true)) {
+          return false;
+        }
+
+        const T = getTranslations();
+        const creatingText = T.signupBtn + '...';
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>${creatingText}`;
+        submitBtn.disabled = true;
+
+        const payload = {
+          name: nameInput.value.trim(),
+          phone_no: phoneInput.value.trim(),
+          password: passwordInput.value
+        };
+
+        // NOTE: Make sure your API at http://localhost:4000 accepts CORS from this origin and responds with JSON.
+        // Using fetchWithTimeout to avoid indefinite blocking.
+        fetchWithTimeout('http://localhost:4000/api/user/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }, 12000)
+        .then(response => {
+          if (!response.ok) {
+            // try to read JSON message if present
+            return response.text().then(txt => {
+              let msg = `HTTP error ${response.status}`;
+              try { const parsed = JSON.parse(txt); if(parsed && parsed.message) msg = parsed.message; } catch(_) { if(txt) msg = txt; }
+              throw new Error(msg);
+            });
+          }
+          return response.json().catch(()=> ({}));
+        })
+        .then(data => {
+          // Accept multiple common success shapes
+          const success = (data && (data.success === true || data.success === 'true' || data === true || data === 'true' || (data.message && /success/i.test(data.message))));
+          if (success) {
+            alert(getTranslations().successMessage);
+            // redirect to next.html (same folder)
+            window.location.href = 'next.html';
+          } else {
+            // If API returns structured error message, show it; otherwise fallback
+            const errMsg = (data && (data.message || data.error)) ? (data.message || data.error) : 'Registration failed';
+            throw new Error(errMsg);
+          }
+        })
+        .catch(error => {
+          console.error('Registration error:', error);
+          alert(error && error.message ? error.message : 'Network error. Please check your connection and try again.');
+          // Reset button and validation
+          submitBtn.innerHTML = originalBtnHTML;
+          submitBtn.disabled = false;
+          updateSubmitButton();
+        });
+
+        return false;
+      });
+
+      // Enter key support to submit
+      [nameInput, phoneInput, passwordInput].forEach(input => {
+        input.addEventListener('keydown', function(ev) {
+          if (ev.key === 'Enter') {
+            ev.preventDefault();
+            updateSubmitButton();
+            if (!submitBtn.disabled) {
+              form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+          }
+        });
+      });
+
+      // Expose debug helpers
+      window.signupDebug = { validateForm, updateSubmitButton };
+    });
+  </script>
+</body>
+</html>

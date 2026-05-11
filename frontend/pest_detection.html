@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Pest Detection System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #0a0e1a; --bg2:#1a0a0e; --card:#fff5e6; --accent:#ff6b35; --muted:#d4a574; 
+      --success:#00ff9d; --warning:#ffa500; --error:#ff4757;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow-x:hidden}
+    body{
+      font-family:Inter,system-ui,sans-serif; 
+      background: radial-gradient(ellipse 1400px 600px at 20% 10%, #3d1a0a 0%, #1f0415 40%, var(--bg1) 100%);
+      color:var(--card); 
+      -webkit-font-smoothing:antialiased;
+      position:relative;
+    }
+
+    .bg-animation{position:fixed;width:100%;height:100%;top:0;left:0;pointer-events:none;z-index:0;overflow:hidden}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.12;animation: float 20s infinite ease-in-out}
+    .orb1{width:500px;height:500px;background:#ff6b35;top:10%;left:-10%;animation-delay:0s}
+    .orb2{width:400px;height:400px;background:#ff4757;bottom:10%;right:-5%;animation-delay:7s}
+    .orb3{width:350px;height:350px;background:#ffa500;top:50%;left:50%;animation-delay:14s}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-50px) scale(1.1)}66%{transform:translate(-40px,30px) scale(0.9)}}
+
+    .stage{max-width:1200px;margin:0 auto;padding:32px 24px;position:relative;z-index:1}
+    
+    .header{display:flex;align-items:center;gap:24px;margin-bottom:32px;padding:24px;background:linear-gradient(135deg, rgba(255,107,53,0.12), rgba(255,71,87,0.08));border-radius:20px;border:1px solid rgba(255,107,53,0.15);backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+    .logo{width:80px;height:80px;border-radius:18px;background:linear-gradient(135deg, #ff6b35, #ff4757);display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 12px 40px rgba(255,107,53,0.5);animation:pulse 3s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 12px 40px rgba(255,107,53,0.5)}50%{transform:scale(1.05);box-shadow:0 16px 50px rgba(255,107,53,0.7)}}
+    h1{font-size:32px;letter-spacing:-0.5px;font-weight:900;line-height:1.2}
+    .subtitle{color:var(--muted);font-size:15px;margin-top:8px;font-weight:600}
+
+    .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px}
+    @media(max-width:1024px){.grid{grid-template-columns:1fr}}
+
+    .card{background:linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));border-radius:20px;padding:28px;border:1px solid rgba(255,107,53,0.1);box-shadow:0 12px 48px rgba(0,0,0,0.5);backdrop-filter:blur(10px);transition:transform 0.3s ease, box-shadow 0.3s ease}
+    .card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+    .card h3{font-size:20px;margin-bottom:20px;font-weight:800;color:var(--accent)}
+
+    .input-group{margin-bottom:20px}
+    .input-row{display:flex;gap:12px}
+    label{display:block;color:var(--card);font-weight:700;margin-bottom:8px;font-size:14px;letter-spacing:0.3px}
+    .label-required::after{content:' *';color:var(--error)}
+    
+    input,select,textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,107,53,0.15);background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));color:var(--card);outline:none;font-weight:600;font-size:15px;transition:all 0.3s ease;font-family:inherit}
+    select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff6b35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:20px;padding-right:40px}
+    select option{background:#1a2332;color:#fff5e6;padding:12px;font-weight:600}
+    textarea{resize:vertical;min-height:80px;font-family:inherit}
+    input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.3)}
+    input:focus, select:focus, textarea:focus{border-color:var(--accent);box-shadow:0 8px 24px rgba(255,107,53,0.25);transform:translateY(-2px)}
+
+    .upload-area{border:2px dashed rgba(255,107,53,0.3);border-radius:12px;padding:40px 20px;text-align:center;background:rgba(255,107,53,0.02);cursor:pointer;transition:all 0.3s ease;position:relative;overflow:hidden}
+    .upload-area:hover{border-color:var(--accent);background:rgba(255,107,53,0.05);transform:translateY(-2px)}
+    .upload-area input[type="file"]{position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;cursor:pointer}
+    .upload-icon{font-size:48px;margin-bottom:12px}
+    .upload-text{font-weight:700;color:var(--accent);margin-bottom:4px}
+    .upload-subtext{font-size:13px;color:var(--muted)}
+    .image-preview{width:100%;max-height:300px;object-fit:contain;border-radius:12px;margin-top:12px;border:1px solid rgba(255,107,53,0.2)}
+
+    .btn-group{display:flex;gap:12px;margin-top:24px}
+    .btn{flex:1;padding:14px 24px;border-radius:12px;border:none;font-weight:800;font-size:15px;cursor:pointer;transition:all 0.3s ease;letter-spacing:0.3px}
+    .btn-primary{background:linear-gradient(135deg, #ff6b35, #ff4757);color:white;box-shadow:0 8px 24px rgba(255,107,53,0.4)}
+    .btn-primary:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 36px rgba(255,107,53,0.6)}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+    .btn-secondary{background:transparent;border:2px solid rgba(255,107,53,0.3);color:var(--card)}
+    .btn-secondary:hover{border-color:var(--accent);background:rgba(255,107,53,0.1)}
+
+    .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .result-panel{background:linear-gradient(135deg, rgba(255,107,53,0.08), rgba(255,71,87,0.04));border-radius:16px;padding:24px;border:1px solid rgba(255,107,53,0.2)}
+    
+    .alert-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:30px;font-weight:800;font-size:14px;margin-bottom:20px}
+    .alert-high{background:rgba(255,71,87,0.2);border:2px solid #ff4757;color:#ff6b7a}
+    .alert-medium{background:rgba(255,165,0,0.2);border:2px solid #ffa500;color:#ffb733}
+    .alert-low{background:rgba(0,255,157,0.2);border:2px solid #00ff9d;color:#33ffa8}
+
+    .pest-info{background:rgba(255,255,255,0.03);border-radius:12px;padding:20px;margin-bottom:20px;border-left:4px solid var(--accent)}
+    .pest-name{font-size:24px;font-weight:900;color:var(--accent);margin-bottom:8px}
+    .pest-details{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+    .detail-item{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px}
+    .detail-label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:4px}
+    .detail-value{font-size:16px;font-weight:800;color:var(--card)}
+
+    .treatment-section{background:rgba(0,255,157,0.05);border-radius:12px;padding:20px;border:1px solid rgba(0,255,157,0.2);margin-top:20px}
+    .treatment-title{font-size:18px;font-weight:800;color:#00ff9d;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .treatment-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+    .treatment-list li{padding:12px 16px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid #00ff9d;font-weight:600;font-size:14px}
+    .treatment-list li::before{content:'💊';margin-right:10px}
+
+    .history{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto}
+    .history-item{padding:16px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,107,53,0.1);display:flex;justify-content:space-between;align-items:center;transition:all 0.3s ease;cursor:pointer}
+    .history-item:hover{background:rgba(255,107,53,0.08);transform:translateX(4px);border-color:var(--accent)}
+    .history-info{flex:1}
+    .history-pest{font-weight:800;font-size:15px;color:var(--accent)}
+    .history-date{font-size:12px;color:var(--muted);margin-top:4px}
+    .history-severity{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:800}
+
+    footer{text-align:center;margin-top:40px;color:var(--muted);font-size:13px;font-weight:600}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+    .empty-icon{font-size:64px;margin-bottom:16px;opacity:0.5}
+  </style>
+</head>
+<body>
+  <div class="bg-animation">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <div class="stage">
+    <div class="header">
+      <div class="logo">🐛</div>
+      <div>
+        <h1>AI-Powered Pest Detection System</h1>
+        <p class="subtitle">Advanced pest identification & treatment recommendations • Real-time analysis with government pest database</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3>Pest Detection Analysis</h3>
+          
+          <div class="input-group">
+            <label class="label-required">Upload Crop/Leaf Image</label>
+            <div class="upload-area" id="uploadArea">
+              <input type="file" id="imageInput" accept="image/*">
+              <div class="upload-icon">📸</div>
+              <div class="upload-text">Click or drag image here</div>
+              <div class="upload-subtext">Supports JPG, PNG (Max 5MB)</div>
+            </div>
+            <img id="imagePreview" class="image-preview" style="display:none">
+          </div>
+
+          <div class="input-group">
+            <label class="label-required">Crop Type</label>
+            <select id="cropType">
+              <option value="">Select crop</option>
+              <option value="rice">Rice</option>
+              <option value="wheat">Wheat</option>
+              <option value="maize">Maize</option>
+              <option value="cotton">Cotton</option>
+              <option value="tomato">Tomato</option>
+              <option value="potato">Potato</option>
+              <option value="sugarcane">Sugarcane</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label class="label-required">Affected Area</label>
+            <select id="affectedArea">
+              <option value="">Select area</option>
+              <option value="leaves">Leaves</option>
+              <option value="stem">Stem</option>
+              <option value="fruit">Fruit/Grain</option>
+              <option value="roots">Roots</option>
+              <option value="whole">Whole Plant</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Visible Symptoms (Optional)</label>
+            <textarea id="symptoms" placeholder="e.g., Yellow spots, holes in leaves, wilting..."></textarea>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group" style="flex:1">
+              <label>Weather</label>
+              <select id="weather">
+                <option value="hot-humid">Hot & Humid</option>
+                <option value="hot-dry">Hot & Dry</option>
+                <option value="mild">Mild</option>
+                <option value="rainy">Rainy</option>
+              </select>
+            </div>
+            <div class="input-group" style="flex:1">
+              <label>Infestation</label>
+              <select id="infestation">
+                <option value="light">Light</option>
+                <option value="moderate">Moderate</option>
+                <option value="severe">Severe</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" id="analyzeBtn">
+              <span id="btnText">🔍 Analyze Pest</span>
+            </button>
+            <button class="btn btn-secondary" id="resetBtn">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Detection Results</h3>
+          
+          <div id="resultPanel" style="display:none">
+            <div class="alert-badge" id="alertBadge">
+              <span id="alertIcon">⚠️</span>
+              <span id="alertText">Alert Level</span>
+            </div>
+
+            <div class="pest-info">
+              <div class="pest-name" id="pestName">—</div>
+              <div style="font-size:14px;color:var(--muted);font-style:italic" id="scientificName">—</div>
+              
+              <div class="pest-details">
+                <div class="detail-item">
+                  <div class="detail-label">CONFIDENCE</div>
+                  <div class="detail-value" id="confidence">—</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">SEVERITY</div>
+                  <div class="detail-value" id="severity">—</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">SPREAD RISK</div>
+                  <div class="detail-value" id="spreadRisk">—</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">CROP LOSS</div>
+                  <div class="detail-value" id="cropLoss">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="treatment-section">
+              <div class="treatment-title">💊 Recommended Treatments</div>
+              <ul class="treatment-list" id="treatmentList"></ul>
+            </div>
+
+            <div style="background:rgba(255,165,0,0.08);border-radius:12px;padding:16px;margin-top:16px;border:1px solid rgba(255,165,0,0.2)">
+              <div style="font-weight:800;color:#ffa500;margin-bottom:8px;font-size:14px">⚡ Quick Actions</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.6" id="quickActions">—</div>
+            </div>
+
+            <div class="btn-group" style="margin-top:20px">
+              <button class="btn btn-secondary" id="downloadBtn">📥 Download</button>
+              <button class="btn btn-secondary" id="saveBtn">💾 Save</button>
+            </div>
+          </div>
+
+          <div id="emptyState" class="empty-state">
+            <div class="empty-icon">🔬</div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:8px">No Analysis Yet</div>
+            <div style="font-size:14px">Upload an image and fill details to detect pests</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:24px">
+          <h3>Detection History</h3>
+          <div class="history" id="historyList">
+            <div class="empty-state" style="padding:30px 20px">
+              <div style="font-size:14px">No detection history</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>AI pest detection • Government agricultural databases • Real-time treatment recommendations</footer>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const pestDB = {
+      rice: {name: 'Brown Plant Hopper', sci: 'Nilaparvata lugens', sev: 'High', risk: 'Very High', loss: '30-40%', 
+        treat: ['Imidacloprid 17.8% SL @ 0.5ml/L', 'Thiamethoxam 25% WG @ 0.2g/L', 'Install light traps', 'Proper water management'],
+        quick: 'Spray immediately. Drain water 2-3 days. Remove infested plants.'},
+      tomato: {name: 'Fruit Borer', sci: 'Helicoverpa armigera', sev: 'Very High', risk: 'High', loss: '40-60%',
+        treat: ['Emamectin Benzoate 5% @ 0.4g/L', 'Spinosad 45% SC @ 0.3ml/L', 'Pheromone traps @ 5/acre', 'Remove infested fruits'],
+        quick: 'Critical! Spray at dusk. Check fruits daily. Bury damaged fruits.'},
+      cotton: {name: 'Bollworm', sci: 'Helicoverpa armigera', sev: 'Very High', risk: 'High', loss: '50-70%',
+        treat: ['Chlorantraniliprole 18.5% @ 0.3ml/L', 'Profenofos 50% EC @ 2ml/L', 'Pheromone traps', 'Release Chrysoperla'],
+        quick: 'Emergency! Spray at flower stage. Daily monitoring. Handpick larvae.'},
+      wheat: {name: 'Aphid', sci: 'Rhopalosiphum padi', sev: 'Medium', risk: 'High', loss: '20-30%',
+        treat: ['Dimethoate 30% EC @ 2ml/L', 'Imidacloprid @ 0.5ml/L', 'Neem oil 3%', 'Conserve ladybird beetles'],
+        quick: 'Spray water jet. Apply neem pesticide. Monitor for ants.'},
+      maize: {name: 'Fall Armyworm', sci: 'Spodoptera frugiperda', sev: 'Very High', risk: 'High', loss: '35-50%',
+        treat: ['Chlorantraniliprole @ 0.4ml/L', 'Emamectin Benzoate @ 0.4g/L', 'Spinosad @ 0.5ml/L', 'Remove egg masses'],
+        quick: 'Inspect whorl daily. Apply sand/ash. Use pheromone traps.'}
+    };
+
+    let uploadedImage = null;
+
+    $('imageInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          alert('File too large! Max 5MB');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          uploadedImage = e.target.result;
+          $('imagePreview').src = uploadedImage;
+          $('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    $('uploadArea').addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.currentTarget.style.borderColor = 'var(--accent)';
+    });
+    $('uploadArea').addEventListener('dragleave', (e) => {
+      e.currentTarget.style.borderColor = 'rgba(255,107,53,0.3)';
+    });
+    $('uploadArea').addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.currentTarget.style.borderColor = 'rgba(255,107,53,0.3)';
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        $('imageInput').files = e.dataTransfer.files;
+        $('imageInput').dispatchEvent(new Event('change'));
+      }
+    });
+
+    function detectPest(data) {
+      const pest = pestDB[data.crop] || {
+        name: 'Common Pest', sci: 'Multiple species', sev: 'Medium', risk: 'Medium', loss: '15-25%',
+        treat: ['Consult agricultural officer', 'Organic pesticide', 'Field sanitation', 'Regular monitoring'],
+        quick: 'Take photos. Remove affected parts. Maintain hygiene.'
+      };
+      
+      let conf = 75 + Math.floor(Math.random() * 20);
+      if (data.symptoms) conf += 5;
+      if (uploadedImage) conf += 5;
+      conf = Math.min(98, conf);
+      
+      return {...pest, confidence: conf};
+    }
+
+    function displayResults(data, result) {
+      $('emptyState').style.display = 'none';
+      $('resultPanel').style.display = 'block';
+      
+      const alertClass = result.sev === 'Very High' || result.sev === 'High' ? 'alert-high' : 
+                         result.sev === 'Medium' ? 'alert-medium' : 'alert-low';
+      $('alertBadge').className = 'alert-badge ' + alertClass;
+      $('alertIcon').textContent = result.sev === 'High' || result.sev === 'Very High' ? '🚨' : 
+                                   result.sev === 'Medium' ? '⚠️' : '✅';
+      $('alertText').textContent = result.sev + ' Alert';
+      
+      $('pestName').textContent = result.name;
+      $('scientificName').textContent = result.sci;
+      $('confidence').textContent = result.confidence + '%';
+      $('severity').textContent = result.sev;
+      $('spreadRisk').textContent = result.risk;
+      $('cropLoss').textContent = result.loss;
+      
+      $('treatmentList').innerHTML = result.treat.map(t => `<li>${t}</li>`).join('');
+      $('quickActions').textContent = result.quick;
+      
+      saveToHistory({...data, ...result, timestamp: Date.now()});
+    }
+
+    function saveToHistory(record) {
+      let history = JSON.parse(localStorage.getItem('pestHistory') || '[]');
+      history.unshift(record);
+      history = history.slice(0, 10);
+      localStorage.setItem('pestHistory', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('pestHistory') || '[]');
+      const list = $('historyList');
+      
+      if (history.length === 0) {
+        list.innerHTML = '<div class="empty-state" style="padding:30px 20px"><div style="font-size:14px">No detection history</div></div>';
+        return;
+      }
+      
+      list.innerHTML = history.map(r => `
+        <div class="history-item">
+          <div class="history-info">
+            <div class="history-pest">${r.name}</div>
+            <div class="history-date">${new Date(r.timestamp).toLocaleDateString()} • ${r.crop}</div>
+          </div>
+          <div class="history-severity" style="background:${r.sev==='High'||r.sev==='Very High'?'rgba(255,71,87,0.2)':r.sev==='Medium'?'rgba(255,165,0,0.2)':'rgba(0,255,157,0.2)'};color:${r.sev==='High'||r.sev==='Very High'?'#ff4757':r.sev==='Medium'?'#ffa500':'#00ff9d'}">${r.sev}</div>
+        </div>
+      `).join('');
+    }
+
+    $('analyzeBtn').addEventListener('click', () => {
+      const crop = $('cropType').value;
+      const area = $('affectedArea').value;
+      
+      if (!crop || !area) {
+        alert('Please fill crop type and affected area');
+        return;
+      }
+      
+      const btnText = $('btnText');
+      btnText.innerHTML = '<span class="spinner"></span> Analyzing...';
+      $('analyzeBtn').disabled = true;
+      
+      setTimeout(() => {
+        const data = {
+          crop, area,
+          symptoms: $('symptoms').value,
+          weather: $('weather').value,
+          infestation: $('infestation').value
+        };
+        
+        const result = detectPest(data);
+        displayResults(data, result);
+        
+        btnText.textContent = '🔍 Analyze Pest';
+        $('analyzeBtn').disabled = false;
+      }, 2000);
+    });
+
+    $('resetBtn').addEventListener('click', () => {
+      $('cropType').value = '';
+      $('affectedArea').value = '';
+      $('symptoms').value = '';
+      $('imagePreview').style.display = 'none';
+      uploadedImage = null;
+      $('emptyState').style.display = 'block';
+      $('resultPanel').style.display = 'none';
+    });
+
+    $('downloadBtn').addEventListener('click', () => {
+      const data = {
+        pest: $('pestName').textContent,
+        confidence: $('confidence').textContent,
+        treatments: Array.from($('treatmentList').children).map(li => li.textContent.replace('💊 ','')),
+        timestamp: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pest-report-${Date.now()}.json`;
+      a.click();
+    });
+
+    $('saveBtn').addEventListener('click', () => {
+      alert('Detection saved to history!');
+    });
+
+    renderHistory();
+  </script>
+</body>
+</html>

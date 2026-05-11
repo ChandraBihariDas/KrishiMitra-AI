@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KrishiMitra — Forgot Password</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#2e8b57;
+      --accent:#8b4513;
+      --muted:#6b6b6b;
+      --bg:#f3fff3;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      height:100vh;
+      font-family:Poppins,system-ui;
+      background:linear-gradient(180deg,#e8ffe8,#ffffff);
+      overflow:hidden;
+    }
+
+    /* animated floating leaves */
+    .leaf{
+      position:absolute;
+      width:40px;height:40px;
+      background:url('https://cdn-icons-png.flaticon.com/512/766/766540.png') no-repeat center/contain;
+      animation: fall var(--t) linear infinite;
+      opacity:.7;
+    }
+    @keyframes fall{
+      0%{transform:translateY(-10vh) rotate(0deg)}
+      100%{transform:translateY(110vh) rotate(360deg)}
+    }
+
+    .page-wrap{display:flex;align-items:center;justify-content:center;height:100%}
+
+    .card-box{
+      width:420px;max-width:92%;
+      background:#ffffffee;
+      padding:28px;
+      border-radius:18px;
+      box-shadow:0 25px 60px rgba(0,0,0,.15);
+      position:relative;
+      backdrop-filter:blur(4px);
+      animation:pop .6s ease both;
+    }
+    @keyframes pop{
+      0%{opacity:0;transform:scale(.7) translateY(30px)}
+      100%{opacity:1;transform:scale(1) translateY(0)}
+    }
+
+    h1{font-weight:800;color:var(--primary)}
+    .muted{color:var(--muted)}
+
+    .form-control{border-radius:999px;padding:10px 15px;border:1px solid #dfeee0}
+    .btn-custom{
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--primary),#1f7a46);
+      border:none;color:#fff;font-weight:700;
+      padding:10px 15px;
+      animation:pulse 2s infinite;
+    }
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(46,139,87,0.4)}
+      70%{box-shadow:0 0 0 18px transparent}
+      100%{box-shadow:0 0 0 0 transparent}
+    }
+
+    .back-link a{color:var(--accent);font-weight:600}
+
+  </style>
+</head>
+<body>
+
+  <!-- animated leaves -->
+  <script>
+    for(let i=0;i<12;i++){
+      const leaf=document.createElement('div');
+      leaf.className='leaf';
+      leaf.style.left=Math.random()*100+'vw';
+      leaf.style.setProperty('--t', (8+Math.random()*6)+'s');
+      document.body.appendChild(leaf);
+    }
+  </script>
+
+  <div class="page-wrap">
+    <div class="card-box">
+      <h1><i class="fa fa-leaf me-2"></i>Forgot Password</h1>
+      <p class="muted mb-4">Enter your registered mobile number to receive a password reset OTP.</p>
+
+      <form id="forgotForm">
+        <div class="mb-3">
+          <input id="phone" type="tel" maxlength="10" class="form-control" placeholder="Mobile number (10 digits)" required>
+          <div class="invalid-feedback d-none" id="phoneErr">Enter a valid 10-digit number.</div>
+        </div>
+        <button id="resetBtn" type="submit" class="btn btn-custom w-100" disabled>
+          <i class="fa fa-paper-plane me-2"></i>Send OTP
+        </button>
+      </form>
+
+      <div class="text-center mt-3 back-link">
+        <a href="login.html"><i class="fa fa-arrow-left me-1"></i>Back to Sign In</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const phone=document.getElementById('phone');
+  const phoneErr=document.getElementById('phoneErr');
+  const resetBtn=document.getElementById('resetBtn');
+  const form=document.getElementById('forgotForm');
+
+  function validate(){
+    const ok=/^\d{10}$/.test(phone.value.trim());
+    phoneErr.classList.toggle('d-none',ok);
+    resetBtn.disabled=!ok;
+    return ok;
+  }
+
+  phone.addEventListener('input',validate);
+
+  form.addEventListener('submit',e=>{
+    e.preventDefault();
+    if(!validate()) return;
+
+    resetBtn.innerHTML='<span class="spinner-border spinner-border-sm"></span> Sending...';
+    resetBtn.disabled=true;
+
+    setTimeout(()=>{
+      alert('OTP sent successfully!');
+      window.location.href='reset.html';
+    },1000);
+  });
+</script>
+
+</body>
+</html>

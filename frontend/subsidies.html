@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Government Subsidies</title>
+
+  <style>
+    /* Light agricultural theme */
+    :root{
+      --bg:#f6fbf6;
+      --card:#ffffff;
+      --muted:#6b7a6b;
+      --accent:#1f7a20;     /* deep leaf green */
+      --accent-2:#58b36b;   /* fresh green */
+      --gold:#d4a017;
+      --glass: rgba(31,122,32,0.06);
+      --shadow: 0 10px 25px rgba(33,44,33,0.06);
+      --radius:14px;
+      --glass-2: rgba(88,179,107,0.06);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: linear-gradient(180deg, #f6fbf6 0%, #eef7ee 100%);
+      color: #233;
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    header{
+      padding:18px 22px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      background: linear-gradient(90deg, rgba(88,179,107,0.12), rgba(31,122,32,0.06));
+      border-bottom: 1px solid rgba(33,44,33,0.04);
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+
+    .brand{
+      display:flex;gap:12px;align-items:center;
+    }
+    .logo{
+      width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),var(--accent));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem;box-shadow:var(--shadow);
+    }
+    .brand h1{font-size:1.15rem;margin:0}
+    .brand p{margin:0;font-size:0.85rem;color:var(--muted)}
+
+    .controls{display:flex;gap:12px;align-items:center}
+    .search{
+      display:flex;align-items:center;gap:8px;background:var(--card);padding:8px 12px;border-radius:999px;box-shadow:var(--shadow);
+      border:1px solid rgba(33,44,33,0.03)
+    }
+    .search input{border:none;outline:none;background:transparent;width:260px;font-size:0.95rem;color:#223}
+    .filter{background:var(--glass);padding:8px 12px;border-radius:999px;border:1px solid rgba(33,44,33,0.03);font-size:0.95rem;color:#233}
+    .cta{background:var(--accent);color:#fff;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(31,122,32,0.12);font-weight:700}
+
+    main{
+      max-width:1200px;margin:26px auto;padding:0 18px 60px;
+      display:grid;grid-template-columns: 1fr 360px; gap:20px;
+    }
+
+    /* Left column: cards grid */
+    .grid{
+      display:grid;grid-template-columns: repeat(auto-fill,minmax(320px,1fr));gap:18px;
+    }
+
+    .card{
+      background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
+      transition:transform .18s ease, box-shadow .18s ease;
+      position:relative;overflow:hidden;border:1px solid rgba(33,44,33,0.03);
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(33,44,33,0.06)}
+
+    .card h3{margin:0 0 8px 0;color:var(--accent);display:flex;align-items:center;gap:10px}
+    .card p{color:var(--muted);margin:6px 0 12px 0;line-height:1.45}
+    .benefits{background:var(--glass-2);padding:10px;border-radius:10px;margin-bottom:10px;color:#234;font-weight:600}
+    .eligibility{font-size:.92rem;color:var(--muted);margin-bottom:12px}
+    .actions{display:flex;gap:10px;align-items:center}
+    .apply{flex:1;padding:10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#fff;font-weight:700;cursor:pointer}
+    .learn{padding:10px;border-radius:10px;border:1px solid rgba(33,44,33,0.06);background:transparent;cursor:pointer;color:var(--accent)}
+
+    /* right column: profile & info */
+    aside{
+      display:flex;flex-direction:column;gap:16px;
+      position:sticky;top:84px;
+    }
+    .profile{
+      background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;border:1px solid rgba(33,44,33,0.03)
+    }
+    .avatar{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem}
+    .profile h4{margin:0;font-size:1rem}
+    .profile p{margin:0;color:var(--muted);font-size:0.9rem}
+
+    .quick-links{background:var(--card);padding:12px;border-radius:12px;box-shadow:var(--shadow);border:1px solid rgba(33,44,33,0.03)}
+    .quick-links h4{margin:0 0 8px 0;color:var(--accent)}
+    .link-list{display:flex;flex-direction:column;gap:8px}
+    .link-list a{display:block;padding:8px;border-radius:8px;text-decoration:none;color:var(--accent);border:1px dashed rgba(31,122,32,0.08);background:transparent;font-weight:600}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(10,15,10,0.35);display:none;align-items:center;justify-content:center;z-index:60}
+    .modal{width:92%;max-width:680px;background:var(--card);border-radius:12px;padding:18px;box-shadow:0 30px 80px rgba(33,44,33,0.16)}
+    .modal h3{margin:0 0 8px 0}
+    .modal .meta{color:var(--muted);margin-bottom:12px}
+    .modal .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+    .btn-outline{padding:10px 12px;border-radius:8px;border:1px solid rgba(33,44,33,0.08);background:transparent;cursor:pointer}
+    .btn-primary{padding:10px 14px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:white;font-weight:700;cursor:pointer}
+
+    /* chips */
+    .chip{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(31,122,32,0.08);color:var(--accent);font-weight:600;margin-right:8px;font-size:0.85rem}
+
+    @media(max-width:980px){
+      main{grid-template-columns:1fr;gap:14px;padding:14px}
+      aside{position:static;top:auto}
+      .search input{width:140px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">🌿</div>
+      <div>
+        <h1>KrishiMitra-AI — Government Subsidies</h1>
+        <p>Find schemes & apply — tailored for farmers and FPOs</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search" role="search" aria-label="Search schemes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden style="opacity:.6"><path d="M21 21l-4.35-4.35" stroke="#3b4" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="searchBox" placeholder="Search schemes, crops, eligibility...">
+      </div>
+
+      <select id="filter" class="filter" title="Filter by category">
+        <option value="all">All categories</option>
+        <option value="income">Income support</option>
+        <option value="infrastructure">Infrastructure</option>
+        <option value="digital">Digital</option>
+        <option value="sustainable">Sustainable</option>
+        <option value="fisheries">Fisheries</option>
+      </select>
+
+      <button class="cta" id="mySchemesBtn">My Applications</button>
+    </div>
+  </header>
+
+  <main>
+    <div>
+      <!-- cards grid -->
+      <div class="grid" id="cardsGrid">
+        <!-- Card template populated by JS -->
+      </div>
+    </div>
+
+    <aside>
+      <div class="profile" id="profileCard">
+        <div class="avatar" id="avatar">RP</div>
+        <div>
+          <h4 id="farmerName">Ramesh Patel</h4>
+          <p id="farmInfo">Green Acres · 8 acres · Tomatoes</p>
+          <div style="margin-top:6px"><span class="chip">Verified Farmer</span><span class="chip">FPO: No</span></div>
+        </div>
+      </div>
+
+      <div class="quick-links">
+        <h4>Important Links</h4>
+        <div class="link-list">
+          <a href="https://pmkisan.gov.in" target="_blank" rel="noreferrer">PM Kisan (official)</a>
+          <a href="https://nfdb.gov.in/welcome/PMMSY" target="_blank" rel="noreferrer">PM Matsya (official)</a>
+          <a href="https://agriinfra.dac.gov.in/" target="_blank" rel="noreferrer">Agri-Infra portal</a>
+        </div>
+      </div>
+
+      <div class="quick-links">
+        <h4>Tips</h4>
+        <div style="color:var(--muted);font-size:0.95rem">
+          <p>• Keep Aadhar & land proofs handy when applying.</p>
+          <p>• For best results, apply via official portal links (opens in current tab).</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Apply for scheme</h3>
+      <div class="meta" id="modalMeta">Loading...</div>
+      <div id="modalBody" style="color:#243;line-height:1.45"></div>
+      <div class="modal-actions">
+        <button class="btn-outline" id="modalCancel">Cancel</button>
+        <button class="btn-primary" id="modalProceed">Proceed to Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ======= Data: schemes and URLs (edit links as needed) ======= */
+    const schemes = [
+      {
+        id: 'pmkisan',
+        title: 'PM Kisan Samman Nidhi',
+        short: 'Direct income support for small & marginal farmers.',
+        benefits: '₹6,000/year transferred in three installments.',
+        eligibility: 'Small/marginal farmers, tenant farmers, sharecroppers.',
+        category: 'income',
+        url: 'http://services.india.gov.in/service/detail/pm-kisan-samman-nidhi' // official
+      },
+      {
+        id: 'dhan-dhaanya',
+        title: 'PM Dhan Dhaanya Krishi Yojana',
+        short: 'Enhances agricultural productivity & sustainable practices.',
+        benefits: 'Integrated support for farming, irrigation, storage.',
+        eligibility: 'Farmers in selected districts.',
+        category: 'infrastructure',
+        url: 'https://pmddky.com/'
+      },
+      {
+        id: 'dalhan',
+        title: 'Dalhan Atmanirbharta Mission',
+        short: 'Boosts pulse production and self-reliance.',
+        benefits: 'Expands cultivation by 35 lakh hectares; financial support.',
+        eligibility: 'Pulse farmers across India.',
+        category: 'sustainable',
+        url: 'https://www.pib.gov.in/PressReleasePage.aspx?PRID=2177847'
+      },
+      {
+        id: 'digital-agri',
+        title: 'Digital Agriculture Mission 2025',
+        short: 'Provides digital tools for modern farming.',
+        benefits: 'Free advisory, pest alerts, precision apps.',
+        eligibility: 'All registered farmers and agri-businesses.',
+        category: 'digital',
+        url: 'https://agriwelfare.gov.in/en/DigiAgriDiv'
+      },
+      {
+        id: 'sadp',
+        title: 'Sustainable Agriculture Development Programme (SADP)',
+        short: 'Promotes eco-friendly farming practices.',
+        benefits: 'Up to 70% subsidy for organics; grants up to ₹25,000/acre.',
+        eligibility: 'Farmers shifting to organics/eco-methods.',
+        category: 'sustainable',
+        url: 'https://www.sadpnepal.org/'
+      },
+      {
+        id: 'agri-infra',
+        title: 'Agri-Infra Fund',
+        short: 'Supports agricultural infrastructure development.',
+        benefits: 'Low-interest loans up to ₹2 crore for storage/warehouses.',
+        eligibility: 'FPOs, cooperatives, entrepreneurs.',
+        category: 'infrastructure',
+        url: 'https://agriinfra.dac.gov.in/'
+      },
+      {
+        id: 'matsya',
+        title: 'PM Matsya Sampada Yojana',
+        short: 'Enhances fisheries and aquaculture.',
+        benefits: 'Up to ₹1.5 lakh/unit subsidy for tech/infrastructure.',
+        eligibility: 'Fishers and aquaculture entrepreneurs.',
+        category: 'fisheries',
+        url: 'https://nfdb.gov.in/welcome/'
+      },
+      {
+        id: 'fpo-support',
+        title: 'FPO Strengthening Support',
+        short: 'Empowers Farmer Producer Organizations.',
+        benefits: 'Grants up to ₹18 lakh/FPO for credit, tech, markets.',
+        eligibility: 'Recognized FPOs.',
+        category: 'infrastructure',
+        url: 'https://www.pib.gov.in/indexd.aspx'
+      }
+    ];
+
+    /* ======= render cards ======= */
+    const grid = document.getElementById('cardsGrid');
+    function renderCards(list){
+      grid.innerHTML = '';
+      list.forEach(s => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${iconFor(s.category)} ${escapeHtml(s.title)}</h3>
+          <p>${escapeHtml(s.short)}</p>
+          <div class="benefits"><strong>Benefits:</strong> ${escapeHtml(s.benefits)}</div>
+          <div class="eligibility"><strong>Eligibility:</strong> ${escapeHtml(s.eligibility)}</div>
+          <div class="actions">
+            <button class="apply" data-id="${s.id}">Apply Now</button>
+            <button class="learn" data-id="${s.id}">Learn more</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      attachCardEvents();
+    }
+
+    function iconFor(cat){
+      switch(cat){
+        case 'income': return '💰';
+        case 'infrastructure': return '🏗️';
+        case 'digital': return '📱';
+        case 'sustainable': return '🌱';
+        case 'fisheries': return '🐟';
+        default: return '🌾';
+      }
+    }
+
+    /* simple escape to avoid injection if content is dynamic */
+    function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+    /* ======= search & filter ======= */
+    const searchBox = document.getElementById('searchBox');
+    const filter = document.getElementById('filter');
+
+    function applyFilters(){
+      const q = searchBox.value.trim().toLowerCase();
+      const cat = filter.value;
+      const filtered = schemes.filter(s => {
+        const matchQ = !q || (s.title + ' ' + s.short + ' ' + s.benefits + ' ' + s.eligibility).toLowerCase().includes(q);
+        const matchCat = cat === 'all' || s.category === cat;
+        return matchQ && matchCat;
+      });
+      renderCards(filtered);
+    }
+
+    searchBox.addEventListener('input', applyFilters);
+    filter.addEventListener('change', applyFilters);
+
+    /* ======= modal & redirect logic ======= */
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMeta = document.getElementById('modalMeta');
+    const modalBody = document.getElementById('modalBody');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalProceed = document.getElementById('modalProceed');
+
+    let activeScheme = null;
+
+    function attachCardEvents(){
+      document.querySelectorAll('.apply').forEach(btn=>{
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          openApplyModal(id);
+        });
+      });
+      document.querySelectorAll('.learn').forEach(btn=>{
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          showLearn(id);
+        });
+      });
+    }
+
+    function openApplyModal(id){
+      const scheme = schemes.find(s => s.id === id);
+      if(!scheme) return alert('Scheme not found');
+      activeScheme = scheme;
+      modalTitle.textContent = `Apply — ${scheme.title}`;
+      modalMeta.textContent = scheme.benefits;
+      modalBody.innerHTML = `
+        <p><strong>Eligibility:</strong> ${escapeHtml(scheme.eligibility)}</p>
+        <p style="margin-top:8px;color:var(--muted);font-size:0.95rem">
+          You will be redirected to the official portal to complete the application. Please ensure you have your <strong>Aadhaar</strong>, land documents and bank details ready.
+        </p>
+      `;
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden','false');
+      // focus btn for accessibility
+      modalProceed.focus();
+    }
+
+    modalCancel.addEventListener('click', () => {
+      modalBackdrop.style.display = 'none';
+      modalBackdrop.setAttribute('aria-hidden','true');
+      activeScheme = null;
+    });
+
+    modalProceed.addEventListener('click', () => {
+      if(!activeScheme) return;
+      // redirect user to the official link for that scheme (current tab)
+      // Validate URL safe format
+      let url = activeScheme.url || '';
+      try {
+        // ensure protocol is present
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        window.location.href = url;
+      } catch(e){
+        alert('Unable to open the scheme link. Please try visiting the official portal: ' + url);
+      }
+    });
+
+    /* learn more opens a simple details modal (no redirect) */
+    function showLearn(id){
+      const scheme = schemes.find(s => s.id === id);
+      if(!scheme) return;
+      activeScheme = null;
+      modalTitle.textContent = scheme.title;
+      modalMeta.textContent = scheme.benefits;
+      modalBody.innerHTML = `
+        <p><strong>About:</strong> ${escapeHtml(scheme.short)}</p>
+        <p style="margin-top:8px"><strong>Eligibility:</strong> ${escapeHtml(scheme.eligibility)}</p>
+        <p style="margin-top:8px;color:var(--muted)">Click "Proceed to Apply" if you want to go to the official portal, or close to browse other schemes.</p>
+      `;
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden','false');
+      modalProceed.focus();
+      // ensure proceed will redirect to link for this scheme if used
+      activeScheme = scheme;
+    }
+
+    /* ======= small personalization examples (profile) ======= */
+    // sample farmer data; in a real app populate from API
+    const farmer = {
+      name: 'Raj mani',
+      farmName: 'Green Acres',
+      size: '8 acres',
+      primaryCrop: 'patato',
+      verified: true
+    };
+
+    function populateProfile(){
+      document.getElementById('farmerName').textContent = farmer.name;
+      document.getElementById('farmInfo').textContent = `${farmer.farmName} · ${farmer.size} · ${farmer.primaryCrop}`;
+      const avatar = document.getElementById('avatar');
+      const initials = farmer.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+      avatar.textContent = initials;
+    }
+
+    /* ======= init ======= */
+    renderCards(schemes);
+    populateProfile();
+
+    // simple keyboard support to close modal with Escape
+    window.addEventListener('keydown', (ev) => {
+      if(ev.key === 'Escape' && modalBackdrop.style.display === 'flex'){
+        modalBackdrop.style.display = 'none';
+        modalBackdrop.setAttribute('aria-hidden','true');
+        activeScheme = null;
+      }
+    });
+
+  </script>
+</body>
+</html>

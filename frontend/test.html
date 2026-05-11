@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <link rel="icon" href="kishan-mitra-logo.png" type="image/x-icon">
+
+  <title data-key="pageTitle">KrishiMitra-AI</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style4.css">
+  <link rel="stylesheet" href="rotate.css">
+  <link rel="stylesheet" href="logo.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
+
+  <style>
+    /* Make navbar fixed (unmovable) */
+    .navbar {
+      height: 80px;
+      transition: background-color 0.3s ease;
+    }
+
+    body {
+      padding-top: 80px; /* Prevent content hiding under fixed navbar */
+    }
+
+    .fixed-top.sticky-scrolled {
+      background: rgba(0, 0, 0, 0.95) !important;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Card Flip */
+    .card-container {
+      width: 305px;
+      height: 405px;
+      perspective: 1500px;
+      margin: 0 auto;
+      
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+      transition: transform 1s ease-in-out;
+      cursor: pointer;
+    }
+
+    .card .front img,
+    .card .back img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .card-container:hover .front img,
+    .card-container:hover .back img {
+      transform: scale(1.05);
+    }
+
+    .card .back {
+      transform: rotateY(180deg);
+    }
+
+    /* Hero Section with fade background */
+    .hero-section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 0.8s ease-in-out;
+      z-index: 0;
+    }
+
+    .hero-bg.hidden {
+      opacity: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+
+    /* Tricolour gradient text (fixed: also target existing wrapper and add cross-browser rules) */
+    .hero-content h1,
+    .hero-content h2,
+    .hero-content p,
+    .-contentcontainer.hero h1,
+    .-contentcontainer.hero h2,
+    .-contentcontainer.hero p {
+      background: linear-gradient(90deg, #fc8607 0%, #FFFFFF 50%, #54ff04 100%);
+      background-size:  100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      font-weight: 800;
+    }
+
+    /* Slide Up Animation */
+    .hero-animate {
+      opacity: 0;
+      transform: translateY(50px);
+      animation: slideUp 1s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Glow animation for button */
+    @keyframes pulseGlow {
+      0% {
+        box-shadow: 0 0 0px rgba(255, 153, 51, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(255, 153, 51, 1), 0 0 30px rgba(19, 136, 8, 0.8);
+      }
+      100% {
+        box-shadow: 0 0 0px rgba(255, 153, 51, 0.7);
+      }
+    }
+
+    .btn-animated {
+      animation: pulseGlow 2s infinite;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      background-image: url('farming-background.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 50px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .stats-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1;
+    }
+
+    .stats-container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    /* Key Features rectangular box grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .feature-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 18px;
+      border-radius: 14px;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      background-color: #00a87b7e;
+      color: #000000;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+      color: #f86c00;
+    }
+
+    .feature-media {
+      height: 100px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      
+    }
+
+    .feature-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform-origin: center;
+      transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+      
+    }
+
+    .feature-card:hover .feature-media img {
+      transform: scale(1.12) rotate(-1deg);
+      
+    }
+
+    .feature-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      
+     
+    }
+
+    .feature-desc {
+      font-size: 0.95rem;
+      color: #742f61;
+    }
+
+    /* subtle floating icon */
+    .feature-icon {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      font-size: 28px;
+      opacity: 0.12;
+      transform: rotate(-10deg);
+     
+    }
+
+    /* small badge acting as CTA */
+    .feature-cta {
+      align-self: flex-end;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: linear-gradient(90deg,#FF9933,#138808);
+      color: rgb(200, 229, 227);
+      font-weight: 700;
+      transition: transform 0.2s ease;
+    }
+
+    .feature-cta:active { transform: scale(.98); }
+
+    /* Market modal styles */
+    .market-item {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      transition: transform 0.35s ease;
+      background: #fff;
+    }
+
+    .market-item:hover { transform: translateY(-8px);
+     }
+
+    .market-thumb { height: 120px; object-fit: cover; width: 100%; }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      
+      
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+     
+    }
+
+    /* responsive adjustments */
+    @media (max-width: 768px) {
+      body { padding-top: 120px; }
+      .navbar-brand span { font-size: 28px; }
+      
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Language Selector -->
+  <header class="bg-primary text-white py-2">
+    <div class="container d-flex justify-content-end align-items-center">
+      <div class="dropdown">
+        <button id="langBtn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+          aria-expanded="false" data-key="languageButtonLabel">
+          Language
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="langBtn">
+          <li><a class="dropdown-item lang-option" href="#" data-lang="en">English</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="hi">हिन्दी (Hindi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="bn">বাংলা (Bengali)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="te">తెలుగు (Telugu)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="mr">मराठी (Marathi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="ta">தமிழ் (Tamil)</a></li>
+          <!-- FIXED: set Odia (Oriya) option to correct language code "or" -->
+          <li><a class="dropdown-item lang-option" href="#" data-lang="or">ଓଡ଼ିଆ (Odia)</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Fixed Navbar (unmovable) -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="kishan.jpg" alt="" width="60" height="60" class="me-2 rounded-circle">
+        <span style="font-size: 28px;" data-key="siteName">KrishiMitra-AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="test.html" data-key="home">Home</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="featuresDropdown" data-bs-toggle="dropdown" data-key="features">
+              Features
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="crop_prediction.html" data-key="nav_crop_prediction">Crop Prediction</a></li>
+              <li><a class="dropdown-item" href="weather_forecast.html" data-key="nav_weather_forecast">Weather Forecast</a></li>
+              <li><a class="dropdown-item" href="market_price.html" data-key="nav_market_prices">Market Prices</a></li>
+              <li><a class="dropdown-item" href="pest_detection.html" data-key="nav_pest_detection">Pest Detection</a></li>
+              <li><a class="dropdown-item" href="soil_analysis.html" data-key="nav_soil_analysis">Soil Analysis</a></li>
+              <li><a class="dropdown-item" href="yield.html" data-key="nav_yield">Yield Optimization</a></li>
+              <li><a class="dropdown-item" href="irrigation.html" data-key="nav_irrigation">Irrigation Advice</a></li>
+              <li><a class="dropdown-item" href="farm_management.html" data-key="nav_farm_management">Farm Management</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="about.html" data-key="about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html" data-key="contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.html" data-key="login">Login</a></li>
+
+          <!-- Market section placed right of signup -->
+          <li class="nav-item"><a class="nav-link btn btn-outline-light ms-2" href="signup.html" data-key="signup">Signup</a></li>
+          <li class="nav-item"><a class="nav-link" href="market.html" data-key="market" id="marketNav">Market</a></li>
+          <li class="nav-item"><a class="nav-link" href="subsidies.html" data-key="subsidies" id="subsidies">subsidies</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html" >profile</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-section text-center py-5">
+    <div class="hero-bg" id="hero-bg-1" style="background-image: url('./images/f4.jpg');"></div>
+    <div class="hero-bg hidden" id="hero-bg-2" style="background-image: url('./images/f1.jpg');"></div>
+
+    <div class="-contentcontainer hero">
+      <h1 class="mb-4 hero-animate" style="animation-delay: 0.2s;" data-key="heroTitle">आप की खेती हमारा साथ</h1>
+      <div class="row align-items-center">
+        <div class="col-lg-6 hero-animate" style="animation-delay: 0.4s;">
+          <div class="card-container">
+            <div class="card" id="flipping-card">
+              <div class="front"><img src="./images/f2.jpg" alt="" data-alt-key="img_front_alt"></div>
+              <div class="back"><img src="./images/f3.jpg" alt="" data-alt-key="img_back_alt"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 hero-animate" style="animation-delay: 0.6s;">
+          <h2 data-key="heroSubtitle">Boost Your Farming Profits with AI</h2>
+          <p class="lead" data-key="heroText">KrishiMitra-AI helps farmers optimize crops, predict yields, and maximize profits using advanced AI technology.</p>
+          <a href="login.html" class="btn btn-warning btn-lg btn-animated mt-3" data-key="getStarted">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features Section with rectangular boxes and animation -->
+  <section id="trending-features" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-4" data-key="featureHeading">🌱 Our Key AI Features 🌾</h2>
+
+      <div class="features-grid reveal" id="featuresGrid">
+        <div class="feature-card" role="button" onclick="location.href='crop_prediction.html'">
+          <div class="feature-icon">🌾</div>
+          <div class="feature-media"><img src="https://i0.wp.com/geopard.tech/wp-content/uploads/2022/06/63.3-min.jpg?w=1920&ssl=1" alt="Crop Prediction" data-alt-key="f1_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f1_title">Crop Prediction</div>
+            <div class="feature-desc" data-key="f1_desc">AI models tell you best crop choices & sowing times for higher yield.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+        <div class="feature-card" role="button" onclick="location.href='weather_forecast.html'">
+          <div class="feature-icon">☀️</div>
+          <div class="feature-media"><img src="https://static.foxnews.com/foxnews.com/content/uploads/2021/03/52b50947-national-forecast.png" alt="Weather Forecast" data-alt-key="f2_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f2_title">Weather Forecast</div>
+            <div class="feature-desc" data-key="f2_desc">Hyperlocal, hourly forecasts & alerts to plan irrigation and harvest.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+        <div class="feature-card" role="button" onclick="location.href='market_price.html'">
+          <div class="feature-icon">💰</div>
+          <div class="feature-media"><img src="https://image.cnbcfm.com/api/v1/image/106575654-1591992102232img_10_57_30_1497655_1000-1591991922388.jpg?v=1591992130" alt="Market Prices" data-alt-key="f3_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f3_title">Market Prices</div>
+            <div class="feature-desc" data-key="f3_desc">Live market rates & price trends to decide when & where to sell.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+        <div class="feature-card" role="button" onclick="location.href='pest_detection.html'">
+          <div class="feature-icon">🐛</div>
+          <div class="feature-media"><img src="https://tse1.mm.bing.net/th/id/OIP.6NuQZ_nunHKZZk8XFqc1mAHaEK?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Pest Detection" data-alt-key="f4_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f4_title">Pest Detection</div>
+            <div class="feature-desc" data-key="f4_desc">Upload photos & get pest/disease diagnosis and treatment suggestions.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+        <div class="feature-card" role="button" onclick="location.href='soil_analysis.html'">
+          <div class="feature-icon">🧪</div>
+          <div class="feature-media"><img src="https://orchardly.co/grow/wp-content/uploads/2023/09/soil-testing-1024x683.jpg" alt="Soil Analysis" data-alt-key="f5_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f5_title">Soil Analysis</div>
+            <div class="feature-desc" data-key="f5_desc">Understand soil health and get fertilizer recommendations.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+        <div class="feature-card" role="button" onclick="location.href='yield.html'">
+          <div class="feature-icon">📈</div>
+          <div class="feature-media"><img src="https://tse1.mm.bing.net/th/id/OIP.6-ukf6P1OcMzL3F2GUbUtAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Yield Optimization" data-alt-key="f6_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f6_title">Yield Optimization</div>
+            <div class="feature-desc" data-key="f6_desc">Data-driven plans for planting density, nutrition & harvest timing.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+        <div class="feature-card" role="button" onclick="location.href='irrigation.html'">
+          <div class="feature-icon">💧</div>
+          <div class="feature-media"><img src="https://tse4.mm.bing.net/th/id/OIP.cajo6HcCg8msEqxc8XyQSwHaDs?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Irrigation Advice" data-alt-key="f7_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f7_title">Irrigation Advice</div>
+            <div class="feature-desc" data-key="f7_desc">Smart schedules by soil-moisture, crop-stage & water availability.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+        <div class="feature-card" role="button" onclick="location.href='farm_management.html'">
+          <div class="feature-icon">🚜</div>
+          <div class="feature-media"><img src="https://tse3.mm.bing.net/th/id/OIP.YHvH4f3ggq3HGjCsSqDD4AHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Farm Management" data-alt-key="f8_img_alt"></div>
+          <div>
+            <div class="feature-title" data-key="f8_title">Farm Management</div>
+            <div class="feature-desc" data-key="f8_desc">Keep records, tasks & schedules — all in one place.</div>
+          </div>
+          <div class="feature-cta mt-3" data-key="feature_cta">Open</div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  
+  <footer class="bg-dark text-white py-3">
+    <div class="container text-center">
+      <p data-key="footerText">&copy; 2024 KrishiMitra-AI. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Language Switch Script + interactions -->
+  <script>
+    const translations = {
+      en: {
+        pageTitle: "KrishiMitra-AI",
+        languageButtonLabel: "Language",
+        siteName: "KrishiMitra-AI",
+        home: "Home",
+        features: "Features",
+        nav_crop_prediction: "Crop Prediction",
+        nav_weather_forecast: "Weather Forecast",
+        nav_market_prices: "Market Prices",
+        nav_pest_detection: "Pest Detection",
+        nav_soil_analysis: "Soil Analysis",
+        nav_yield: "Yield Optimization",
+        nav_irrigation: "Irrigation Advice",
+        nav_farm_management: "Farm Management",
+        about: "About Us",
+        contact: "Contact",
+        login: "Login",
+        signup: "Signup",
+        market: "Market",
+        subsidies: "subsidies",
+        heroTitle: "Your Farming, Our Support",
+        heroSubtitle: "Boost Your Farming Profits with AI",
+        heroText: "KrishiMitra-AI helps farmers optimize crops, predict yields, and maximize profits using advanced AI technology.",
+        getStarted: "Get Started",
+        featureHeading: "🌱 Our Key AI Features 🌾",
+        f1_title: "Crop Prediction",
+        f1_desc: "AI models tell you best crop choices & sowing times for higher yield.",
+        f2_title: "Weather Forecast",
+        f2_desc: "Hyperlocal, hourly forecasts & alerts to plan irrigation and harvest.",
+        f3_title: "Market Prices",
+        f3_desc: "Live market rates & price trends to decide when & where to sell.",
+        f4_title: "Pest Detection",
+        f4_desc: "Upload photos & get pest/disease diagnosis and treatment suggestions.",
+        f5_title: "Soil Analysis",
+        f5_desc: "Understand soil health and get fertilizer recommendations.",
+        f6_title: "Yield Optimization",
+        f6_desc: "Data-driven plans for planting density, nutrition & harvest timing.",
+        f7_title: "Irrigation Advice",
+        f7_desc: "Smart schedules by soil-moisture, crop-stage & water availability.",
+        f8_title: "Farm Management",
+        f8_desc: "Keep records, tasks & schedules — all in one place.",
+        feature_cta: "Open",
+        footerText: "© 2024 KrishiMitra-AI. All Rights Reserved.",
+        img_front_alt: "Farmer image front",
+        img_back_alt: "Farmer image back",
+        f1_img_alt: "Crop prediction image",
+        f2_img_alt: "Weather forecast image",
+        f3_img_alt: "Market prices image",
+        f4_img_alt: "Pest detection image",
+        f5_img_alt: "Soil analysis image",
+        f6_img_alt: "Yield optimization image",
+        f7_img_alt: "Irrigation advice image",
+        f8_img_alt: "Farm management image"
+      },
+
+      hi: {
+        pageTitle: "कृषिमित्र-एआई",
+        languageButtonLabel: "भाषा",
+        siteName: "कृषिमित्र-एआई",
+        home: "होम",
+        features: "विशेषताएँ",
+        nav_crop_prediction: "फ़सल पूर्वानुमान",
+        nav_weather_forecast: "मौसम पूर्वानुमान",
+        nav_market_prices: "बाज़ार मूल्य",
+        nav_pest_detection: "कीट पहचान",
+        nav_soil_analysis: "मिट्टी विश्लेषण",
+        nav_yield: "उत्पादन अनुकूलन",
+        nav_irrigation: "सिंचाई सलाह",
+        nav_farm_management: "फ़ार्म प्रबंधन",
+        about: "हमारे बारे में",
+        contact: "संपर्क करें",
+        login: "लॉगिन",
+        signup: "साइनअप",
+        market: "बाज़ार",
+        subsidies:"सब्सिडी",
+        heroTitle: "आप की खेती हमारा साथ",
+        heroSubtitle: "एआई से बढ़ाएँ अपनी खेती का मुनाफ़ा",
+        heroText: "कृषिमित्र-एआई किसानों को फसल अनुकूलन, उपज की भविष्यवाणी और मुनाफ़ा बढ़ाने में मदद करता है।",
+        getStarted: "शुरू करें",
+        featureHeading: "🌾 हमारे मुख्य AI फीचर्स 🌱",
+        f1_title: "फ़सल पूर्वानुमान",
+        f1_desc: "AI मॉडल आपको सर्वोत्तम फ़सल विकल्प और बुवाई का समय बताते हैं।",
+        f2_title: "मौसम पूर्वानुमान",
+        f2_desc: "हाइपरलोकल, प्रति घंटा पूर्वानुमान और अलर्ट — सिंचाई व कटाई की योजना बनाएं।",
+        f3_title: "बाज़ार मूल्य",
+        f3_desc: "लाइव मार्केट रेट और प्राइस ट्रेंड जिससे विक्रय का सही समय चुन सकें।",
+        f4_title: "कीट पहचान",
+        f4_desc: "तस्वीरें अपलोड करें और कीट/रोग पहचान व उपचार के सुझाव पायें।",
+        f5_title: "मिट्टी विश्लेषण",
+        f5_desc: "मिट्टी की सेहत समझें और उर्वरक सुझाव प्राप्त करें।",
+        f6_title: "उत्पादन अनुकूलन",
+        f6_desc: "बुवाई घनत्व, पोषण व कटाई समय के लिए डाटा-आधारित योजना।",
+        f7_title: "सिंचाई सलाह",
+        f7_desc: "मृत्यु-पानी स्तर, फसल-चरण और उपलब्धता के अनुसार स्मार्ट शेड्यूल।",
+        f8_title: "फ़ार्म प्रबंधन",
+        f8_desc: "रिकॉर्ड, कार्य और शेड्यूल — सब एक जगह रखें।",
+        feature_cta: "खोलें",
+        footerText: "© 2024 कृषिमित्र-एआई. सभी अधिकार सुरक्षित।",
+        img_front_alt: "किसान की तस्वीर (सामने)",
+        img_back_alt: "किसान की तस्वीर (पीछे)",
+        f1_img_alt: "फ़सल पूर्वानुमान छवि",
+        f2_img_alt: "मौसम पूर्वानुमान छवि",
+        f3_img_alt: "बाज़ार मूल्य छवि",
+        f4_img_alt: "कीट पहचान छवि",
+        f5_img_alt: "मिट्टी विश्लेषण छवि",
+        f6_img_alt: "उत्पादन अनुकूलन छवि",
+        f7_img_alt: "सिंचाई सलाह छवि",
+        f8_img_alt: "फ़ार्म प्रबंधन छवि"
+      },
+
+      bn: {
+        pageTitle: "কৃষি মিত্র-এআই",
+        languageButtonLabel: "ভাষা",
+        siteName: "কৃষি মিত্র-এআই",
+        home: "হোম",
+        features: "ফিচার",
+        nav_crop_prediction: "ফসল পূর্বাভাস",
+        nav_weather_forecast: "আবহাওয়া পূর্বাভাস",
+        nav_market_prices: "বাজার মূল্য",
+        nav_pest_detection: "পোকা সনাক্তকরণ",
+        nav_soil_analysis: "মাটি বিশ্লেষণ",
+        nav_yield: "উৎপাদন অপ্টিমাইজেশন",
+        nav_irrigation: "সেচ পরামর্শ",
+        nav_farm_management: "ফার্ম ম্যানেজমেন্ট",
+        about: "আমাদের সম্পর্কে",
+        contact: "যোগাযোগ",
+        login: "লগইন",
+        signup: "সাইন আপ",
+        market: "বাজার",
+        subsidies:"সাবসিডি",
+        heroTitle: "আপনার কৃষি, আমাদের সহায়তা",
+        heroSubtitle: "AI দিয়ে আপনার খামারের লাভ বাড়ান",
+        heroText: "কৃষি মিত্র-এআই কৃষকদের ফসল অপ্টিমাইজ, ফলন পূর্বাভাস এবং লাভ বাড়াতে সাহায্য করে।",
+        getStarted: "শুরু করুন",
+        featureHeading: "🌱 আমাদের প্রধান AI ফিচার 🌾",
+        f1_title: "ফসল পূর্বাভাস",
+        f1_desc: "AI মডেলগুলো সবচেয়ে ভালো ফসল ও বপনের সময় বলে দেয়।",
+        f2_title: "আবহাওয়া পূর্বাভাস",
+        f2_desc: "হাইপারলোকাল, ঘণ্টাভিত্তিক পূর্বাভাস ও সতর্কতা — সেচ ও ফলন সময় নির্ধারণে সাহায্য করে।",
+        f3_title: "বাজার মূল্য",
+        f3_desc: "লাইভ বাজার রেট ও মূল্য প্রবণতা, কখন ও কোথায় বিক্রি করবেন তা ঠিক করুন।",
+        f4_title: "পোকা সনাক্তকরণ",
+        f4_desc: "ছবি আপলোড করুন এবং পোকা/রোগ সনাক্তকরণ ও চিকিৎসার পরামর্শ পান।",
+        f5_title: "মাটি বিশ্লেষণ",
+        f5_desc: "মাটির স্বাস্থ্য বুঝুন ও সার নির্বাচন সম্পর্কে পরামর্শ পান।",
+        f6_title: "উৎপাদন অপ্টিমাইজেশন",
+        f6_desc: "রোপণ ঘনত্ব, পুষ্টি ও কাটা সময়ের ডেটা-চালিত পরিকল্পনা।",
+        f7_title: "সেচ পরামর্শ",
+        f7_desc: "মাটির আর্দ্রতা, ফসলের স্তর ও পানির প্রাপ্যতার উপর ভিত্তি করে স্মার্ট সিডিউল।",
+        f8_title: "ফার্ম ম্যানেজমেন্ট",
+        f8_desc: "রেকর্ড, কাজ & শিডিউল—সব এক জায়গায় রাখুন।",
+        feature_cta: "খুলো",
+        footerText: "© 2024 কৃষি মিত্র-এআই। সর্বস্বত্ব সংরক্ষিত।",
+        img_front_alt: "কৃষকের ছবি (সামনে)",
+        img_back_alt: "কৃষকের ছবি (পেছনে)",
+        f1_img_alt: "ফসল পূর্বাভাস ছবি",
+        f2_img_alt: "আবহাওয়া পূর্বাভাস ছবি",
+        f3_img_alt: "বাজার মূল্য ছবি",
+        f4_img_alt: "পোকা সনাক্তকরণ ছবি",
+        f5_img_alt: "মাটি বিশ্লেষণ ছবি",
+        f6_img_alt: "উৎপাদন অপ্টিমাইজেশন ছবি",
+        f7_img_alt: "সেচ পরামর্শ ছবি",
+        f8_img_alt: "ফার্ম ম্যানেজমেন্ট ছবি"
+      },
+
+      te: {
+        pageTitle: "కృషిమిత్ర్-ఏఐ",
+        languageButtonLabel: "భాష",
+        siteName: "కృషిమిత్ర్-ఏఐ",
+        home: "హోమ్",
+        features: "ఫీచర్స్",
+        nav_crop_prediction: "పంట అంచనా",
+        nav_weather_forecast: "వాతావరణ అంచనా",
+        nav_market_prices: "మార్కెట్ ధరలు",
+        nav_pest_detection: "దోమ/పురుగు గుర్తింపు",
+        nav_soil_analysis: "మట్టిశాస్త్ర విశ్లేషణ",
+        nav_yield: "పంట వేయకూ మెరుగుదల",
+        nav_irrigation: "నీరుద్వారా సలహాలు",
+        nav_farm_management: "ఫార్మ్ నిర్వహణ",
+        about: "మాకు గురించి",
+        contact: "సంప్రదించండి",
+        login: "లాగిన్",
+        signup: "సైన్ అప్",
+        market: "మార్కెట్",
+        subsidies:"సబ్సిడీ",
+        heroTitle: "మీ వ్యవసాయం, మా మద్దతు",
+        heroSubtitle: "AIతో మీ వ్యవసాయ లాభాలను పెంచండి",
+        heroText: "కృషిమిత్ర్-ఏఐ రైతులకు పంటలు ఆప్టిమైజ్ చేయడం, దిగుబడులను అంచనా వేసే మరియు లాభాలను పెంచడానికి సహాయపడుతుంది.",
+        getStarted: "ప్రారంభించండి",
+        featureHeading: "🌱 మా ప్రాథమిక AI ఫీచర్లు 🌾",
+        f1_title: "పంట అంచనా",
+        f1_desc: "AI మోడళ్లు మీకు ఉత్తమ పంట ఎంపికలు మరియు సీసింగ్ సమయాన్ని చెబతాయి.",
+        f2_title: "వాతావరణ అంచనా",
+        f2_desc: "హైపర్‌లోకల్, గంటా వారీ అంచనాలు & అలర్ట్లు — నీరుపోయే సమయం, పంట పారిపోవడానికి వినియోగించండి.",
+        f3_title: "మార్కెట్ ధరలు",
+        f3_desc: "లైవ్ మార్కెట్ రేట్లు & ధరల ట్రెండ్‌లతో ఎప్పుడు, ఎక్కడ అమ్మాలో నిర్ణయించుకోండి.",
+        f4_title: "పురుగు గుర్తింపు",
+        f4_desc: "ఫోటోలు అప్లోడ్ చేయండి మరియు పురుగు/రోగ గుర్తింపు మరియు చికిత్స సూచనలు పొందండి.",
+        f5_title: "మట్టిశాస్త్ర విశ్లేషణ",
+        f5_desc: "మట్టి ఆరోగ్యాన్ని అర్థం చేసుకోండి మరియు ఎరువులు సూచనలు పొందండి.",
+        f6_title: "పంట మెరుగుదల",
+        f6_desc: "రোপణ సాంద్రత, పోషణ మరియు కోత సమయానికి డేటా ఆధారిత ప్లాన్లు.",
+        f7_title: "నీరుద్వారా సలహాలు",
+        f7_desc: "మట్టి తేమ, పంట దశ & నీరు లభ్యత ఆధారంగా స్మార్ట్ షెడ్యూల్స్.",
+        f8_title: "ఫార్మ్ నిర్వహణ",
+        f8_desc: "రికార్డులు, పనులు & షెడ్యూల్‌లు — ఒకే చోట ఉంచండి.",
+        feature_cta: "తెరవండి",
+        footerText: "© 2024 కృషిమిత్ర్-ఏఐ. అన్ని హక్కులు రిజర్వు చేయబడ్డాయి.",
+        img_front_alt: "రైతు చిత్రం (ముందు)",
+        img_back_alt: "రైతు చిత్రం (వెనుక)",
+        f1_img_alt: "పంట అంచనా చిత్రం",
+        f2_img_alt: "వాతావరణ చిత్రం",
+        f3_img_alt: "మార్కెట్ చిత్రం",
+        f4_img_alt: "పురుగు గుర్తింపు చిత్రం",
+        f5_img_alt: "మట్టి విశ్లేషణ చిత్రం",
+        f6_img_alt: "పంట మెరుగుదల చిత్రం",
+        f7_img_alt: "నీరుద్వారా సలహాలు చిత్రం",
+        f8_img_alt: "పண்ணை చిత్రం"
+      },
+
+      mr: {
+        pageTitle: "कृषि मित्र-एआई",
+        languageButtonLabel: "भाषा",
+        siteName: "कृषि मित्र-एआई",
+        home: "मुख्य पृष्ठ",
+        features: "वैशिष्ट्ये",
+        nav_crop_prediction: "पीक अंदाज",
+        nav_weather_forecast: "हवामान अंदाज",
+        nav_market_prices: "बाजार भाव",
+        nav_pest_detection: "किडी ओळख",
+        nav_soil_analysis: "माती विश्लेषण",
+        nav_yield: "उत्पादन अनुकूलन",
+        nav_irrigation: "सिंचन सल्ला",
+        nav_farm_management: "फार्म व्यवस्थापन",
+        about: "आमच्याबद्दल",
+        contact: "संपर्क",
+        login: "लॉगिन",
+        signup: "साइनअप",
+        market: "बाजार",
+        subsidies:"सब्सिडी",
+        heroTitle: "तुमची शेती, आमचे सहकार्य",
+        heroSubtitle: "AI सह तुमचे शेतीचे नफा वाढवा",
+        heroText: "कृषि मित्र-एआई शेतकऱ्यांना पिके ऑप्टिमाइझ करण्यास, उत्पादनांची भाकीत करण्यास आणि नफा वाढविण्यास मदत करते.",
+        getStarted: "सुरू करा",
+        featureHeading: "🌾 आमची प्रमुख AI वैशिष्ट्ये 🌱",
+        f1_title: "पीक अंदाज",
+        f1_desc: "AI मॉडेल तुम्हाला उत्तम पिक निवड आणि पेरणीचा वेळ सांगतात.",
+        f2_title: "हवामान अंदाज",
+        f2_desc: "हायपरलोकल, तासिक अंदाज व अलर्ट — सिंचन आणि कापणी नियोजनासाठी.",
+        f3_title: "बाजार भाव",
+        f3_desc: "जिवंत बाजार दर व किमतींचे ट्रेंड — कधी व कुठे विकायचे ते ठरवा.",
+        f4_title: "किडी ओळख",
+        f4_desc: "फोटो अपलोड करा व कीड/रोग ओळख व उपचार सूचना मिळवा.",
+        f5_title: "माती विश्लेषण",
+        f5_desc: "मातीची गुणवत्ता समजून घ्या व खत सूचना मिळवा.",
+        f6_title: "उत्पादन अनुकूलन",
+        f6_desc: "पेरणी घनता, पोषण व कापणी वेळेसाठी डेटावर आधारित योजना.",
+        f7_title: "सिंचन सल्ला",
+        f7_desc: "मातीची ओलावा, पिक टप्पा आणि पाणी उपलब्धतेनुसार स्मार्ट शेड्यूल.",
+        f8_title: "फार्म व्यवस्थापन",
+        f8_desc: "रेकॉर्ड, कामे व वेळापत्रक — सर्व एका ठिकाणी ठेवा.",
+        feature_cta: "उघडा",
+        footerText: "© 2024 कृषि मित्र-एआई. सर्व हक्क राखीव.",
+        img_front_alt: "शेतकऱ्याचे चित्र (समोर)",
+        img_back_alt: "शेतकऱ्याचे चित्र (मागे)",
+        f1_img_alt: "पीक अंदाज प्रतिमा",
+        f2_img_alt: "हवामान प्रतिमा",
+        f3_img_alt: "बाजार प्रतिमा",
+        f4_img_alt: "किडी ओळख प्रतिमा",
+        f5_img_alt: "माती विश्लेषण प्रतिमा",
+        f6_img_alt: "उत्पादन प्रतिमा",
+        f7_img_alt: "सिंचन प्रतिमा",
+        f8_img_alt: "फार्म व्यवस्थापन प्रतिमा"
+      },
+
+      ta: {
+        pageTitle: "கிரிஷி மித்ர்-ஏஐ",
+        languageButtonLabel: "மொழி",
+        siteName: "கிரிஷி மித்ர்-ஏஐ",
+        home: "முகப்பு",
+        features: "அம்சங்கள்",
+        nav_crop_prediction: "பயிர் கணிப்பு",
+        nav_weather_forecast: "வானிலை கணிப்பு",
+        nav_market_prices: "சந்தை விலைகள்",
+        nav_pest_detection: "புழு கண்டறிதல்",
+        nav_soil_analysis: "மண் பகுப்பாய்வு",
+        nav_yield: "மீட்டுகள் மேம்பாடு",
+        nav_irrigation: "நீர்ப்பாசன ஆலோசனை",
+        nav_farm_management: "பண்ணை மேலாண்மை",
+        about: "எங்களை பற்றி",
+        contact: "தொடர்பு",
+        login: "உள்நுழைய",
+        signup: "சைன் அப்",
+        market: "சந்தை",
+        subsidies:"சப்சிடி",
+        heroTitle: "உங்கள் விவசாயம், எங்கள் ஆதரவு",
+        heroSubtitle: "AI மூலம் உங்கள் பயிர் லாபத்தை அதிகரிக்கவும்",
+        heroText: "கிரிஷி மித்ர்-ஏஐ விவசாயிகளுக்கு பயிர்களை மேம்படுத்த, அறுவடை முன்னறிவிப்பு மற்றும் லாபம் அதிகரிக்க உதவுகிறது.",
+        getStarted: "தொடங்கு",
+        featureHeading: "🌱 எங்கள் முக்கிய AI அம்சங்கள் 🌾",
+        f1_title: "பயிர் கணிப்பு",
+        f1_desc: "AI மாடல்கள் சிறந்த பயிர் தேர்வு மற்றும் விதைப்பது எப்போது என்பதை அறிவிக்கின்றன.",
+        f2_title: "வானிலை கணிப்பு",
+        f2_desc: "ஹைப்பர்லோகல், மணி அடிப்படையில் கணிப்புகள் & அலெர்ட்கள் — நீரை திட்டமிட உதவும்.",
+        f3_title: "சந்தை விலைகள்",
+        f3_desc: "நேரடி சந்தை விகிதங்கள் & விலை போக்குகள் — எப்போது & எங்கு விற்க வேண்டும் என்பதைத் தீர்மானிக்க.",
+        f4_title: "புழு கண்டறிதல்",
+        f4_desc: "புகைப்படங்களை பதிவேற்றவும் மற்றும் புழு/நோய் கண்டறிதலும் சிகிச்சை பரிந்துரைகளும் பெறவும்.",
+        f5_title: "மண் பகுப்பாய்வு",
+        f5_desc: "மண்ணின் ஆரோக்கியத்தை புரிந்து கொள்ளுங்கள் மற்றும் உரங்கள் பற்றிய ஆலோசனைகள் பெறுங்கள்.",
+        f6_title: "மீட்டுகள் மேம்பாடு",
+        f6_desc: "தாவர அடர்த்தி, ஊட்டச்சத்து & அறுவடை நேரத்திற்கான தரவுத்தள திட்டங்கள்.",
+        f7_title: "நீர்ப்பாசன ஆலோசனை",
+        f7_desc: "மண் ஈரப்பதம், பயிர் நிலை & நீர் கிடைப்பின்படி ச்மார்ட் ஷெட்யூல்கள்.",
+        f8_title: "பண்ணை மேலாண்மை",
+        f8_desc: "பதிவுகள், பணிகள் மற்றும் அட்டவணைகள் — எல்லாம் ஒரே இடத்தில்.",
+        feature_cta: "திறக்க",
+        footerText: "© 2024 கிரிஷி மித்ர்-ஏஐ. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.",
+        img_front_alt: "விவசாயி படம் (முன்)",
+        img_back_alt: "விவசாயி படம் (பின்)",
+        f1_img_alt: "பயிர் கணிப்பு படம்",
+        f2_img_alt: "வானிலை படம்",
+        f3_img_alt: "சந்தை படம்",
+        f4_img_alt: "புழு படம்",
+        f5_img_alt: "மண் படம்",
+        f6_img_alt: "மீட்டுகள் படம்",
+        f7_img_alt: "நீர்ப்பாசன படம்",
+        f8_img_alt: "பண்ணை படம்"
+      },
+
+      // NEW: Odia translations (language code "or")
+      or: {
+        pageTitle: "କୃଷିମିତ୍ର-ଏଆଇ",
+        languageButtonLabel: "ଭାଷା",
+        siteName: "କୃଷିମିତ୍ର-ଏଆଇ",
+        home: "ହୋମ୍",
+        features: "ବୈଶିଷ୍ଟ୍ୟ",
+        nav_crop_prediction: "ଫସଲ ପୂର୍ବାନୁମାନ",
+        nav_weather_forecast: "ମଉସମ ପୂର୍ବାନୁମାନ",
+        nav_market_prices: "ବଜାର ମୂଲ୍ୟ",
+        nav_pest_detection: "ପୋକା ଚିହ୍ନଟ",
+        nav_soil_analysis: "ମାଟି ଖୋଜ",
+        nav_yield: "ଉତ୍ପାଦନ ଅପ୍ଟିମାଇଜେଶନ",
+        nav_irrigation: "ସିଞ୍ଚନ ପରାମର୍ଶ",
+        nav_farm_management: "ଫାର୍ମ ପରିଚାଳନ",
+        about: "ଆମ ବିଷୟରେ",
+        contact: "ସଂପର୍କ",
+        login: "ଲଗଇନ୍",
+        signup: "ସାଇନ୍ ଅପ୍",
+        market: "ବଜାର",
+        subsidies:"ସବସିଡି",
+        heroTitle: "ଆପଣଙ୍କର କୃଷି, ଆମର ସହଯୋଗ",
+        heroSubtitle: "AI ସହ ଆପଣଙ୍କର କୃଷି ଲାଭ ବୃଦ୍ଧି କରନ୍ତୁ",
+        heroText: "କୃଷିମିତ୍ର-ଏଆଇ ରାଇତଙ୍କୁ ଫସଲ ଉତ୍ପାଦନ ବଢ଼େଇବା, ଉପଜ ଅନୁମାନ କରିବା ଏବଂ ଲାଭ ବଢ଼େଇବାରେ ସାହାଯ୍ୟ କରେ।",
+        getStarted: "ଆରମ୍ଭ କରନ୍ତୁ",
+        featureHeading: "🌱 ଆମର ମୁଖ୍ୟ AI ବୈଶିଷ୍ଟ୍ୟ 🌾",
+        f1_title: "ଫସଲ ପୂର୍ବାନୁମାନ",
+        f1_desc: "AI ମଡେଲ୍‌ଗୁଡିକ ସର୍ବୋତ୍ତମ ଫସଲ ଏବଂ ଚାଷ ସମୟ ଖବର କରେ।",
+        f2_title: "ମଉସମ ପୂର୍ବାନୁମାନ",
+        f2_desc: "ହାଇପରଲୋକଲ୍, ପ୍ରତି ଘଣ୍ଟା ପୂର୍ବାନୁମାନ ଏବଂ ଆଲର୍ଟ — ସିଞ୍ଚନ ଓ କାଟନା ପାଇଁ ଯୋଜନା କରନ୍ତୁ।",
+        f3_title: "ବଜାର ମୂଲ୍ୟ",
+        f3_desc: "ଲାଇଭ୍ ବଜାର ରେଟ୍ ଏବଂ ମୂଲ୍ୟ ପ୍ରବୃତ୍ତି — କେବେ ଏବଂ କଥାଁକୁ ବିକ୍ରୟ କରିବେ ବୋଲି ନିଷ୍ପତ୍ତି କରନ୍ତୁ।",
+        f4_title: "ପୋକା ଚିହ୍ନଟ",
+        f4_desc: "ଛବି ଅପଲୋଡ୍ କରନ୍ତୁ ଏବଂ ପୋକା/ରୋଗ ଚିହ୍ନଟ ଏବଂ ଚିକିତ୍ସା ପରାମର୍ଶ ପାଆନ୍ତୁ।",
+        f5_title: "ମାଟି ଖୋଜ",
+        f5_desc: "ମାଟିର ସ୍ୱାସ୍ଥ୍ୟ ବୁଝନ୍ତୁ ଏବଂ ମୁକାବିଲା ଉର୍ବରକ ସୁପାରିସ୍ ପାଆନ୍ତୁ।",
+        f6_title: "ଉତ୍ପାଦନ ଅପ୍ଟିମାଇଜେଶନ",
+        f6_desc: "ଚାଷ ଘନତା, ପୋଷଣ ଏବଂ କାଟନା ସମୟ ପାଇଁ ଡାଟା ଭିତ୍ତିକ ଯୋଜନା।",
+        f7_title: "ସିଞ୍ଚନ ପରାମର୍ଶ",
+        f7_desc: "ମାଟି ଆର୍ଦ୍ରତା, ଫସଲ ଚରଣ ଏବଂ ପାଣି ଉପଲବ୍ଧତା ଅନୁଯାୟୀ ସ୍ମାର୍ଟ ସ୍କେଡ୍ୟୁଲ୍।",
+        f8_title: "ଫାର୍ମ ପରିଚାଳନ",
+        f8_desc: "ରେକର୍ଡ, କାମ ଏବଂ ଶେଡ୍ୟୁଲ୍ — ସବୁକିଛି ଗୋଟେ ଜାଗାରେ।",
+        feature_cta: "ଖୋଲନ୍ତୁ",
+        footerText: "© 2024 କୃଷିମିତ୍ର-ଏଆଇ. ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ।",
+        img_front_alt: "କୃଷକ ଛବି (ସାମ୍ନା)",
+        img_back_alt: "କୃଷକ ଛବି (ପଛ)",
+        f1_img_alt: "ଫସଲ ପୂର୍ବାନୁମାନ ଛବି",
+        f2_img_alt: "ମଉସମ ପୂର୍ବାନୁମାନ ଛବି",
+        f3_img_alt: "ବଜାର ମୂଲ୍ୟ ଛବି",
+        f4_img_alt: "ପୋକା ଚିହ୍ନଟ ଛବି",
+        f5_img_alt: "ମାଟି ଖୋଜ ଛବି",
+        f6_img_alt: "ଉତ୍ପାଦନ ଅପ୍ଟିମାଇଜେଶନ ଛବି",
+        f7_img_alt: "ସିଞ୍ଚନ ପରାମର୍ଶ ଛବି",
+        f8_img_alt: "ଫାର୍ମ ପରିଚାଳନ ଛବି"
+      }
+    };
+
+    // setLanguage updates all elements with data-key and image alt attributes with data-alt-key
+    function setLanguage(lang) {
+      if (!translations[lang]) {
+        console.warn("Language not available:", lang);
+        return;
+      }
+
+      // Update text nodes
+      document.querySelectorAll("[data-key]").forEach(el => {
+        const key = el.getAttribute("data-key");
+        const txt = translations[lang][key];
+        if (typeof txt !== "undefined") {
+          // title needs special handling if present as <title>
+          if (el.tagName.toLowerCase() === "title") {
+            document.title = txt;
+            el.textContent = txt;
+          } else {
+            el.innerHTML = txt;
+          }
+        }
+      });
+
+      // Update alt attributes for images
+      document.querySelectorAll("[data-alt-key]").forEach(img => {
+        const altKey = img.getAttribute("data-alt-key");
+        const altText = translations[lang][altKey];
+        if (typeof altText !== "undefined") img.alt = altText;
+      });
+
+      // Update html lang attribute for accessibility
+      document.documentElement.lang = lang;
+
+      // Update dropdown button label to localized "Language"
+      const langBtn = document.getElementById("langBtn");
+      if (langBtn) {
+        const label = translations[lang]["languageButtonLabel"] || "Language";
+        langBtn.textContent = label;
+        langBtn.classList.add("dropdown-toggle");
+      }
+
+      // Persist selection
+      localStorage.setItem("site_language", lang);
+    }
+
+    // attach click listeners for language options
+    document.querySelectorAll(".lang-option").forEach(option => {
+      option.addEventListener("click", (e) => {
+        e.preventDefault();
+        const lang = option.getAttribute("data-lang");
+        setLanguage(lang);
+      });
+    });
+
+    // On load: ensure <title> has data-key so it gets translated
+    (function ensureTitleKey() {
+      const t = document.querySelector("title");
+      if (t && !t.hasAttribute("data-key")) t.setAttribute("data-key", "pageTitle");
+    })();
+
+    // Load saved language or default to English
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedLang = localStorage.getItem("site_language") || "en";
+      setLanguage(savedLang);
+
+      // small tweak: animate hero elements after language sets (so gradient text shows)
+      document.querySelectorAll(".hero-animate").forEach((el, i) => {
+        el.style.animationDelay = (0.2 + i*0.2) + "s";
+      });
+    });
+
+    // Hero flip + background swap (unchanged)
+    const card = document.getElementById("flipping-card");
+    const bg1 = document.getElementById("hero-bg-1");
+    const bg2 = document.getElementById("hero-bg-2");
+    let isFlipped = false;
+
+    function toggleFlip() {
+      isFlipped = !isFlipped;
+      if (card) card.style.transform = isFlipped ? "rotateY(180deg)" : "rotateY(0deg)";
+      if (isFlipped) {
+        if (bg1) bg1.classList.add("hidden");
+        if (bg2) bg2.classList.remove("hidden");
+      } else {
+        if (bg2) bg2.classList.add("hidden");
+        if (bg1) bg1.classList.remove("hidden");
+      }
+    }
+
+    if (card) {
+      card.addEventListener("click", toggleFlip);
+      setInterval(toggleFlip, 5000);
+    }
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    reveals.forEach(r => observer.observe(r));
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FarmPro AI — Yield Optimization & Planning</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- jsPDF (optional) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{
+  --green:#2FA84F;
+  --muted:#6b6b6b;
+  --bg:#f4f7f5;
+  --card:#ffffff;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Poppins",Arial,system-ui;background:var(--bg);color:#1e1e1e}
+
+/* header */
+header{background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8e8e8}
+.logo{color:var(--green);font-weight:700;font-size:20px}
+nav a{margin-left:18px;text-decoration:none;color:var(--muted);font-weight:600}
+
+/* layout */
+.wrap{padding:18px;max-width:1200px;margin:0 auto}
+h1{margin:18px 0 6px;font-size:28px}
+.lead{color:var(--muted);margin-top:0}
+
+.grid{display:grid;grid-template-columns:1fr 1.25fr 0.9fr;gap:20px;margin-top:18px}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 6px 18px rgba(20,20,20,0.04)}
+
+/* upload */
+.upload{border:2px dashed var(--green);border-radius:10px;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--muted);cursor:pointer}
+.upload.dragover{background:#eefff0}
+.buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+button{background:var(--green);color:white;border:0;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:700}
+.btn-ghost{background:#f0f0f0;color:#333}
+
+/* preview & charts */
+.preview{width:100%;background:#fafafa;border-radius:10px;overflow:hidden;position:relative}
+.preview img{width:100%;display:block;height:260px;object-fit:cover;border-bottom:1px solid #f0f0f0}
+.charts-row{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap}
+.chart-card{flex:1;min-width:200px;background:#fff;border-radius:8px;padding:12px;box-shadow:none}
+.small{font-size:13px;color:var(--muted)}
+
+/* ensure canvases don't drive infinite height */
+.chart-box{width:100%; height:260px; position:relative;}
+
+/* responsive chart heights for small screens (Option A uses fixed but slightly smaller on mobile) */
+@media(max-width:720px){
+  .chart-box{height:200px}
+}
+
+/* scenarios list */
+.scenario-item{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.scenario-item img{width:70px;height:60px;object-fit:cover;border-radius:8px}
+
+/* comparison block */
+.compare-block{background:white;margin-top:18px;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+.compare-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.compare-content{margin-top:12px}
+.hidden{display:none}
+.delete-btn{background:#ff4d4d;padding:6px 10px;border-radius:6px;color:#fff;border:0;cursor:pointer;margin-left:8px}
+.toggle-btn{background:#ddd;padding:6px 10px;border-radius:6px;border:0;cursor:pointer;margin-right:8px}
+
+/* responsive layout */
+@media(max-width:1024px){
+  .grid{grid-template-columns:1fr 1.25fr;}
+  .grid > :nth-child(3){grid-column:1/-1}
+}
+@media(max-width:720px){
+  .grid{grid-template-columns:1fr}
+  h1{font-size:20px}
+  .preview img{height:180px}
+  .charts-row{flex-direction:column}
+}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="logo">KrishiMitra-AI AI</div>
+    <nav>
+      <a href="test.html">Home</a>
+      <a href="login.html" onclick="alert('Please login first to access the dashboard!')">Dashboard</a>
+      <a href="#">Reports</a>
+      <a href="contact.html">Help</a>
+    </nav>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="btn-ghost" id="langEn">English</button>
+    <button id="langHi">हिन्दी</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Yield Optimization & Planning</h1>
+  <p class="lead">Upload farm data (CSV/PDF/Images) or use scenarios. Charts show projected yield and efficiency. Click a scenario to create a comparison block (keeps previous blocks).</p>
+
+  <div class="grid">
+
+    <!-- LEFT: Input -->
+    <div class="card">
+      <h3>Input Farm Data</h3>
+      <div id="dropzone" class="upload" tabindex="0">
+        <div style="font-size:28px">📤</div>
+        <div><strong>Drag & Drop farm data files</strong></div>
+        <div class="muted">or click to browse • CSV / PDF / JPG</div>
+        <input id="fileInput" type="file" accept=".csv,.pdf,image/*" style="display:none">
+      </div>
+
+      <div class="buttons" style="margin-top:12px;">
+        <button id="analyzeBtn">Analyze Yield Potential</button>
+        <button id="resetBtn" class="btn-ghost">Reset</button>
+      </div>
+
+      <div style="margin-top:16px" class="small muted">Tip: For demo this page generates example outputs. In production connect analyze() to your backend.</div>
+    </div>
+
+    <!-- MIDDLE: Analysis -->
+    <div class="card">
+      <h3>Analysis Results</h3>
+
+      <div class="preview" id="previewWrap">
+        <!-- Use your uploaded image path exactly -->
+        <img id="previewImg" src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1400&auto=format&fit=crop" alt="Yield Preview">
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-box"><canvas id="lineChart"></canvas></div>
+          <div class="small muted">Projected Yield (kg/acre)</div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-box"><canvas id="uptakeChart"></canvas></div>
+          <div class="small muted">Nutrient Uptake Efficiency (%)</div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-box"><canvas id="waterChart"></canvas></div>
+          <div class="small muted">Water Usage Effectiveness (%)</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <h4>Recommended Actions</h4>
+        <ol id="actionsList" class="muted">
+          <li>Upload data and press Analyze.</li>
+        </ol>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button id="downloadReport" class="btn-ghost">📄 Download Report</button>
+        </div>
+      </div>
+
+      <!-- Comparison area (blocks will be appended here) -->
+      <div id="comparisonArea"></div>
+    </div>
+
+    <!-- RIGHT: Scenarios -->
+    <div class="card">
+      <h3>Input Scenarios</h3>
+      <div id="scenarioList">
+        <div class="scenario-item" data-name="Baseline" data-img="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80">
+          <img src="https://plus.unsplash.com/premium_photo-1664303828953-3e8ef4ac44e2?q=80&w=2071&auto=format&fit=crop" alt="">
+          <div><strong>Baseline</strong><br><span class="muted small">Current inputs & schedule</span></div>
+        </div>
+
+        <div class="scenario-item" data-name="Optimized - Water" data-img="https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80">
+          <img src="https://plus.unsplash.com/premium_photo-1661818305309-dd2145095cb2?q=80&w=2070&auto=format&fit=crop" alt="">
+          <div><strong>Optimized - Water</strong><br><span class="muted small">Improved irrigation timing</span></div>
+        </div>
+
+        <div class="scenario-item" data-name="Optimized - Fertilizer" data-img="https://images.unsplash.com/photo-1501004318643-3d8e1a1f3c4c?q=80">
+          <img src="https://media.istockphoto.com/id/1850451475/photo/chemical-fertilizers-nitrogen-phosphate-potassium.jpg?s=2048x2048&w=is&k=20&c=XnLJaCU62IVc8ZHFjuCWaxPjQuBpDhwMp7Jso03PpzA=" alt="">
+          <div><strong>Optimized - Fertilizer</strong><br><span class="muted small">Targeted NPK schedule</span></div>
+        </div>
+
+        <div class="scenario-item" data-name="Best Practice Mix" data-img="https://images.unsplash.com/photo-1470137430626-983a37b8ea46?q=80">
+          <img src="https://plus.unsplash.com/premium_photo-1731356517948-ee7b9122a1fc?q=80&w=1333&auto=format&fit=crop" alt="">
+          <div><strong>Best Practice Mix</strong><br><span class="muted small">Irrigation + Fertilizer optimized</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- end grid -->
+</div> <!-- end wrap -->
+
+<script>
+/* -------------------------
+  MAIN CHARTS (fixed-height containers used)
+------------------------- */
+let lineChart, uptakeChart, waterChart;
+
+function createMainCharts(lineLabels, lineValues, uptakeLabels, uptakeValues, waterLabels, waterValues){
+  // line
+  const lineEl = document.getElementById('lineChart');
+  if(lineEl){
+    const lineCtx = lineEl.getContext('2d');
+    try { if(lineChart) lineChart.destroy(); } catch(e){}
+    lineChart = new Chart(lineCtx, {
+      type:'line',
+      data:{
+        labels: lineLabels,
+        datasets: [
+          { label: 'Projected Yield', data: lineValues, borderColor:'#2FA84F', backgroundColor:'rgba(47,168,79,0.08)', tension:0.25, fill:true }
+        ]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        scales:{ y:{ beginAtZero:true } },
+        plugins:{legend:{display:false}}
+      }
+    });
+  }
+
+  // uptake bar
+  const upEl = document.getElementById('uptakeChart');
+  if(upEl){
+    const upCtx = upEl.getContext('2d');
+    try { if(uptakeChart) uptakeChart.destroy(); } catch(e){}
+    uptakeChart = new Chart(upCtx, {
+      type:'bar',
+      data:{ labels: uptakeLabels, datasets:[{ data: uptakeValues, backgroundColor:'#2FA84F' }] },
+      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } }, plugins:{legend:{display:false}} }
+    });
+  }
+
+  // water bar
+  const wEl = document.getElementById('waterChart');
+  if(wEl){
+    const wCtx = wEl.getContext('2d');
+    try { if(waterChart) waterChart.destroy(); } catch(e){}
+    waterChart = new Chart(wCtx, {
+      type:'bar',
+      data:{ labels: waterLabels, datasets:[{ data: waterValues, backgroundColor:'#4C9AFF' }] },
+      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } }, plugins:{legend:{display:false}} }
+    });
+  }
+}
+
+// initial defaults
+createMainCharts(
+  ['Early','Optimise','Middle','Recover','Mature'],
+  [5,12,18,22,28],
+  ['Nitrogen','Magnesium','Zinc','Copper'],
+  [30,7.5,25,3],
+  ['Irrigation A','Irrigation B','Irrigation C'],
+  [12,30,36]
+);
+
+/* -------------------------
+  ANALYZE: demo dynamic
+------------------------- */
+document.getElementById('analyzeBtn').addEventListener('click', analyze);
+document.getElementById('resetBtn').addEventListener('click', resetAll);
+const previewImgEl = document.getElementById('previewImg');
+const actionsList = document.getElementById('actionsList');
+
+function analyze(){
+  const labels = ['Early','Optimise','Middle','Recover','Mature'];
+  const baseline = labels.map((_,i)=> Math.round((5 + i*5) + Math.random()*6));
+  const nutrients = ['Nitrogen','Magnesium','Zinc','Copper'];
+  const uptakeBase = nutrients.map(()=> +(5 + Math.random()*30).toFixed(1));
+  const waterLabels = ['Schedule A','Schedule B','Schedule C'];
+  const waterBase = waterLabels.map(()=> +(10 + Math.random()*30).toFixed(1));
+
+  createMainCharts(labels, baseline, nutrients, uptakeBase, waterLabels, waterBase);
+
+  actionsList.innerHTML = `
+    <li>Implement smart irrigation schedule (start week 2)</li>
+    <li>Apply 20-10-10 NPK fertilizer at recommended dosage (week 6)</li>
+    <li>Monitor soil moisture daily; use drip if possible</li>
+    <li>Projected harvest window: Sep 15 - Sep 30</li>
+  `;
+}
+
+/* -------------------------
+  Drag & drop preview
+------------------------- */
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+
+['dragenter','dragover'].forEach(ev => {
+  dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+});
+['dragleave','drop'].forEach(ev => {
+  dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+});
+
+dropzone.addEventListener('click', ()=> fileInput.click());
+dropzone.addEventListener('drop', e => {
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if(!f) return;
+  handleFileForPreview(f);
+});
+
+fileInput.addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  handleFileForPreview(f);
+});
+
+function handleFileForPreview(file){
+  if(file && file.type && file.type.startsWith('image')){
+    previewImgEl.src = URL.createObjectURL(file);
+  } else {
+    previewImgEl.src = 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1400&auto=format&fit=crop';
+  }
+}
+
+/* -------------------------
+  SCENARIO CLICK -> ADD COMPARISON BLOCK (all 3 charts)
+------------------------- */
+const scenarioList = document.getElementById('scenarioList');
+scenarioList.addEventListener('click', function(ev){
+  const item = ev.target.closest('.scenario-item');
+  if(!item) return;
+  const name = item.dataset.name || 'Scenario';
+  const img = item.dataset.img || 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1400&auto=format&fit=crop';
+
+  // produce scenario-specific values (deterministic-ish)
+  const seed = name.length;
+  const labels = ['Early','Optimise','Middle','Recover','Mature'];
+  const base = labels.map((_,i)=> Math.round((5 + i*5) + ((seed%7)+i) * 1.4));
+  const alt1 = base.map(v => Math.round(v * (1 + 0.10 + (seed%5)/50)));
+  const alt2 = base.map(v => Math.round(v * (1 + 0.05 + (seed%3)/70)));
+
+  const nutrients = ['Nitrogen','Magnesium','Zinc','Copper'];
+  const uptakeValues = nutrients.map((_,i)=> +(8 + seed%10 + i*2 + Math.random()*6).toFixed(1));
+
+  const waterLabels = ['Schedule A','Schedule B','Schedule C'];
+  const waterValues = waterLabels.map((_,i)=> +(12 + seed%8 + i*6 + Math.random()*8).toFixed(1));
+
+  // update main charts
+  createMainCharts(labels, base, nutrients, uptakeValues, waterLabels, waterValues);
+
+  // update recommendations (fixed proper string array)
+  const recs = [
+    'Scenario: ' + name,
+    'Adopt irrigation timing adjustments.',
+    'Adjust fertiliser according to soil test.',
+    'Monitor and record yield weekly.'
+  ];
+  actionsList.innerHTML = recs.map(s => '<li>' + s + '</li>').join('');
+
+  // add comparison block (does NOT remove normal behavior)
+  addComparisonBlockAllCharts(name, img, labels, base, alt1, alt2, nutrients, uptakeValues, waterLabels, waterValues);
+});
+
+/* -------------------------
+  ADD COMPARISON BLOCK (3 charts)
+------------------------- */
+function addComparisonBlockAllCharts(title, imgURL, lineLabels, baseLine, altLine1, altLine2, uptLabels, uptVals, wLabels, wVals){
+  let comparisonArea = document.getElementById('comparisonArea');
+  if(!comparisonArea){
+    // find the middle card to append if not present
+    const midCard = document.querySelector('.wrap .grid .card:nth-child(2)');
+    comparisonArea = document.createElement('div');
+    comparisonArea.id = 'comparisonArea';
+    if(midCard) midCard.appendChild(comparisonArea);
+    else document.body.appendChild(comparisonArea);
+  }
+
+  const id = Date.now();
+  const block = document.createElement('div');
+  block.className = 'compare-block';
+  block.id = 'comp_' + id;
+
+  block.innerHTML = `
+    <div class="compare-header">
+      <div><strong>${escapeHtml(title)}</strong> — Comparison</div>
+      <div>
+        <button class="toggle-btn" id="toggle_${id}">▼</button>
+        <button class="delete-btn" id="del_${id}">🗑 Delete</button>
+      </div>
+    </div>
+
+    <div class="compare-content" id="content_${id}">
+      <img src="${escapeHtml(imgURL)}" style="width:100%;height:160px;object-fit:cover;border-radius:6px;margin-top:10px">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:12px">
+        <div style="flex:1;min-width:260px">
+          <div class="chart-box"><canvas id="line_comp_${id}"></canvas></div>
+        </div>
+        <div style="flex:1;min-width:240px">
+          <div class="chart-box"><canvas id="upt_comp_${id}"></canvas></div>
+        </div>
+        <div style="flex:1;min-width:240px">
+          <div class="chart-box"><canvas id="wat_comp_${id}"></canvas></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  comparisonArea.appendChild(block);
+
+  // toggle + delete wiring
+  const toggleBtn = document.getElementById('toggle_' + id);
+  const deleteBtn = document.getElementById('del_' + id);
+  const contentEl = document.getElementById('content_' + id);
+
+  if(toggleBtn){
+    toggleBtn.addEventListener('click', function(){
+      if(contentEl.classList.contains('hidden')){ contentEl.classList.remove('hidden'); this.innerText = '▼'; }
+      else { contentEl.classList.add('hidden'); this.innerText = '►'; }
+    });
+  }
+  if(deleteBtn){
+    deleteBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      block.remove();
+    });
+  }
+
+  // create charts for this block (each canvas inside fixed-height .chart-box)
+  try{
+    const lineCanvas = document.getElementById('line_comp_' + id);
+    if(lineCanvas){
+      const ctx = lineCanvas.getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: lineLabels,
+          datasets: [
+            { label:'Scenario A', data: baseLine, borderColor:'#2FA84F', backgroundColor:'rgba(47,168,79,0.08)', tension:0.25, fill:true },
+            { label:'Scenario B', data: altLine1, borderColor:'#FF9F1C', backgroundColor:'rgba(255,159,28,0.06)', tension:0.25, fill:true },
+            { label:'Scenario C', data: altLine2, borderColor:'#4C9AFF', backgroundColor:'rgba(76,154,255,0.05)', tension:0.25, fill:true }
+          ]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
+      });
+    }
+
+    const uptCanvas = document.getElementById('upt_comp_' + id);
+    if(uptCanvas){
+      const ctx2 = uptCanvas.getContext('2d');
+      new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: uptLabels, datasets:[{ label:'Uptake %', data: uptVals, backgroundColor:'#2FA84F' }] },
+        options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
+      });
+    }
+
+    const watCanvas = document.getElementById('wat_comp_' + id);
+    if(watCanvas){
+      const ctx3 = watCanvas.getContext('2d');
+      new Chart(ctx3, {
+        type: 'bar',
+        data: { labels: wLabels, datasets:[{ label:'Effectiveness %', data: wVals, backgroundColor:'#4C9AFF' }] },
+        options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
+      });
+    }
+  }catch(e){
+    console.warn('Failed to create comparison charts', e);
+  }
+
+  block.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+/* -------------------------
+  Reset (clears comparison blocks)
+------------------------- */
+function resetAll(){
+  previewImgEl.src = 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1400&auto=format&fit=crop';
+  createMainCharts(
+    ['Early','Optimise','Middle','Recover','Mature'],
+    [5,12,18,22,28],
+    ['Nitrogen','Magnesium','Zinc','Copper'],
+    [30,7.5,25,3],
+    ['Irrigation A','Irrigation B','Irrigation C'],
+    [12,30,36]
+  );
+  actionsList.innerHTML = '<li>Upload data and press Analyze.</li>';
+  const compArea = document.getElementById('comparisonArea');
+  if(compArea) compArea.innerHTML = '';
+}
+
+/* -------------------------
+  Simple PDF export for top-level charts (optional)
+------------------------- */
+document.getElementById('downloadReport').addEventListener('click', async ()=>{
+  try{
+    const { jsPDF } = window.jspdf || window.jspdf || {};
+    if(!jsPDF){
+      alert('PDF library not available');
+      return;
+    }
+    const doc = new jsPDF({ unit:'pt', format:'a4' });
+    doc.setFontSize(18); doc.text('FarmPro AI — Yield Analysis Report', 40, 50);
+    doc.setFontSize(12); doc.text('Generated: ' + new Date().toLocaleString(), 40, 70);
+    try{
+      const lineCanvas = document.getElementById('lineChart');
+      if(lineCanvas) doc.addImage(lineCanvas.toDataURL('image/png'), 'PNG', 40, 90, 250, 140);
+    }catch(e){}
+    doc.save('yield_report.pdf');
+  }catch(e){ alert('PDF export failed: ' + (e && e.message ? e.message : e)); }
+});
+
+/* -------------------------
+  Small util
+------------------------- */
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
+}
+
+</script>
+
+</body>
+</html>

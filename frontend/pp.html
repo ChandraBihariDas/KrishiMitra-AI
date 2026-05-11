@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-key="pageTitle">KrishiMitra-AI - Deep Analysis</title>
+
+  <!-- Bootstrap & icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{ --accent-green:#138808; --glass: rgba(255,255,255,0.95); --header-h:48px; }
+    body{ font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin:0; background: linear-gradient(180deg,#f7fff7, #f0fff0); color:#111; padding-top: calc(var(--header-h)); }
+    /* fixed top language header */
+    .site-header {
+      height: var(--header-h);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 2000;
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(255,255,255,0.95));
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid rgba(0,0,0,0.04);
+      display:flex; align-items:center;
+    }
+    .site-header .container { display:flex; justify-content:flex-end; align-items:center; height:100%; gap:.5rem; }
+
+    header{ padding:1rem; text-align:center; background:transparent; margin-top:0; }
+    .container-main{ max-width:1100px; margin:1rem auto; padding:1rem; }
+
+    .panel{
+      background:var(--glass);
+      border-radius:12px;
+      box-shadow:0 10px 28px rgba(0,0,0,0.06);
+      padding:1rem;
+      margin-bottom:1rem;
+      position:relative;
+    }
+
+    /* Gauge style */
+    .gauge{ width:180px; height:110px; margin:0 auto; display:block; }
+    .gauge .value { font-weight:700; font-size:1.15rem; margin-top:6px; text-align:center; color:var(--accent-green); }
+
+    .indicators{ display:flex; gap:1rem; flex-wrap:wrap; justify-content:space-between; }
+
+    .small-muted{ color:#666; font-size:.9rem; }
+
+    .result-good{ background: linear-gradient(90deg, rgba(19,136,8,0.12), rgba(19,136,8,0.04)); border-left:4px solid var(--accent-green); padding:.8rem; border-radius:8px; }
+    .result-bad{ background: linear-gradient(90deg, rgba(255,99,71,0.06), rgba(255,99,71,0.02)); border-left:4px solid #ff6347; padding:.8rem; border-radius:8px; }
+
+    .nav-back{ position:fixed; left:16px; top:calc(var(--header-h) + 12px); background:white; padding:.5rem .7rem; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.08); text-decoration:none; color:#111; display:flex; gap:.6rem; align-items:center; z-index:1500; }
+
+    @media (max-width:800px){ .gauge{ width:140px; height:92px;} }
+  </style>
+</head>
+<body>
+
+  <!-- TOP LANGUAGE HEADER (copyable across pages) -->
+  <header class="site-header" role="banner" aria-hidden="false">
+    <div class="container">
+      <div class="dropdown">
+        <button id="langBtn" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-key="languageButtonLabel">
+          Language
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langBtn">
+          <li><a class="dropdown-item lang-option" href="#" data-lang="en">English</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="hi">हिन्दी (Hindi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="bn">বাংলা (Bengali)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="te">తెలుగు (Telugu)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="mr">मराठी (Marathi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="ta">தமிழ் (Tamil)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="or">ଓଡ଼ିଆ (Odia)</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <a class="nav-back" href="next.html"><i class="fa fa-arrow-left"></i> <span data-key="backLabel">Back</span></a>
+
+  <header style="margin-top:8px;">
+    <h2 data-key="pageHeading">🔬 Deep Farm Analysis for Raj Mani</h2>
+    <div class="small-muted" data-key="pageSub">Soil · Weather · Crop history · Actionable Recommendation</div>
+  </header>
+
+  <main class="container-main">
+
+    <!-- Soil Analysis -->
+    <section class="panel" id="soilSection" aria-labelledby="soilHeading">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div><h4 id="soilHeading" data-key="soilHeading">Soil Analysis</h4><div class="small-muted" data-key="soilSub">Live gauges show the current measured / sampled values (demo data).</div></div>
+        <div class="small-muted" data-key="soilLast">Last sample: <span id="soilTs">-</span></div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-5">
+          <div class="text-center">
+            <!-- Gauges (SVG) -->
+            <svg class="gauge" viewBox="0 0 100 60" id="gMoist" aria-hidden="true">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#138808"/><stop offset="1" stop-color="#ff9933"/></linearGradient>
+              </defs>
+              <path d="M10 50 A40 40 0 0 1 90 50" stroke="#eee" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <path id="gMoistArc" d="M10 50 A40 40 0 0 1 90 50" stroke="url(#g1)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="0 200"/>
+              <text x="50" y="38" text-anchor="middle" font-size="8" data-key="soilMoistLabel">Soil Moisture</text>
+              <text id="gMoistVal" x="50" y="52" text-anchor="middle" font-size="10" fill="#138808">-- %</text>
+            </svg>
+            <div class="value" id="gMoistLabel">Moisture</div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="indicators" role="list">
+            <div style="flex:1; min-width:160px;" role="listitem">
+              <strong data-key="soilTempLabel">Soil Temperature</strong>
+              <div class="small-muted" data-key="soilTempCur">Current</div>
+              <div style="font-size:1.6rem;font-weight:700;color:#d94b2b" id="soilTemp">-- °C</div>
+            </div>
+
+            <div style="flex:1; min-width:160px;" role="listitem">
+              <strong data-key="soilHumidityLabel">Soil Humidity</strong>
+              <div class="small-muted" data-key="soilHumCur">Ambient</div>
+              <div style="font-size:1.6rem;font-weight:700;color:#1e90ff" id="soilHumidity">-- %</div>
+            </div>
+
+            <div style="flex:1; min-width:160px;" role="listitem">
+              <strong data-key="soilPhLabel">Soil pH</strong>
+              <div class="small-muted" data-key="soilPhSub">Acidity / Alkalinity</div>
+              <div style="font-size:1.6rem;font-weight:700;color:#6b3fb1" id="soilPh">--</div>
+            </div>
+
+            <div style="flex:1; min-width:160px;" role="listitem">
+              <strong data-key="fertLabel">Fertilizer Presence</strong>
+              <div class="small-muted" data-key="fertSub">Estimated</div>
+              <div style="font-size:1.2rem;font-weight:700;color:#138808" id="fertilizer">-- %</div>
+            </div>
+          </div>
+
+          <hr/>
+
+          <div class="row small-muted">
+            <div class="col-md-4">
+              <strong>Nitrogen (N)</strong>
+              <div id="nitrogen">-- ppm</div>
+            </div>
+            <div class="col-md-4">
+              <strong>Phosphorus (P)</strong>
+              <div id="phosphorus">-- ppm</div>
+            </div>
+            <div class="col-md-4">
+              <strong>Potassium (K)</strong>
+              <div id="potassium">-- ppm</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Weather Analysis -->
+    <section class="panel" id="weatherSection" aria-labelledby="weatherHeading">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div><h4 id="weatherHeading" data-key="weatherHeading">Weather Analysis</h4><div class="small-muted" data-key="weatherSub">Today's weather and upcoming tentative forecast (demo).</div></div>
+        <div class="small-muted" data-key="weatherSource">Source: Demo predictions</div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-5">
+          <div class="mb-2">
+            <strong data-key="todaysWeather">Today's Weather</strong>
+            <div class="small-muted" data-key="todaysSub">Summary for planning today</div>
+            <div style="font-size:1.1rem;font-weight:700;margin-top:.5rem" id="todayWeatherSummary">--</div>
+            <div class="small-muted mt-1" id="todayDetails">--</div>
+          </div>
+
+          <canvas id="nextDaysChart" height="150" aria-hidden="false"></canvas>
+        </div>
+
+        <div class="col-lg-7">
+          <div>
+            <strong data-key="upcoming7">Upcoming 7 Days (detailed)</strong>
+            <table class="table table-sm mt-2" aria-describedby="upcoming7">
+              <thead><tr><th data-key="dateCol">Date</th><th data-key="highLowCol">High/Low</th><th data-key="rainCol">Rain %</th><th data-key="adviceCol">Advice</th></tr></thead>
+              <tbody id="detail7Days"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Old crop details -->
+    <section class="panel" id="oldCropSection">
+      <h4 data-key="oldCropHeading">Old Crop Details</h4>
+      <div class="small-muted" data-key="oldCropSub">Dummy analysis of previous crop (sample data).</div>
+      <div class="row mt-2">
+        <div class="col-md-6">
+          <div><strong data-key="cropLabel">Crop:</strong> Maize</div>
+          <div><strong data-key="yieldLabel">Yield:</strong> 14 qtls/acre (sample)</div>
+          <div><strong data-key="issuesLabel">Issues observed:</strong> Mild pest attack in 3rd week</div>
+          <div><strong data-key="pesticideLabel">Pesticide used:</strong> Imidacloprid (sample)</div>
+        </div>
+        <div class="col-md-6">
+          <div><strong data-key="soilChangeLabel">Soil change after harvest:</strong> pH moved from 6.2 → 5.9</div>
+          <div><strong data-key="recLabel">Recommendations:</strong> Apply lime if pH &lt; 6.0, top up N &amp; P</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gathering results -->
+    <section class="panel" id="gatherSection">
+      <h4 data-key="gatherHeading">Gathering the Results</h4>
+      <div class="small-muted" data-key="gatherSub">We summarise soil + weather + history to provide day-by-day suitability.</div>
+
+      <div class="row mt-2">
+        <div class="col-md-6">
+          <div id="suitabilityBox" class="result-good">
+            <strong data-key="recSummary">Recommendation Summary</strong>
+            <p id="summaryText">--</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="panel" style="padding:.8rem;">
+            <strong data-key="nextBest">Next Best Days for Field Work</strong>
+            <ol id="bestDaysList"></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="text-align:center;padding:.8rem;color:#666;">© 2025 KrishiMitra-AI — Deep Analysis (demo)</footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* ---------------------------
+       Translations (includes Odia 'or') — minimal keys used on this page
+       This file will apply translations to elements that have data-key attributes.
+       If you have a global setLanguage on main site, this will call it instead.
+       --------------------------- */
+    (function(){
+      const translations = {
+        en: {
+          pageTitle: "KrishiMitra-AI - Deep Analysis",
+          languageButtonLabel: "Language",
+          backLabel: "Back",
+          pageHeading: "🔬 Deep Farm Analysis for Raj Mani",
+          pageSub: "Soil · Weather · Crop history · Actionable Recommendation",
+          soilHeading: "Soil Analysis",
+          soilSub: "Live gauges show the current measured / sampled values (demo data).",
+          soilLast: "Last sample:",
+          soilMoistLabel: "Soil Moisture",
+          soilTempLabel: "Soil Temperature",
+          soilTempCur: "Current",
+          soilHumidityLabel: "Soil Humidity",
+          soilHumCur: "Ambient",
+          soilPhLabel: "Soil pH",
+          soilPhSub: "Acidity / Alkalinity",
+          fertLabel: "Fertilizer Presence",
+          fertSub: "Estimated",
+          weatherHeading: "Weather Analysis",
+          weatherSub: "Today's weather and upcoming tentative forecast (demo).",
+          weatherSource: "Source: Demo predictions",
+          todaysWeather: "Today's Weather",
+          todaysSub: "Summary for planning today",
+          upcoming7: "Upcoming 7 Days (detailed)",
+          dateCol: "Date",
+          highLowCol: "High/Low",
+          rainCol: "Rain %",
+          adviceCol: "Advice",
+          oldCropHeading: "Old Crop Details",
+          oldCropSub: "Dummy analysis of previous crop (sample data).",
+          cropLabel: "Crop:",
+          yieldLabel: "Yield:",
+          issuesLabel: "Issues observed:",
+          pesticideLabel: "Pesticide used:",
+          soilChangeLabel: "Soil change after harvest:",
+          recLabel: "Recommendations:",
+          gatherHeading: "Gathering the Results",
+          gatherSub: "We summarise soil + weather + history to provide day-by-day suitability.",
+          recSummary: "Recommendation Summary",
+          nextBest: "Next Best Days for Field Work"
+        },
+        hi: {
+          pageTitle: "कृषिमित्र-एआई - गहरी विश्लेषण",
+          languageButtonLabel: "भाषा",
+          backLabel: "वापस",
+          pageHeading: "🔬 राज मणि के लिए गहरी खेत विश्लेषण",
+          pageSub: "मिट्टी · मौसम · फसल इतिहास · व्यावहारिक सिफारिश",
+          soilHeading: "मिट्टी विश्लेषण",
+          soilSub: "लाइव गेज वर्तमान माप/नमूना दिखाते हैं (डेमो डेटा)।",
+          soilLast: "अंतिम नमूना:",
+          soilMoistLabel: "मिट्टी की नमी",
+          soilTempLabel: "मिट्टी तापमान",
+          soilTempCur: "वर्तमान",
+          soilHumidityLabel: "मिट्टी नमी",
+          soilHumCur: "वातावरण",
+          soilPhLabel: "मिट्टी pH",
+          soilPhSub: "अम्लता / क्षारीयता",
+          fertLabel: "उर्वरक उपस्थिती",
+          fertSub: "अनुमानित",
+          weatherHeading: "मौसम विश्लेषण",
+          weatherSub: "आज का मौसम व आगामी अनुमान (डेमो)।",
+          weatherSource: "स्रोत: डेमो अनुमान",
+          todaysWeather: "आज का मौसम",
+          todaysSub: "योजना बनाने के लिए सारांश",
+          upcoming7: "आगामी 7 दिन (विस्तृत)",
+          dateCol: "तारीख",
+          highLowCol: "उच्च/निम्न",
+          rainCol: "बारिश %",
+          adviceCol: "सलाह",
+          oldCropHeading: "पिछली फसल विवरण",
+          oldCropSub: "पिछली फसल का नमूना विश्लेषण।",
+          cropLabel: "फसल:",
+          yieldLabel: "उपज:",
+          issuesLabel: "दिखे मुद्दे:",
+          pesticideLabel: "प्रयोगित कीटनाशक:",
+          soilChangeLabel: "कटाई बाद मिट्टी परिवर्तन:",
+          recLabel: "सिफारिशें:",
+          gatherHeading: "परिणाम संकलन",
+          gatherSub: "हम मिट्टी + मौसम + इतिहास का सारांश देते हैं।",
+          recSummary: "सिफारिश सारांश",
+          nextBest: "खंड कार्य के लिए अगले श्रेष्ठ दिन"
+        },
+        bn: { /* Bengali short translations */ pageTitle:"কৃষি মিত্র - ডীপ বিশ্লেষণ", languageButtonLabel:"ভাষা", backLabel:"ফিরে যাও", pageHeading:"🔬 রাজ মণির জন্য ডীপ ফার্ম বিশ্লেষণ", pageSub:"মাটি · আবহাওয়া · ফসল ইতিহাস · সুপারিশ", soilHeading:"মাটি বিশ্লেষণ", soilSub:"লাইভ গেজ (ডেমো)", soilLast:"সাম্পল:", soilMoistLabel:"মাটি আর্দ্রতা", soilTempLabel:"মাটি তাপমাত্রা", soilTempCur:"বর্তমান", soilHumidityLabel:"মাটি আর্দ্রতা", soilHumCur:"বাতাস", soilPhLabel:"মাটি pH", soilPhSub:"অ্যাসিডিটি/আ্যালকালিনিটি", fertLabel:"উর্বরক উপস্থিতি", fertSub:"অনুমানিত", weatherHeading:"আবহাওয়া বিশ্লেষণ", weatherSub:"ডেমো পূর্বাভাস", weatherSource:"উৎস: ডেমো", todaysWeather:"আজকের আবহাওয়া", todaysSub:"পরিকল্পনা সংক্ষেপ", upcoming7:"আগামী 7 দিন", dateCol:"তারিখ", highLowCol:"উচ্চ/নিচু", rainCol:"বৃষ্টি %", adviceCol:"পরামর্শ", oldCropHeading:"পূর্ববর্তী ফসল বিবরণ", oldCropSub:"নমুনা বিশ্লেষণ", cropLabel:"ফসল:", yieldLabel:"ফলন:", issuesLabel:"সমস্যা:", pesticideLabel:"কীটনাশক:", soilChangeLabel:"মাটি পরিবর্তন:", recLabel:"সুপারিশ:", gatherHeading:"ফলাফল সংগ্রহ", gatherSub:"মাটি+আবহাওয়া+ইতিহাস সারাংশ", recSummary:"সুপারিশ সারাংশ", nextBest:"ক্ষেত্রে কর্মের জন্য সেরা দিন" },
+        te: { pageTitle:"డీప్ విశ్లేషణ - కృషిమిత్ర్", languageButtonLabel:"భాష", backLabel:"పైకి వెళ్ళు", pageHeading:"🔬 రాజ్ మణి కోసం డీప్ ఫార్మ్ విశ్లేషణ", pageSub:"మట్టి · వాతావరణ · పంట చరిత్ర · సలహా", soilHeading:"మట్టి విశ్లేషణ", soilSub:"లైవ్ గేజ్‌లు (డెమో)", soilLast:"చివరి నమూనా:", soilMoistLabel:"మట్టి తేమ", soilTempLabel:"మట్టి ఉష్ణోగ్రత", soilTempCur:"ప్రస్తుత", soilHumidityLabel:"మట్టి ఆర్ద్రత", soilHumCur:"పరిసరాలు", soilPhLabel:"మట్టి pH", soilPhSub:"అమ్లత్వం/క్షారత్వం", fertLabel:"ఎరువుల ఉనికి", fertSub:"అంచనా", weatherHeading:"వాతావరణ విశ్లేషణ", weatherSub:"డెమో ముందస్తు అంచనాలు", weatherSource:"స्रोतము: డెమో", todaysWeather:"ఈరోజు వాతావరణం", todaysSub:"నియోజకత్వం", upcoming7:"ఒకటి తదితర 7 రోజుల", dateCol:"తేదీ", highLowCol:"హై/లో", rainCol:"వర్ష %", adviceCol:"సలహా", oldCropHeading:"పాత పంట వివరాలు", oldCropSub:"నమూనా విశ్లేషణ", cropLabel:"పంట:", yieldLabel:"ఫలితం:", issuesLabel:"సమస్యలు:", pesticideLabel:"కీటనాశకం:", soilChangeLabel:"ఫసలు తర్వాత మట్టి మార్పు:", recLabel:"సిఫార్సులు:", gatherHeading:"ఫలితాలు సంకలనం", gatherSub:"మట్టి+వాతావరణ+చరిత్ర సంక్షిప్తం", recSummary:"సిఫార్సు సంగ్రహం", nextBest:"క్షేత్ర పని కోసం ఉత్తమ రోజులు" },
+        mr: { pageTitle:"डीप विश्लेषण - कृषिमित्र", languageButtonLabel:"भाषा", backLabel:"परत", pageHeading:"🔬 राज मणीसाठी डीप फॉर्म विश्लेषण", pageSub:"माती · हवामान · पिक इतिहास · शिफारसी", soilHeading:"माती विश्लेषण", soilSub:"लाइव्ह गेज (डेमो)", soilLast:"शेवटचा नमुना:", soilMoistLabel:"मातीची आर्द्रता", soilTempLabel:"मातीचा तापमान", soilTempCur:"सध्याचा", soilHumidityLabel:"माती आर्द्रता", soilHumCur:"पर्यावरण", soilPhLabel:"माती pH", soilPhSub:"अम्लता/क्षारीयता", fertLabel:"खते उपस्थिती", fertSub:"अनुमानित", weatherHeading:"हवामान विश्लेषण", weatherSub:"डेमो अंदाज", weatherSource:"स्रोत: डेमो", todaysWeather:"आजचे हवामान", todaysSub:"योजनेसाठी सारांश", upcoming7:"पुढील 7 दिवस", dateCol:"दिनांक", highLowCol:"हाय/लो", rainCol:"पाऊस %", adviceCol:"सल्ला", oldCropHeading:"मागील फसल तपशील", oldCropSub:"नमुना विश्लेषण", cropLabel:"फसल:", yieldLabel:"उत्पादन:", issuesLabel:"समस्या:", pesticideLabel:"कीटकनाशक:", soilChangeLabel:"उपसहारानंतर माती बदल:", recLabel:"सूचना:", gatherHeading:"निकाल गोळा करणे", gatherSub:"माती+हवामान+इतिहास सारांश", recSummary:"शिफारसी सारांश", nextBest:"शेतकामासाठी पुढील उत्तम दिवस" },
+        ta: { pageTitle:"டீப் அனாலிசிஸ் - கிரிஷிமித்ர்", languageButtonLabel:"மொழி", backLabel:"பின்னுக்கு", pageHeading:"🔬 ராஜ் மணி - டீப் பண்ணை அலசல்", pageSub:"மண் · வானிலை · பயிர் வரலாறு · பரிந்துரைகள்", soilHeading:"மண் நுண்ணறிவு", soilSub:"லைவ் கேஜ் (டெமோ)", soilLast:"இறுதிப் மாதிரி:", soilMoistLabel:"மண் ஈரப்பதம்", soilTempLabel:"மண் வெப்பநிலை", soilTempCur:"தற்போது", soilHumidityLabel:"மண் ஈரம்", soilHumCur:"சுற்றுப்புறம்", soilPhLabel:"மண் pH", soilPhSub:"அமிலம்/அல்கலிந்", fertLabel:"விவசாய உரம் இருப்பு", fertSub:"கணிக்கப்பட்டது", weatherHeading:"வானிலை பகுப்பாய்வு", weatherSub:"இன்றைய வானிலை மற்றும் அடுத்தது (டெமோ)", weatherSource:"மூலம்: டெமோ", todaysWeather:"இன்றைய வானிலை", todaysSub:"திட்டமிடுதலுக்கு சுருக்கம்", upcoming7:"அடுத்த 7 நாட்கள்", dateCol:"தேதி", highLowCol:"உயர்/குறைவு", rainCol:"மழை %", adviceCol:"ஆதாரம்", oldCropHeading:"முந்தைய பயிர் விவரம்", oldCropSub:"மாதிரி பகுப்பாய்வு", cropLabel:"பயிர்:", yieldLabel:"பYield:", issuesLabel:"பிரச்சினைகள்:", pesticideLabel:"வெளியீடு:", soilChangeLabel:"வடிவம் பிறகு மண் மாற்றம்:", recLabel:"பரிந்துரைகள்:", gatherHeading:"முழுமைக் கூட்டு", gatherSub:"மண்+வானிலை+வரலாறு எளிய முடிவு", recSummary:"பரிந்துரைகள் சுருக்கம்", nextBest:"பாட்டுப் பணிக்கான சிறந்த நாட்கள்" },
+        // Odia
+        or: {
+          pageTitle: "କୃଷିମିତ୍ର-ଏଆଇ - ଡୀପ୍ ବିଶ୍ଲେଷଣ",
+          languageButtonLabel: "ଭାଷା",
+          backLabel: "ପଛକୁ",
+          pageHeading: "🔬 ରାଜ ମଣି ପାଇଁ ଡୀପ୍ ଫାର୍ମ ବିଶ୍ଲେଷଣ",
+          pageSub: "ମାଟି · ଆବହାଉ · ଫସଲ ଇତିହାସ · କାର୍ଯ୍ୟତମକ ସୁପାରିଶ",
+          soilHeading: "ମାଟି ବିଶ୍ଲେଷଣ",
+          soilSub: "ଲାଇଭ ଗେଜ୍ ବର୍ତ୍ତମାନ ମାପ/ନମୁନା ଦେଖାଉଛି (ଡେମୋ)।",
+          soilLast: "ଶେଷ ନମୁନା:",
+          soilMoistLabel: "ମାଟି ଆର୍ଦ୍ରତା",
+          soilTempLabel: "ମାଟି ତାପମାତ୍ରା",
+          soilTempCur: "ବର୍ତ୍ତମାନ",
+          soilHumidityLabel: "ମାଟି ହ୍ୟୁମିଡିଟି",
+          soilHumCur: "ପରିବେଶ",
+          soilPhLabel: "ମାଟି pH",
+          soilPhSub: "ଆମ୍ଲତା/ଆଲକାଲିନିଟି",
+          fertLabel: "ଉର୍ବରକ ଉପସ୍ଥିତି",
+          fertSub: "ଅନୁମାନିତ",
+          weatherHeading: "ଆବହାଉ ବିଶ୍ଲେଷଣ",
+          weatherSub: "ଆଜିର ଆବହାଉ ଓ ଆସନ୍ତା ପୂର୍ବାନୁମାନ (ଡେମୋ)।",
+          weatherSource: "ସୂତ୍ର: ଡେମୋ ପୂର୍ବାନୁମାନ",
+          todaysWeather: "ଆଜିର ଆବହାଉ",
+          todaysSub: "ଯୋଜନା ପାଇଁ ସାରାଂଶ",
+          upcoming7: "ଆସନ୍ତା 7 ଦିନ (ବିସ୍ତୃତ)",
+          dateCol: "ତାରିଖ",
+          highLowCol: "ଉଚ୍ଚ/କମ୍",
+          rainCol: "ବର୍ଷା %",
+          adviceCol: "ସୁପାରିଶ",
+          oldCropHeading: "ପୁରୁଣା ଫସଲ ବିବରଣୀ",
+          oldCropSub: "ନମୁନା ବିଶ୍ଲେଷଣ (ଡେମୋ)।",
+          cropLabel: "ଫସଲ:",
+          yieldLabel: "ଉତ୍ପାଦନ:",
+          issuesLabel: "ପ୍ରତ୍ୟକ୍ଷ ସମସ୍ୟା:",
+          pesticideLabel: "ବ୍ୟବହୃତ କୀଟନାଶକ:",
+          soilChangeLabel: "ହାର୍ଭେଷ୍ଟ ପରେ ମାଟି ପରିବର୍ତ୍ତନ:",
+          recLabel: "ସୁପାରିଶ:",
+          gatherHeading: "ଫଳାଫଳ ସଂଗ୍ରହ",
+          gatherSub: "ମାଟି+ଆବହାଉ+ଇତିହାସ ସଂକ୍ଷିପ୍ତ କରାଯାଏ।",
+          recSummary: "ସୁପାରିଶ ସାରାଂଶ",
+          nextBest: "କ୍ଷେତ୍ର କାମ ପାଇଁ ପରବର୍ତ୍ତୀ ଉତ୍ତମ ଦିନ"
+        }
+      };
+
+      window.translations = translations;
+
+      function applyLanguage(lang){
+        const T = translations[lang];
+        if(!T) return console.warn('No translations for', lang);
+        document.querySelectorAll('[data-key]').forEach(el=>{
+          const k = el.getAttribute('data-key');
+          if(!k) return;
+          const v = T[k];
+          if(typeof v === 'undefined') return;
+          if(el.tagName.toLowerCase() === 'title'){ document.title = v; el.textContent = v; }
+          else el.innerHTML = v;
+        });
+        document.documentElement.lang = lang;
+        try{ localStorage.setItem('site_language', lang); }catch(e){}
+      }
+
+      // language option clicks delegate
+      document.addEventListener('click', function(e){
+        const opt = e.target.closest('.lang-option');
+        if(!opt) return;
+        e.preventDefault();
+        const lang = opt.getAttribute('data-lang') || 'en';
+        if(typeof window.setLanguage === 'function'){
+          try{ window.setLanguage(lang); return; } catch(err){ console.warn('setLanguage failed', err); }
+        }
+        applyLanguage(lang);
+      });
+
+      document.addEventListener('DOMContentLoaded', function(){
+        const saved = localStorage.getItem('site_language') || 'en';
+        if(typeof window.setLanguage === 'function'){
+          try{ window.setLanguage(saved); return; } catch(err){ console.warn('window.setLanguage failed', err); }
+        }
+        applyLanguage(saved);
+      });
+
+      window.applyLanguage = applyLanguage;
+    })();
+  </script>
+
+  <script>
+    // ---------- demo sample data generation & UI updates ----------
+    function rand(min,max){ return Math.round(min + Math.random()*(max-min)); }
+
+    const soilSample = {
+      moisture: rand(20,65),
+      temperature: rand(18,30),
+      humidity: rand(35,85),
+      ph: (Math.random()*2 + 5.4).toFixed(1),
+      fertilizer: rand(10,80),
+      nitrogen: rand(50,180),
+      phosphorus: rand(10,80),
+      potassium: rand(80,260)
+    };
+
+    function updateSoilUI(){
+      document.getElementById('soilTs').textContent = new Date().toLocaleString();
+      const pct = soilSample.moisture;
+      const arc = Math.round((pct/100) * 200);
+      document.getElementById('gMoistArc').setAttribute('stroke-dasharray', arc + ' 200');
+      document.getElementById('gMoistVal').textContent = pct + ' %';
+      document.getElementById('gMoistLabel').textContent = document.querySelector('[data-key="soilMoistLabel"]')?.innerText || 'Moisture';
+      document.getElementById('soilTemp').textContent = soilSample.temperature + ' °C';
+      document.getElementById('soilHumidity').textContent = soilSample.humidity + ' %';
+      document.getElementById('soilPh').textContent = soilSample.ph;
+      document.getElementById('fertilizer').textContent = soilSample.fertilizer + ' %';
+      document.getElementById('nitrogen').textContent = soilSample.nitrogen + ' ppm';
+      document.getElementById('phosphorus').textContent = soilSample.phosphorus + ' ppm';
+      document.getElementById('potassium').textContent = soilSample.potassium + ' ppm';
+    }
+
+    function sampleWeather(iOffset=0){
+      const icons = ['Sunny','Partly Cloudy','Light Rain','Heavy Rain','Thunder','Cloudy'];
+      const advice = {
+        'Sunny':'Good for sowing/field work. Irrigate if moisture low.',
+        'Partly Cloudy':'Suitable for most activities but monitor soil moisture.',
+        'Light Rain':'Avoid heavy machinery. Good for sowing if soil not waterlogged.',
+        'Heavy Rain':'Avoid field work. Protect seedlings and drainage checks.',
+        'Thunder':'Dangerous. Delay work.',
+        'Cloudy':'Suitable; watch for evening rain.'
+      };
+      const i = Math.floor(Math.abs(Math.sin(iOffset+Date.now())*100)) % icons.length;
+      return { icon: icons[i], high: rand(24,34), low: rand(16,24), rain: rand(5,70), advice: advice[icons[i]] };
+    }
+
+    function renderWeatherAnalysis(){
+      const today = sampleWeather(0);
+      document.getElementById('todayWeatherSummary').textContent = `${today.icon} — ${today.high}° / ${today.low}°`;
+      document.getElementById('todayDetails').textContent = `Rain chance ${today.rain}%. Advice: ${today.advice}`;
+
+      const tbody = document.getElementById('detail7Days');
+      tbody.innerHTML = '';
+      const bestDays = [];
+      const labels = [], highs = [];
+      for(let i=1;i<=7;i++){
+        const day = sampleWeather(i);
+        const d = new Date(); d.setDate(d.getDate()+i);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${d.toLocaleDateString()}</td><td>${day.high}° / ${day.low}°</td><td>${day.rain}%</td><td>${day.advice}</td>`;
+        tbody.appendChild(tr);
+        labels.push(d.toLocaleDateString().slice(0,5));
+        highs.push(day.high);
+        if(day.rain < 35) bestDays.push({date:d,advice:day.advice});
+      }
+
+      const ctx = document.getElementById('nextDaysChart').getContext('2d');
+      new Chart(ctx, {
+        type:'line',
+        data:{ labels:labels, datasets:[{label:'High (°C)', data:highs, tension:0.3, fill:true}]},
+        options:{ responsive:true, plugins:{legend:{display:false}}}
+      });
+
+      const list = document.getElementById('bestDaysList');
+      list.innerHTML = '';
+      bestDays.slice(0,5).forEach(b=>{
+        const li = document.createElement('li');
+        li.textContent = `${b.date.toDateString().slice(0,15)} — ${b.advice}`;
+        list.appendChild(li);
+      });
+
+      const summary = [];
+      if(soilSample.moisture < 30) summary.push('Soil moisture is low — irrigation recommended before sowing.');
+      if(Number(soilSample.ph) < 6.0) summary.push('Soil is slightly acidic — consider liming before planting pH-sensitive crops.');
+      if(soilSample.nitrogen < 80) summary.push('Nitrogen is low — supply N-based fertilizer for better yield.');
+      if(bestDays.length>0) summary.push(`Next best days for light field work: ${bestDays.slice(0,3).map(b=>b.date.toDateString().slice(0,10)).join(', ')}.`);
+
+      document.getElementById('summaryText').innerHTML = summary.length ? summary.join('<br>') : 'Soil and weather look suitable. Proceed with regular schedule.';
+    }
+
+    // init
+    (function init(){
+      updateSoilUI();
+      renderWeatherAnalysis();
+    })();
+  </script>
+</body>
+</html>

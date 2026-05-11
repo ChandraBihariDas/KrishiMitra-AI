@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-key="pageTitle">KrishiMitra — Sign In</title>
+
+  <!-- Bootstrap + Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#2e8b57;
+      --muted:#6b6b6b;
+      --header-h:54px;
+      --card-radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, Poppins, system-ui, Arial, sans-serif}
+    body{
+      background: linear-gradient(180deg,#eef9ef 0%, #f8fff8 100%);
+      padding-top:calc(var(--header-h));
+      color:#112;
+      -webkit-font-smoothing:antialiased;
+      background-image: url("images/signin.jpg");
+      background-size: cover;
+    }
+
+    /* fixed header */
+    .site-header{
+      height:var(--header-h);
+      position:fixed;top:0;left:0;right:0;z-index:1100;
+      display:flex;align-items:center;padding:0 18px;background:var(--primary);color:#fff;
+      box-shadow:0 6px 18px rgba(31,122,74,0.12);
+    }
+    .site-header .controls{margin-left:auto; display:flex;gap:10px;align-items:center}
+    .site-header .btn-light{background:#fff;color:var(--primary)}
+
+    /* page */
+    .page-wrap{min-height:calc(100vh - var(--header-h));display:flex;align-items:center;justify-content:center;padding:28px}
+
+    /* card */
+    .auth-card{
+      width:440px;max-width:96%;
+      background:linear-gradient(180deg,#ffffff,#fbfff9);
+      border-radius:var(--card-radius);
+      box-shadow:0 24px 48px rgba(18,40,22,0.08);
+      overflow:hidden;
+    }
+
+    .hero{display:flex;gap:14px;padding:20px;border-bottom:1px solid #eef6ee;align-items:center}
+    .brand-title{font-weight:800;color:var(--primary);font-size:1.35rem;margin:0}
+    .brand-sub{font-size:.9rem;color:var(--muted)}
+
+    .card-body{padding:22px}
+    .input-wrap{position:relative;margin-bottom:14px}
+    .form-control{border-radius:28px;padding:12px 14px;border:1px solid #e6efe6}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--primary)}
+    .form-control.ps-5{padding-left:44px}
+    .muted{color:var(--muted)}
+    .btn-primary-custom{border-radius:999px;background:linear-gradient(90deg,var(--primary),#1f7a46);color:#fff;border:none;font-weight:700;padding:10px 14px}
+    .divider{height:1px;background:#eef6ee;margin:18px 0;border-radius:8px}
+
+    .links a{color:var(--primary);font-weight:600}
+
+    /* small states */
+    .invalid-feedback{color:#c12; font-size:.92rem}
+
+    @media (max-width:520px){
+      .hero{padding:14px}
+    }
+  </style>
+</head>
+<body>
+  <script src="login.js"></script>
+  <header class="site-header" role="banner">
+    <div class="brand" style="font-weight:700">KrishiMitra</div>
+    <div class="controls">
+      <div class="dropdown">
+        <button id="langBtn" class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-key="languageButtonLabel">Language</button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langBtn">
+          <li><a class="dropdown-item lang-option" href="#" data-lang="en">English</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="hi">हिन्दी</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="bn">বাংলা</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="te">తెలుగు</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="mr">मराठी</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="ta">தமிழ்</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="or">ଓଡ଼ିଆ</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <section class="auth-card" role="dialog" aria-labelledby="signinTitle" aria-modal="true">
+      <div class="hero">
+        <div>
+          <h1 id="signinTitle" class="brand-title" data-key="siteName">KrishiMitra</h1>
+          <div class="brand-sub" data-key="heroSubtitle">Farmer portal — sign in to your dashboard</div>
+        </div>
+        <div class="ms-auto muted" data-key="welcomeText">Welcome back 🌱</div>
+      </div>
+
+      <div class="card-body">
+        <form id="signinForm" novalidate>
+          <div class="input-wrap">
+            <i class="fa fa-phone input-icon" aria-hidden="true"></i>
+            <input id="phone" name="phone" type="tel" inputmode="numeric" pattern="\d{10}" maxlength="10"
+                   class="form-control ps-5" placeholder="" data-key="phPlaceholder" required aria-describedby="phoneHelp">
+            <div id="phoneHelp" class="form-text muted" data-key="phoneHelpText">We'll send an OTP to this number when required.</div>
+            <div class="invalid-feedback d-none" id="phoneErr" data-key="phoneError">Please enter a valid 10-digit mobile number.</div>
+          </div>
+
+          <div class="input-wrap">
+            <i class="fa fa-lock input-icon" aria-hidden="true"></i>
+            <input id="password" name="password" type="password" minlength="8" maxlength="32"
+                   class="form-control ps-5" placeholder="" data-key="passPlaceholder" required aria-describedby="passHelp">
+            <div id="passHelp" class="form-text muted" data-key="passHelpText">Use letters and numbers for a stronger password.</div>
+            <div class="invalid-feedback d-none" id="passErr" data-key="passError">Password must be 8 or more characters.</div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="remember">
+              <label class="form-check-label muted" for="remember" data-key="rememberText">Remember me</label>
+            </div>
+            <div class="links"><a href="forgot.html" id="forgotLink" data-key="forgotText">Forgot?</a></div>
+          </div>
+
+          <div class="divider" role="presentation"></div>
+
+          <button id="submitBtn" class="btn btn-primary-custom w-100" disabled type="submit">
+            <i class="fa fa-tractor me-2" aria-hidden="true"></i>
+            <span data-key="signInBtn">Sign In</span>
+          </button>
+
+          <!-- translation-safe: split text and anchor so anchor remains clickable -->
+          <div class="text-center mt-3 muted">
+            <span data-key="newTo">New to KrishiMitra?</span>
+            <a href="signup.html" id="createLink" data-key="createAccount" class="ms-1 links">Create an account</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    (function(){
+      // full translations for each language
+      const translations = {
+        en: {
+          pageTitle: "KrishiMitra — Sign In",
+          languageButtonLabel: "Language",
+          siteName: "KrishiMitra",
+          heroSubtitle: "Farmer portal — sign in to your dashboard",
+          welcomeText: "Welcome back 🌱",
+          phPlaceholder: "Mobile number (10 digits)",
+          phoneHelpText: "We'll send an OTP to this number when required.",
+          phoneError: "Please enter a valid 10-digit mobile number.",
+          passPlaceholder: "Password (8+ characters)",
+          passHelpText: "Use letters and numbers for a stronger password.",
+          passError: "Password must be 8 or more characters.",
+          rememberText: "Remember me",
+          forgotText: "Forgot?",
+          signInBtn: "Sign In",
+          newTo: "New to KrishiMitra?",
+          createAccount: "Create an account",
+          signingAlert: "🌾 Welcome back! Redirecting to your dashboard..."
+        },
+        hi: {
+          pageTitle: "कृषिमित्र — साइन इन",
+          languageButtonLabel: "भाषा",
+          siteName: "कृषिमित्र",
+          heroSubtitle: "किसान पोर्टल — अपने डैशबोर्ड में साइन इन करें",
+          welcomeText: "वापसी पर स्वागत है 🌱",
+          phPlaceholder: "मोबाइल नंबर (10 अंक)",
+          phoneHelpText: "आवश्यक होने पर हम इस नंबर पर OTP भेजेंगे।",
+          phoneError: "कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।",
+          passPlaceholder: "पासवर्ड (8+ अक्षर)",
+          passHelpText: "मज़बूत पासवर्ड के लिए अक्षर और संख्या का प्रयोग करें।",
+          passError: "पासवर्ड कम से कम 8 अक्षर का होना चाहिए।",
+          rememberText: "मुझे याद रखें",
+          forgotText: "भूल गए?",
+          signInBtn: "साइन इन",
+          newTo: "कृषिमित्र पर नए हैं?",
+          createAccount: "एक खाता बनाएं",
+          signingAlert: "🌾 स्वागत है! आपके डैशबोर्ड पर ले जाया जा रहा है..."
+        },
+        bn: {
+          pageTitle: "কৃষি মিত্র — সাইন ইন",
+          languageButtonLabel: "ভাষা",
+          siteName: "কৃষি মিত্র",
+          heroSubtitle: "কৃষক পোর্টাল — আপনার ড্যাশবোর্ডে সাইন ইন করুন",
+          welcomeText: "ফিরে আসায় স্বাগতম 🌱",
+          phPlaceholder: "মোবাইল নম্বর (10 ডিজিট)",
+          phoneHelpText: "প্রয়োজন হলে আমরা এই নম্বরে OTP পাঠাবো।",
+          phoneError: "সঠিক 10 ডিজিটের মোবাইল নম্বর লিখুন।",
+          passPlaceholder: "পাসওয়ার্ড (8+ অক্ষর)",
+          passHelpText: "মজবুত পাসওয়ার্ডের জন্য অক্ষর ও সংখ্যা ব্যবহার করুন।",
+          passError: "পাসওয়ার্ড কমপক্ষে 8 অক্ষরের হতে হবে।",
+          rememberText: "আমাকে মনে রাখুন",
+          forgotText: "বিস্মৃত?",
+          signInBtn: "সাইন ইন",
+          newTo: "কৃষি মিত্রে নতুন?",
+          createAccount: "একটি অ্যাকাউন্ট তৈরি করুন",
+          signingAlert: "🌾 স্বাগতম! আপনার ড্যাশবোর্ডে যাচ্ছে..."
+        },
+        te: {
+          pageTitle: "కృషిమిత్ర్ — సైన్ ఇన్",
+          languageButtonLabel: "భాష",
+          siteName: "కృషిమిత్ర్",
+          heroSubtitle: "రైతు పోర్టల్ — మీ డ్యాష్‌బోర్డ్‌లో సైన్ ఇన్ చేయండి",
+          welcomeText: "వెల్కమ్ బ్యాక్ 🌱",
+          phPlaceholder: "మొబైల్ నంబర్ (10 అంకెలు)",
+          phoneHelpText: "ఆవశ్యకమైతే మేము OTP ని ఈ సంఖ్యకు పంపిస్తాము.",
+          phoneError: "దయచేసి సరైన 10-అంకెల మొబైల్ నంబర్ నమోదు చేయండి.",
+          passPlaceholder: "పాస్‌వర్డ్ (8+ అక్షరాలు)",
+          passHelpText: "బలమైన పాస్‌వర్డ్ కోసం అక్షరాలు మరియు సంఖ్యలను ఉపయోగించండి.",
+          passError: "పాస్‌వర్డ్ కనీసం 8 అక్షరాల ఉండాలి.",
+          rememberText: "నన్ను గుర్తుంచు",
+          forgotText: "మరిచిపోయారా?",
+          signInBtn: "సైన్ ఇన్",
+          newTo: "కృషిమిత్ర్‌కు కొత్తవారా?",
+          createAccount: "ఒక ఖాతాను సృష్టించండి",
+          signingAlert: "🌾 స్వాగతం! మీ డ్యాష్బోర్డ్‌కు మారుస్తున్నాము..."
+        },
+        mr: {
+          pageTitle: "कृषि मित्र — साइन इन",
+          languageButtonLabel: "भाषा",
+          siteName: "कृषि मित्र",
+          heroSubtitle: "शेतकरी पोर्टल — आपल्या डॅशबोर्डमध्ये साइन इन करा",
+          welcomeText: "परत स्वागत आहे 🌱",
+          phPlaceholder: "मोबाईल नंबर (10 अंक)",
+          phoneHelpText: "आवश्यक असल्यास आम्ही या क्रमांकावर OTP पाठवू.",
+          phoneError: "कृपया वैध 10-अंकी मोबाइल नंबर टाका.",
+          passPlaceholder: "पासवर्ड (8+ वर्ण)",
+          passHelpText: "मजबूत पासवर्डसाठी अक्षरे आणि संख्या वापरा.",
+          passError: "पासवर्ड कमीतकमी 8 वर्णांचा असावा.",
+          rememberText: "मला स्मरणात ठेवा",
+          forgotText: "विसरून गेला?",
+          signInBtn: "साइन इन",
+          newTo: "कृषि मित्र वर नवीन?",
+          createAccount: "खाते तयार करा",
+          signingAlert: "🌾 स्वागत आहे! तुमच्या डॅशबोर्डवर नेत आहे..."
+        },
+        ta: {
+          pageTitle: "கிரிஷி மித்ர் — சைன் இன்",
+          languageButtonLabel: "மொழி",
+          siteName: "கிரிஷி மித்ர்",
+          heroSubtitle: "விவசாயி போர்டல் — உங்கள் டாஷ்போர்டில் சைன் இன் செய்யுங்கள்",
+          welcomeText: "திரும்ப வந்ததற்கு வரவேற்பு 🌱",
+          phPlaceholder: "மொபைல் எண் (10 இலக்கங்கள்)",
+          phoneHelpText: "தேவைப்பட்டால், இந்த எண்ணுக்கு OTP அனுப்பப்படும்.",
+          phoneError: "தயவு செய்து செல்லுபடியான 10-அங்கிய மொபைல் எண்ணை உள்ளிடவும்.",
+          passPlaceholder: "கடவுச்சொல் (8+ எழுத்துகள்)",
+          passHelpText: "வலுவான கடவுச்சொல்லுக்கு எழுத்துகள் மற்றும் எண்களைப் பயன்படுத்தவும்.",
+          passError: "கடவுச்சொல் குறைந்தபட்சம் 8 எழுத்துகள் இருக்க வேண்டும்.",
+          rememberText: "என்னை நினைவில் வைக்க",
+          forgotText: "மறந்துவிட்டீர்களா?",
+          signInBtn: "சைன் இன்",
+          newTo: "கிரிஷி மித்ருக்கு புதியவரா?",
+          createAccount: "ஒரு கணக்கை உருவாக்கு",
+          signingAlert: "🌾 வரவேற்பு! உங்கள் டாஷ்போர்டிற்கு வழிமாற்றப்படுகிறது..."
+        },
+        or: {
+          pageTitle: "କୃଷିମିତ୍ର — ସାଇନ୍ ଇନ୍",
+          languageButtonLabel: "ଭାଷା",
+          siteName: "କୃଷିମିତ୍ର",
+          heroSubtitle: "କୃଷକ ପୋର୍ଟାଲ୍ — ଆପଣଙ୍କର ଡ୍ୟାଶବୋର୍ଡରେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ",
+          welcomeText: "ପୁନର୍ଆଗମନରେ ସ୍ୱାଗତ 🌱",
+          phPlaceholder: "ମୋବାଇଲ୍ ସଂଖ୍ୟା (10 ଅଙ୍କ)",
+          phoneHelpText: "ଆବଶ୍ୟକ ହେଲେ ଆମେ ଏହି ସଂଖ୍ୟାକୁ OTP ପଠାଇବା।",
+          phoneError: "ଦୟାକରି ଏକ ବୈଧ 10-ଅଙ୍କର ମୋବାଇଲ୍ ସଂଖ୍ୟା ପ୍ରବେଶ କରନ୍ତୁ।",
+          passPlaceholder: "ପାସୱାର୍ଡ (8+ ଅକ୍ଷର)",
+          passHelpText: "ମଜବୁତ ପାସୱାର୍ଡ ପାଇଁ ଅକ୍ଷର ଏବଂ ସଂଖ୍ୟା ବ୍ୟବହାର କରନ୍ତୁ।",
+          passError: "ପାସୱାର୍ଡ ଅନ୍ତତଃ 8 ଅକ୍ଷରର ହେବା ଦରକାର।",
+          rememberText: "ମୋକୁ ମନେ ରଖନ୍ତୁ",
+          forgotText: "ଭୁଲିଗଲେ?",
+          signInBtn: "ସାଇନ୍ ଇନ୍",
+          newTo: "କୃଷିମିତ୍ରକୁ ନୂଆ କି?",
+          createAccount: "ଏକ ଆକାଉଣ୍ଟ ତିଆରି କରନ୍ତୁ",
+          signingAlert: "🌾 ସ୍ୱାଗତ! ଆପଣଙ୍କୁ ଡ୍ୟାଶବୋର୍ଡକୁ ନେଉଛୁ..."
+        }
+      };
+
+      // Safe language application: use textContent so anchors are preserved.
+      function applyLanguage(lang){
+        const T = translations[lang] || translations.en;
+        document.querySelectorAll('[data-key]').forEach(el=>{
+          const key = el.getAttribute('data-key');
+          if(!key) return;
+          const v = T[key];
+          if(typeof v === 'undefined') return;
+          // title element special case
+          if(el.tagName.toLowerCase() === 'title'){ document.title = v; el.textContent = v; return; }
+          // Do not replace innerHTML — use textContent so child anchors remain clickable.
+          el.textContent = v;
+        });
+        document.documentElement.lang = lang;
+        try{ localStorage.setItem('site_language', lang); }catch(e){}
+        // update the language button label without destroying dropdown
+        const langBtn = document.getElementById('langBtn');
+        if(langBtn){ langBtn.textContent = (T.languageButtonLabel || 'Language'); langBtn.classList.add('dropdown-toggle'); }
+      }
+
+      // language click handling (delegated)
+      document.addEventListener('click', (e)=>{
+        const opt = e.target.closest('.lang-option');
+        if(!opt) return;
+        e.preventDefault();
+        const lang = opt.getAttribute('data-lang') || 'en';
+        applyLanguage(lang);
+      });
+
+      // form validation & navigation
+      document.addEventListener('DOMContentLoaded', ()=>{
+        // apply saved language
+        const saved = localStorage.getItem('site_language') || 'en';
+        applyLanguage(saved);
+
+        const phone = document.getElementById('phone');
+        const password = document.getElementById('password');
+        const submitBtn = document.getElementById('submitBtn');
+        const phoneErr = document.getElementById('phoneErr');
+        const passErr = document.getElementById('passErr');
+        const form = document.getElementById('signinForm');
+
+        function validatePhone(){
+          const v = phone.value.trim(); const ok = /^\d{10}$/.test(v);
+          phoneErr.classList.toggle('d-none', ok);
+          return ok;
+        }
+        function validatePass(){
+          const ok = password.value.length >= 8;
+          passErr.classList.toggle('d-none', ok);
+          return ok;
+        }
+        function updateSubmit(){
+          submitBtn.disabled = !(validatePhone() && validatePass());
+        }
+
+        phone.addEventListener('input', updateSubmit);
+        password.addEventListener('input', updateSubmit);
+
+        form.addEventListener('submit', (e)=>{
+          e.preventDefault();
+          if(!validatePhone() || !validatePass()) return;
+          const lang = localStorage.getItem('site_language') || 'en';
+          const signingText = translations[lang]?.signingAlert || translations.en.signingAlert;
+          submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' + signingText;
+          submitBtn.disabled = true;
+          // simulate auth then redirect to dashboard (placeholder)
+          setTimeout(()=>{
+            alert(signingText);
+            // Redirect to next page (in production: real dashboard)
+            window.location.href = 'next.html';
+          }, 700);
+        });
+
+        // Accessibility: Enter key submits if valid
+        [phone, password].forEach(i=> i.addEventListener('keydown', ev=>{
+          if(ev.key === 'Enter'){ ev.preventDefault(); if(!submitBtn.disabled) form.requestSubmit(); }
+        }));
+
+        // IMPORTANT: the Create account anchor intentionally not modified by JS.
+        // It will navigate to signup.html as a normal anchor.
+        const createLink = document.getElementById('createLink');
+        if(createLink){
+          // ensure href exists and is unchanged
+          createLink.setAttribute('href', createLink.getAttribute('href') || 'signup.html');
+        }
+      });
+
+      // expose for debugging
+      window.applyLanguage = applyLanguage;
+      window._translations = translations;
+    })();
+  </script>
+      
+</body>
+</html>

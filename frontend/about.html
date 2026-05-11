@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-key="pageTitle">About Us - KrishiMitra-AI</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --header-h: 48px;
+      --navbar-h: 80px;
+    }
+
+    /* Body padding so fixed header + navbar don't overlap content */
+    body {
+      padding-top: calc(var(--header-h) + var(--navbar-h));
+      background-color: #f8f9fa;
+      background-image: url('images/ab.jpg');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* Top language header (fixed) */
+    .site-header {
+      height: var(--header-h);
+      line-height: var(--header-h);
+      background: var(--bs-primary);
+      color: #fff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1050;
+      display: flex;
+      align-items: center;
+    }
+
+    .site-header .container {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .site-header .dropdown-toggle::after { margin-left: .5rem; }
+
+    /* Main navbar fixed below header */
+    .main-navbar {
+      height: var(--navbar-h);
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      z-index: 1040;
+    }
+
+    .navbar-brand img { object-fit: cover; }
+
+    /* Page content styles */
+    .about-section { padding: 60px 0; }
+    .about-title {
+      font-weight: 800;
+      color: #138808;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .mission-box {
+      background-color: rgba(255,255,255,0.98);
+      padding: 28px;
+      border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+
+    .highlight { color: #FF9933; font-weight: 700; }
+
+    @media (max-width:768px) {
+      :root { --header-h: 56px; --navbar-h: 120px; }
+      body { padding-top: calc(var(--header-h) + var(--navbar-h)); }
+      .site-header { height: var(--header-h); line-height: var(--header-h); }
+      .main-navbar { top: var(--header-h); height: var(--navbar-h); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- TOP LANGUAGE HEADER -->
+  <header class="site-header text-white">
+    <div class="container">
+      <div class="dropdown">
+        <button id="langBtn" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+          aria-expanded="false" data-key="languageButtonLabel">Language</button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langBtn">
+          <li><a class="dropdown-item lang-option" href="#" data-lang="en">English</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="hi">हिन्दी (Hindi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="bn">বাংলা (Bengali)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="te">తెలుగు (Telugu)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="mr">मराठी (Marathi)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="ta">தமிழ் (Tamil)</a></li>
+          <li><a class="dropdown-item lang-option" href="#" data-lang="or">ଓଡ଼ିଆ (Odia)</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN NAVBAR -->
+  <nav class="navbar main-navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="test.html">
+        <img src="kishan.jpg" alt="KrishiMitra logo" width="60" height="60" class="me-2 rounded-circle">
+        <span style="font-size: 28px;" data-key="siteName">KrishiMitra-AI</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#globalNavbar"
+        aria-controls="globalNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="globalNavbar">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="test.html" data-key="home">Home</a></li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="featuresMenu" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false" data-key="features">Features</a>
+            <ul class="dropdown-menu" aria-labelledby="featuresMenu">
+              <li><a class="dropdown-item" href="crop_prediction.html" data-key="nav_crop_prediction">Crop Prediction</a></li>
+              <li><a class="dropdown-item" href="weather_forecast.html" data-key="nav_weather_forecast">Weather Forecast</a></li>
+              <li><a class="dropdown-item" href="market_price.html" data-key="nav_market_prices">Market Prices</a></li>
+              <li><a class="dropdown-item" href="pest_detection.html" data-key="nav_pest_detection">Pest Detection</a></li>
+              <li><a class="dropdown-item" href="soil_analysis.html" data-key="nav_soil_analysis">Soil Analysis</a></li>
+              <li><a class="dropdown-item" href="yield.html" data-key="nav_yield">Yield Optimization</a></li>
+              <li><a class="dropdown-item" href="irrigation.html" data-key="nav_irrigation">Irrigation Advice</a></li>
+              <li><a class="dropdown-item" href="farm_management.html" data-key="nav_farm_management">Farm Management</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item"><a class="nav-link active" href="about.html" data-key="about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html" data-key="contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.html" data-key="login">Login</a></li>
+
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-light ms-2" href="signup.html" data-key="signup">Signup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="market.html" data-key="market">Market</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="container about-section">
+      <h1 class="about-title" data-key="aboutHeading">About KrishiMitra-AI</h1>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="mission-box">
+            <p data-key="aboutPara1">
+              <span class="highlight">KrishiMitra-AI</span> is an innovative platform built to empower Indian farmers by combining
+              modern Artificial Intelligence with tried-and-tested agricultural practices. Our focus is to increase productivity,
+              provide actionable insights and make farm decisions data-driven.
+            </p>
+
+            <p data-key="aboutPara2">
+              We provide features such as <strong data-key="featList">crop prediction, pest detection, soil analysis, irrigation advice and weather forecasts</strong>
+              so that farmers of all scales can reduce risk and improve returns.
+            </p>
+
+            <p data-key="aboutPara3">
+              Our team includes agronomists, AI engineers and rural-development specialists working together to deliver localized,
+              affordable and easy-to-use tools for the field.
+            </p>
+
+            <p data-key="aboutPara4">
+              Whether you are a smallholder or a commercial grower, KrishiMitra-AI aims to be your trusted partner in making farming
+              more productive and sustainable.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Translations + language switcher script (includes Odia 'or') -->
+  <script>
+    (function () {
+      const translations = {
+        en: {
+          pageTitle: "About Us - KrishiMitra-AI",
+          languageButtonLabel: "Language",
+          siteName: "KrishiMitra-AI",
+          home: "Home",
+          features: "Features",
+          nav_crop_prediction: "Crop Prediction",
+          nav_weather_forecast: "Weather Forecast",
+          nav_market_prices: "Market Prices",
+          nav_pest_detection: "Pest Detection",
+          nav_soil_analysis: "Soil Analysis",
+          nav_yield: "Yield Optimization",
+          nav_irrigation: "Irrigation Advice",
+          nav_farm_management: "Farm Management",
+          about: "About Us",
+          contact: "Contact",
+          login: "Login",
+          signup: "Signup",
+          market: "Market",
+          aboutHeading: "About KrishiMitra-AI",
+          aboutPara1: "<span class='highlight'>KrishiMitra-AI</span> is an innovative platform built to empower Indian farmers by combining modern Artificial Intelligence with tried-and-tested agricultural practices. Our focus is to increase productivity, provide actionable insights and make farm decisions data-driven.",
+          aboutPara2: "We provide features such as <strong>crop prediction, pest detection, soil analysis, irrigation advice and weather forecasts</strong> so that farmers of all scales can reduce risk and improve returns.",
+          aboutPara3: "Our team includes agronomists, AI engineers and rural-development specialists working together to deliver localized, affordable and easy-to-use tools for the field.",
+          aboutPara4: "Whether you are a smallholder or a commercial grower, KrishiMitra-AI aims to be your trusted partner in making farming more productive and sustainable.",
+          featList: "crop prediction, pest detection, soil analysis, irrigation advice and weather forecasts"
+        },
+
+        hi: {
+          pageTitle: "हमारे बारे में - कृषिमित्र-एआई",
+          languageButtonLabel: "भाषा",
+          siteName: "कृषिमित्र-एआई",
+          home: "होम",
+          features: "विशेषताएँ",
+          nav_crop_prediction: "फ़सल पूर्वानुमान",
+          nav_weather_forecast: "मौसम पूर्वानुमान",
+          nav_market_prices: "बाज़ार मूल्य",
+          nav_pest_detection: "कीट पहचान",
+          nav_soil_analysis: "मिट्टी विश्लेषण",
+          nav_yield: "उत्पादन अनुकूलन",
+          nav_irrigation: "सिंचाई सलाह",
+          nav_farm_management: "फ़ार्म प्रबंधन",
+          about: "हमारे बारे में",
+          contact: "संपर्क",
+          login: "लॉगिन",
+          signup: "साइनअप",
+          market: "बाज़ार",
+          aboutHeading: "कृषिमित्र-एआई के बारे में",
+          aboutPara1: "<span class='highlight'>कृषिमित्र-एआई</span> एक अभिनव प्लेटफ़ॉर्म है जो भारतीय किसानों को आधुनिक आर्टिफिशियल इंटेलिजेंस और पारंपरिक कृषि पद्धतियों के संयोजन से सशक्त बनाता है।",
+          aboutPara2: "हम फ़सल पूर्वानुमान, कीट पहचान, मिट्टी विश्लेषण, सिंचाई सलाह और मौसम पूर्वानुमान जैसी सुविधाएँ देते हैं जिससे किसान जोखिम कम कर सकें और बेहतर लाभ कमा सकें।",
+          aboutPara3: "हमारी टीम में कृषि विज्ञानी, AI इंजीनियर और ग्रामीण विकास विशेषज्ञ शामिल हैं जो क्षेत्र के लिए स्थानीयकृत और सस्ती उपकरण बनाते हैं।",
+          aboutPara4: "चाहे आप छोटे किसान हों या व्यावसायिक उत्पादक, कृषिमित्र-एआई आपका साथी बनना चाहता है।",
+          featList: "फ़सल पूर्वानुमान, कीट पहचान, मिट्टी विश्लेषण, सिंचाई सलाह और मौसम पूर्वानुमान"
+        },
+
+        bn: {
+          pageTitle: "আমাদের সম্পর্কে - কৃষি মিত্র-এআই",
+          languageButtonLabel: "ভাষা",
+          siteName: "কৃষি মিত্র-এআই",
+          home: "হোম",
+          features: "ফিচার",
+          nav_crop_prediction: "ফসল পূর্বাভাস",
+          nav_weather_forecast: "আবহাওয়া পূর্বাভাস",
+          nav_market_prices: "বাজার মূল্য",
+          nav_pest_detection: "পোকা সনাক্তকরণ",
+          nav_soil_analysis: "মাটি বিশ্লেষণ",
+          nav_yield: "উৎপাদন অপ্টিমাইজেশন",
+          nav_irrigation: "সেচ পরামর্শ",
+          nav_farm_management: "ফার্ম ম্যানেজমেন্ট",
+          about: "আমাদের সম্পর্কে",
+          contact: "যোগাযোগ",
+          login: "লগইন",
+          signup: "সাইন আপ",
+          market: "বাজার",
+          aboutHeading: "কৃষি মিত্র-এআই সম্পর্কে",
+          aboutPara1: "<span class='highlight'>কৃষি মিত্র-এআই</span> একটি উদ্ভাবনী প্ল্যাটফর্ম যা আধুনিক কৃত্রিম বুদ্ধিমত্তা এবং ঐতিহ্যবাহী কৃষি অনুশীলনের সমন্বয়ে কৃষকদের ক্ষমতায়িত করে।",
+          aboutPara2: "আমরা ফসল পূর্বাভাস, পোকা সনাক্তকরণ, মাটি বিশ্লেষণ, সেচ পরামর্শ এবং আবহাওয়া পূর্বাভাস সহ ফিচার সরবরাহ করি যাতে কৃষকরা ঝুঁকি কমাতে এবং আয় বাড়াতে পারে।",
+          aboutPara3: "আমাদের দল এগ্রো-স্পেশালিস্ট, AI ইঞ্জিনিয়ার ও গ্রামীণ উন্নয়ন বিশেষজ্ঞের সমন্বয়ে গঠিত।",
+          aboutPara4: "আপনি ছোট বা বাণিজ্যিক খামারি হওন, কৃষি মিত্র-এআই আপনার বিশ্বস্ত সঙ্গী হতে চায়।",
+          featList: "ফসল পূর্বাভাস, পোকা সনাক্তকরণ, মাটি বিশ্লেষণ, সেচ পরামর্শ এবং আবহাওয়া পূর্বাভাস"
+        },
+
+        te: {
+          pageTitle: "మాతో సంబంధించి - కృషిమిత్ర్-ఏఐ",
+          languageButtonLabel: "భాష",
+          siteName: "కృషిమిత్ర్-ఏఐ",
+          home: "హోమ్",
+          features: "ఫీచర్స్",
+          nav_crop_prediction: "పంట అంచనా",
+          nav_weather_forecast: "వాతావరణ అంచనా",
+          nav_market_prices: "మార్కెట్ ధరలు",
+          nav_pest_detection: "పురుగు గుర్తింపు",
+          nav_soil_analysis: "మట్టి విశ్లేషణ",
+          nav_yield: "పంట మెరుగుదల",
+          nav_irrigation: "నీరుపై సలహా",
+          nav_farm_management: "ఫార్మ్ నిర్వహణ",
+          about: "మాతో సంబంధించి",
+          contact: "సంప్రదించండి",
+          login: "లాగిన్",
+          signup: "సైన్ అప్",
+          market: "మార్కెట్",
+          aboutHeading: "కృషిమిత్ర్-ఏఐ గురించి",
+          aboutPara1: "<span class='highlight'>కృషిమిత్ర్-ఏఐ</span> రైతులను ఆధునిక AI మరియు సంప్రదాయ వ్యవసాయ పద్ధతుల మిళితం ద్వారా శక్తివర్థకం చేసే ప్లాట్‌ఫారమ్.",
+          aboutPara2: "పంట అంచనా, పురుగు గుర్తింపు, మట్టి విశ్లేషణ, నీరుపై సలహా మరియు వాతావరణ అంచనాలు వంటి ఫీచర్లను అందిస్తాము.",
+          aboutPara3: "మా బృందం ఎగ్రోనమిస్ట్‌లు, AI ఇంజనీర్లతో కలిసి పని చేస్తుంది.",
+          aboutPara4: "మీరు చిన్న రైతు లేదా వాణిజ్య రైతు అతె అయినా, కృషిమిత్ర్-ఏఐ మీ భాగస్వామి కావాలని ఆశిస్తుంది.",
+          featList: "పంట అంచనా, పురుగు గుర్తింపు, మట్టి విశ్లేషణ, నీరుపై సలహా మరియు వాతావరణ అంచనాలు"
+        },
+
+        mr: {
+          pageTitle: "आमच्याबद्दल - कृषि मित्र-एआई",
+          languageButtonLabel: "भाषा",
+          siteName: "कृषि मित्र-एआई",
+          home: "मुख्य पृष्ठ",
+          features: "वैशिष्ट्ये",
+          nav_crop_prediction: "पीक अंदाज",
+          nav_weather_forecast: "हवामान अंदाज",
+          nav_market_prices: "बाजार भाव",
+          nav_pest_detection: "किडी ओळख",
+          nav_soil_analysis: "माती विश्लेषण",
+          nav_yield: "उत्पादन अनुकूलन",
+          nav_irrigation: "सिंचन सल्ला",
+          nav_farm_management: "फार्म व्यवस्थापन",
+          about: "आमच्याबद्दल",
+          contact: "संपर्क",
+          login: "लॉगिन",
+          signup: "साइनअप",
+          market: "बाजार",
+          aboutHeading: "कृषि मित्र-एआई बद्दल",
+          aboutPara1: "<span class='highlight'>कृषि मित्र-एआई</span> ही एक नाविन्यपूर्ण प्लॅटफॉर्म आहे जी आधुनिक AI आणि पारंपरिक शेतीचे एकत्रीकरण करून शेतकऱ्यांना सशक्त करते.",
+          aboutPara2: "आम्ही पीक अंदाज, किडी ओळख, माती विश्लेषण, सिंचन सल्ला आणि हवामान अंदाज अशी सुविधा देतो.",
+          aboutPara3: "आमच्या टीममध्ये कृषिविद, AI अभियंते आणि ग्रामीण विकास तज्ञ आहेत.",
+          aboutPara4: "आपण लहान शेतकरी असाल किंवा व्यावसायिक उत्पादक, कृषि मित्र-एआई आपला विश्वासू साथीदार व्हायचे उद्दिष्ट आहे.",
+          featList: "पीक अंदाज, किडी ओळख, माती विश्लेषण, सिंचन सल्ला आणि हवामान अंदाज"
+        },
+
+        ta: {
+          pageTitle: "எங்களை பற்றி - கிரிஷி மித்ர்-ஏஐ",
+          languageButtonLabel: "மொழி",
+          siteName: "கிரிஷி மித்ர்-ஏஐ",
+          home: "முகப்பு",
+          features: "அம்சங்கள்",
+          nav_crop_prediction: "பயிர் கணிப்பு",
+          nav_weather_forecast: "வானிலை கணிப்பு",
+          nav_market_prices: "சந்தை விலைகள்",
+          nav_pest_detection: "புழு கண்டறிதல்",
+          nav_soil_analysis: "மண் பகுப்பாய்வு",
+          nav_yield: "மீட்டுகள் மேம்பாடு",
+          nav_irrigation: "நீர்ப்பாசன ஆலோசனை",
+          nav_farm_management: "பண்ணை மேலாண்மை",
+          about: "எங்களை பற்றி",
+          contact: "தொடர்பு",
+          login: "உள்நுழைய",
+          signup: "சைன் அப்",
+          market: "சந்தை",
+          aboutHeading: "கிரிஷி மித்ர்-ஏஐ பற்றி",
+          aboutPara1: "<span class='highlight'>கிரிஷி மித்ர்-ஏஐ</span> நவீன AI மற்றும் பாரம்பரிய வேளாண் நடைமுறைகளை இணைத்து விவசாயிகளை சுறுசுறுப்பாக மாற்றும் ஒரு தளம்.",
+          aboutPara2: "பயிர் கணிப்பு, புழு கண்டறிதல், மண் பகுப்பாய்வு, நீர் ஆலோசனை மற்றும் வானிலை கணிப்புகள் ஆகியவை நமது சேவைகள்.",
+          aboutPara3: "எங்கள் குழுவில் விவசாய அறிஞர்கள், AI பொறியாளர்கள் மற்றும் கிராமிய மேம்பாட்டு நிபுணர்கள் சேரಿದ್ದಾರೆ.",
+          aboutPara4: "சின்ன விவசாய வருடரா அல்லது தொழில்முறை உற்பத்தியாளர் ஆகினும், கிரிஷி மித்ர்-ஏஐ உங்கள் நம்பிக்கையான தோழன் ஆகும்.",
+          featList: "பயிர் கணிப்பு, புழு கண்டறிதல், மண் பகுப்பாய்வு, நீர் ஆலோசனை மற்றும் வானிலை கணிப்புகள்"
+        },
+
+        // Odia / Oriya (language code "or")
+        or: {
+          pageTitle: "ଆମ ବିଷୟରେ - କୃଷିମିତ୍ର-ଏଆଇ",
+          languageButtonLabel: "ଭାଷା",
+          siteName: "କୃଷିମିତ୍ର-ଏଆଇ",
+          home: "ହୋମ୍",
+          features: "ବୈଶିଷ୍ଟ୍ୟ",
+          nav_crop_prediction: "ଫସଲ ପୂର୍ବାନୁମାନ",
+          nav_weather_forecast: "ମଉସମ ପୂର୍ବାନୁମାନ",
+          nav_market_prices: "ବଜାର ମୂଲ୍ୟ",
+          nav_pest_detection: "ପୋକା ଚିହ୍ନଟ",
+          nav_soil_analysis: "ମାଟି ଖୋଜ",
+          nav_yield: "ଉତ୍ପାଦନ ଅପ୍ଟିମାଇଜେଶନ",
+          nav_irrigation: "ସିଞ୍ଚନ ପରାମର୍ଶ",
+          nav_farm_management: "ଫାର୍ମ ପରିଚାଳନ",
+          about: "ଆମ ବିଷୟରେ",
+          contact: "ଯୋଗାଯୋଗ",
+          login: "ଲଗଇନ୍",
+          signup: "ସାଇନ୍ ଅପ୍",
+          market: "ବଜାର",
+          aboutHeading: "କୃଷିମିତ୍ର-ଏଆଇ ବିଷୟରେ",
+          aboutPara1: "<span class='highlight'>କୃଷିମିତ୍ର-ଏଆଇ</span> ଏକ ନବୀନ ପ୍ଲାଟଫର୍ମ ଯାହା ଆଧୁନିକ AI ଓ ପାରମ୍ପରିକ କୃଷି ପ୍ରକ୍ରିୟାକୁ ମିଶାଇ କୃଷକଙ୍କୁ ସକ୍ଷମ କରେ।",
+          aboutPara2: "ଆମେ ଫସଲ ପୂର୍ବାନୁମାନ, ପୋକା ଚିହ୍ନଟ, ମାଟି ଖୋଜ, ସିଞ୍ଚନ ପରାମର୍ଶ ଓ ମଉସମ ପୂର୍ବାନୁମାନ ଯେପରି ସୁବିଧା ଦିଅୁଛୁ।",
+          aboutPara3: "ଆମ ଦଳରେ ଅଗ୍ରୋନୋମିସ୍ଟ, AI ଇଞ୍ଜିନିୟର ଏବଂ ଗ୍ରାମୀଣ ବିକାଶ ବିଶେଷଜ୍ଞ ଅଛନ୍ତି।",
+          aboutPara4: "ଛୋଟ କୃଷକ ହେଉ କି ବଡ଼ ଉତ୍ପାଦକ, କୃଷିମିତ୍ର-ଏଆଇ ଆପଣଙ୍କର ଭରସାଯୋଗ୍ୟ ସହଚର ହେବାକୁ ଚାହାଁଛି।",
+          featList: "ଫସଲ ପୂର୍ବାନୁମାନ, ପୋକା ଚିହ୍ନଟ, ମାଟି ଖୋଜ, ସିଞ୍ଚନ ପରାମର୍ଶ ଏବଂ ମଉସମ ପୂର୍ବାନୁମାନ"
+        }
+      };
+
+      // Expose translations globally for reuse
+      window.translations = translations;
+
+      function applyLanguage(lang) {
+        const T = translations[lang];
+        if (!T) return console.warn("No translations for", lang);
+
+        document.querySelectorAll("[data-key]").forEach(el => {
+          const key = el.getAttribute("data-key");
+          if (!key) return;
+          const val = T[key];
+          if (typeof val === "undefined") return;
+          if (el.tagName.toLowerCase() === "title") {
+            document.title = val;
+            el.textContent = val;
+          } else {
+            el.innerHTML = val;
+          }
+        });
+
+        document.querySelectorAll("[data-alt-key]").forEach(img => {
+          const altKey = img.getAttribute("data-alt-key");
+          if (!altKey) return;
+          const altVal = T[altKey];
+          if (typeof altVal !== "undefined") img.alt = altVal;
+        });
+
+        document.documentElement.lang = lang;
+
+        const langBtn = document.getElementById("langBtn");
+        if (langBtn) {
+          const label = T["languageButtonLabel"] || "Language";
+          langBtn.textContent = label;
+          langBtn.classList.add("dropdown-toggle");
+        }
+
+        try { localStorage.setItem("site_language", lang); } catch (e) { }
+      }
+
+      // Delegate click for language options (works even if dropdown created before DOMContentLoaded)
+      document.addEventListener("click", function (e) {
+        const option = e.target.closest(".lang-option");
+        if (!option) return;
+        e.preventDefault();
+        const lang = option.getAttribute("data-lang") || "en";
+        if (typeof window.setLanguage === "function") {
+          try { window.setLanguage(lang); return; } catch (err) { console.warn("setLanguage failed, falling back"); }
+        }
+        applyLanguage(lang);
+      });
+
+      // On load: apply saved language (prefers existing global setLanguage)
+      document.addEventListener("DOMContentLoaded", function () {
+        const saved = localStorage.getItem("site_language") || "en";
+        if (typeof window.setLanguage === "function") {
+          try { window.setLanguage(saved); return; } catch (err) { console.warn("window.setLanguage threw", err); }
+        }
+        applyLanguage(saved);
+
+        // highlight active nav link
+        (function highlightActive() {
+          const path = (location.pathname || "").split("/").pop() || "index.html";
+          document.querySelectorAll(".navbar-nav .nav-link").forEach(link => {
+            try {
+              const href = link.getAttribute("href") || "";
+              if ((href && href.split("/").pop() === path) || (href === "/" && (path === "index.html" || path === ""))) {
+                link.classList.add("active");
+              } else {
+                link.classList.remove("active");
+              }
+            } catch (e) { }
+          });
+        })();
+      });
+
+      // expose applyLanguage
+      window.applyLanguage = applyLanguage;
+    })();
+  </script>
+</body>
+
+</html>
