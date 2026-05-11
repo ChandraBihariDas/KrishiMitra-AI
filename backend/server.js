@@ -23,6 +23,7 @@ app.use('/api/user', userRouter);
 app.use('/api/farmers', profileRoute);
 app.use('/api/iot', iotRouter);  // New: Mount IoT routes
 
+
 app.get('/', (req, res) => {
   res.send("API WORKING - IoT Enabled");
 });

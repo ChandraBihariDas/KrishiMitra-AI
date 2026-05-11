@@ -400,9 +400,9 @@
           password: passwordInput.value
         };
 
-        // NOTE: Make sure your API at http://localhost:4000 accepts CORS from this origin and responds with JSON.
+        // NOTE: Make sure your API at https://krishimitra-ai-wpik.onrender.com accepts CORS from this origin and responds with JSON.
         // Using fetchWithTimeout to avoid indefinite blocking.
-        fetchWithTimeout('http://localhost:4000/api/user/register', {
+        fetchWithTimeout('https://krishimitra-ai-wpik.onrender.com/api/user/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
