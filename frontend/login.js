@@ -71,10 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       if (response.ok && (data === true || data.success === true)) {
-        // On success, optionally handle token if returned
-        // if (data.token) localStorage.setItem('token', data.token);
-        
-        // Redirect after a short delay to show the message
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('phone_no', data.phone_no);
+        localStorage.setItem('token', data.token);
+        console.log("USERNAME SAVED:", data.username);
         setTimeout(() => {
           window.location.href = 'next.html';
         }, 1000);

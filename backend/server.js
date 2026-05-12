@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
   res.send("API WORKING - IoT Enabled");
 });
 
+
 // Error handler (enhanced with more logging)
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', {

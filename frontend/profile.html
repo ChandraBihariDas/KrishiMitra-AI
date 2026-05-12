@@ -179,26 +179,47 @@
       showStatus('Saving to server...', false);
 
       let res;
-      if(file){
-        // send multipart/form-data so server multer/cloudinary middleware receives file
+
+      const profileId = idEl.value;
+
+      const url = profileId
+        ? `${BACKEND_URL}/${profileId}`
+        : BACKEND_URL;
+
+      const method = profileId ? 'PUT' : 'POST';
+
+      if (file) {
+
         const fd = new FormData();
-        fd.append('photo', file); // IMPORTANT: field name must match middleware
+
+        fd.append('photo', file);
+
         fd.append('name', baseObj.name);
         fd.append('phone', baseObj.phone);
         fd.append('location', baseObj.location);
         fd.append('size', baseObj.size);
         fd.append('crops', baseObj.crops);
         fd.append('bio', baseObj.bio);
-        fd.append('past', JSON.stringify(baseObj.past || [])); // send array as JSON string
+        fd.append('past', JSON.stringify(baseObj.past || []));
 
-        res = await fetch(BACKEND_URL, { method: 'POST', body: fd });
-      } else {
-        // send JSON (no file)
-        res = await fetch(BACKEND_URL, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ ...baseObj, photo: '' })
+        res = await fetch(url, {
+          method,
+          body: fd
         });
+
+      } else {
+
+        res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ...baseObj,
+            photo: ''
+          })
+        });
+
       }
 
       if(!res.ok){
@@ -207,6 +228,11 @@
       }
 
       const data = await res.json().catch(()=>null);
+
+      if (data && data.data) {
+        idEl.value = data.data._id;
+      }
+
       showStatus('Profile saved successfully 👍', false);
       console.log('Saved response:', data);
     }catch(err){
@@ -222,6 +248,56 @@
   }
   function generateId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
   function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[c]); }
+</script>
+<script>
+  window.addEventListener("DOMContentLoaded", async () => {
+
+  const phone = localStorage.getItem("phone_no");
+
+  if (!phone) return;
+
+  try {
+
+    const response = await fetch(
+      `http://localhost:4000/api/farmers/phone/${phone}`
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+
+      const profile = data.data;
+
+      // Autofill inputs
+      nameEl.value = profile.name || '';
+      phoneEl.value = profile.phone || '';
+      locationEl.value = profile.location || '';
+      sizeEl.value = profile.size || '';
+      cropsEl.value = profile.crops || '';
+      bioEl.value = profile.bio || '';
+
+      // Load image
+      if (profile.photo) {
+        avatar.src = profile.photo;
+      }
+
+      // Load past crops
+      if (profile.past) {
+        pastCrops = profile.past;
+        renderChips();
+      }
+
+      // Save profile id
+      idEl.value = profile._id;
+    }
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+});
 </script>
 </body>
 </html>

@@ -321,7 +321,7 @@
             <div class="profile-dropdown">
                 <button class="profile-btn" id="profileBtn" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user"></i>
-                    <span>John Farmer</span>
+                    <span id="username">User</span>
                 </button>
 
                 <div class="dropdown-menu" id="dropdownMenu" role="menu" aria-hidden="true">
@@ -593,6 +593,23 @@
         });
 
         setInterval(() => { console.log('Dashboard refreshed for live data.'); }, 300000); // 5 min
+
+        
+    </script>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const username = localStorage.getItem("username");
+
+            console.log("USERNAME FROM STORAGE:", username);
+
+            if (username) {
+                document.getElementById("username").innerText = username;
+            }
+
+        });
+
     </script>
     
 </body>

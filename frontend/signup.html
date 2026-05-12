@@ -422,10 +422,15 @@
           // Accept multiple common success shapes
           const success = (data && (data.success === true || data.success === 'true' || data === true || data === 'true' || (data.message && /success/i.test(data.message))));
           if (success) {
-            alert(getTranslations().successMessage);
-            // redirect to next.html (same folder)
-            window.location.href = 'next.html';
-          } else {
+
+              // Store user data
+              localStorage.setItem("username", payload.name);
+              localStorage.setItem("phone_no", payload.phone_no);
+
+              alert(getTranslations().successMessage);
+
+              window.location.href = 'next.html';
+          }else {
             // If API returns structured error message, show it; otherwise fallback
             const errMsg = (data && (data.message || data.error)) ? (data.message || data.error) : 'Registration failed';
             throw new Error(errMsg);
