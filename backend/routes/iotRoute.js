@@ -22,7 +22,10 @@ router.post('/data', async (req, res) => {
       soil_temp,
       soil_moisture,
       soil_ph,
-      soil_npk
+      soil_npk,
+      nitrogen,
+      phosphorus,
+      potassium
     });
     await newData.save();
 

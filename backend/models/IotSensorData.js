@@ -8,7 +8,10 @@ const iotSensorDataSchema = new mongoose.Schema({
   soil_temp: { type: Number, required: true },  // Soil temperature (°C)
   soil_moisture: { type: Number, required: true },  // Soil moisture (%)
   soil_ph: { type: Number, required: true },  // Soil pH (0-14)
-  soil_npk: { type: Number, required: true },  // NPK value (e.g., combined index)
+  soil_npk: { type: Number, required: true }, 
+  nitrogen: { type: Number, required: true },  // Nitrogen content (ppm)
+  phosphorus: { type: Number, required: true },  // Phosphorus content (ppm)
+  potassium: { type: Number, required: true },  // Potassium content (ppm)
   timestamp: { type: Date, default: Date.now }
 }, { timestamps: true });  // Adds createdAt/updatedAt
 

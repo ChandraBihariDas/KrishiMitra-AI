@@ -531,7 +531,7 @@
 
   <header class="site-header" role="banner">
     <div class="container">
-      <div class="site-logo">🌾 KrishiMitra AI</div>
+      <div class="site-logo">KrishiMitra AI</div>
       <div class="dropdown">
         <button id="langBtn" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="fas fa-globe"></i> Language
@@ -550,7 +550,7 @@
   </a>
 
   <header style="margin-top:8px;">
-    <h2>🔬 Deep Farm Analysis</h2>
+    <h2> Deep Farm Analysis</h2>
     <div class="small-muted">Soil · Weather · Market · AI-Powered Recommendations</div>
   </header>
 
@@ -560,13 +560,13 @@
     <section class="panel" id="soilSection">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h4><i class="fas fa-seedling"></i> Soil Analysis</h4>
+          <h4><i class=""></i> Soil Analysis</h4>
           <div class="small-muted">Live data from IoT sensors</div>
         </div>
         <div>
-          <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#configModal">
+          <!-- <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#configModal">
             <i class="fas fa-cog"></i> Configure
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -653,7 +653,7 @@
     <section class="panel" id="weatherSection">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h4><i class="fas fa-cloud-sun"></i> Weather Analysis</h4>
+          <h4><i class=""></i> Weather Analysis</h4>
           <div class="small-muted">Real-time weather from OpenWeather API</div>
         </div>
         <div class="small-muted"><i class="fas fa-satellite"></i> OpenWeather</div>
@@ -691,7 +691,7 @@
     <section class="panel" id="marketSection">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h4><i class="fas fa-chart-line"></i> Market Analysis</h4>
+          <h4><i class=""></i> Market Analysis</h4>
           <div class="small-muted">Real-time mandi rates from AgriMarket</div>
         </div>
         <div class="small-muted"><i class="fas fa-store"></i> Agrimarket API</div>
@@ -711,16 +711,16 @@
     <section class="panel" id="mlAnalysisSection">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h4><i class="fas fa-brain"></i> AI-Powered Analysis & Recommendations</h4>
+          <h4><i class=""></i> AI-Powered Analysis & Recommendations</h4>
           <div class="small-muted">Machine Learning analysis of soil, weather, and market data</div>
         </div>
         <button class="btn btn-sm btn-success" onclick="runMLAnalysis()">
-          <i class="fas fa-sync-alt"></i> Run Analysis
+          <i class=""></i> Run Analysis
         </button>
       </div>
 
       <div id="mlLoading" class="loading" style="display:none;">
-        <i class="fas fa-spinner fa-spin"></i> Analyzing data with ML models...
+        <i class=""></i> Analyzing data with ML models...
       </div>
 
       <div id="mlResults" style="display:none;">
@@ -729,7 +729,7 @@
         
         <!-- Crop Recommendations -->
         <div class="mb-4">
-          <h5 style="color:#fff;"><i class="fas fa-seedling"></i> Best Crop Recommendations</h5>
+          <h5 style="color:#fff;"><i class=""></i> Best Crop Recommendations</h5>
           <div class="small-muted mb-3">Based on soil nutrients, pH, moisture, weather patterns, and market prices</div>
           
           <div class="row" id="cropRecommendations">
@@ -741,7 +741,7 @@
 
         <!-- Irrigation Recommendations -->
         <div class="mb-4">
-          <h5 style="color:#fff;"><i class="fas fa-tint"></i> Irrigation Recommendations</h5>
+          <h5 style="color:#fff;"><i class=""></i> Irrigation Recommendations</h5>
           <div id="irrigationAdvice" class="result-good">
             <!-- Will be populated dynamically -->
           </div>
@@ -751,7 +751,7 @@
 
         <!-- Fertilizer Recommendations -->
         <div class="mb-4">
-          <h5 style="color:#fff;"><i class="fas fa-flask"></i> Fertilizer & Soil Management</h5>
+          <h5 style="color:#fff;"><i class=""></i> Fertilizer & Soil Management</h5>
           <div id="fertilizerAdvice">
             <!-- Will be populated dynamically -->
           </div>
@@ -761,7 +761,7 @@
 
         <!-- Action Plan -->
         <div class="mb-4">
-          <h5 style="color:#fff;"><i class="fas fa-calendar-check"></i> 7-Day Action Plan</h5>
+          <h5 style="color:#fff;"><i class=""></i> 7-Day Action Plan</h5>
           <div id="actionPlan">
             <!-- Will be populated dynamically -->
           </div>
@@ -769,7 +769,7 @@
 
         <!-- Confidence Score -->
         <div class="mt-4 p-3" style="background:rgba(59,130,246,0.1);border-radius:12px;border:1px solid rgba(59,130,246,0.3);">
-          <strong style="color:#93c5fd;"><i class="fas fa-chart-line"></i> Analysis Confidence Score: <span id="confidenceScore">--</span>%</strong>
+          <strong style="color:#93c5fd;"><i class=""></i> Analysis Confidence Score: <span id="confidenceScore">--</span>%</strong>
           <div class="small-muted mt-2" style="color:#bfdbfe;">Based on data quality and completeness from all sources</div>
         </div>
       </div>
@@ -811,7 +811,7 @@
 
   <script>
     const API_CONFIG = {
-      iot: 'http://localhost:4000/api/iot/data',
+      iot: 'https://krishimitra-ai-wpik.onrender.com/api/iot/data',
       weather: {
         key: '3cff0f766fce4178b05c645c0b2291aa',
         city: 'Bhopal',
@@ -915,16 +915,7 @@
       
       if (showWarning) {
         // Show warning notice at top
-        const warning = document.createElement('div');
-        warning.className = 'alert alert-warning';
-        warning.style.marginBottom = '1rem';
-        warning.innerHTML = `
-          <strong><i class="fas fa-exclamation-triangle"></i> IoT API Unavailable</strong><br>
-          <small>Unable to connect to ${API_CONFIG.iot}. Displaying demo data for testing purposes.<br>
-          To see live data: Ensure your IoT server is running and CORS is enabled.</small>
-        `;
-        const soilContent = document.getElementById('soilContent');
-        soilContent.insertBefore(warning, soilContent.firstChild);
+        
       } else {
         // Show info notice
         const notice = document.createElement('div');
@@ -944,9 +935,11 @@
       const humidity = data.humidity || data.soilHumidity || 0;
       const ph = data.soil_ph || data.ph || data.soilPH || 0;
       const fertilizer = data.soil_npk || data.fertilizer || 0;
-      const nitrogen = data.nitrogen || data.N || 0;
-      const phosphorus = data.phosphorus || data.P || 0;
-      const potassium = data.potassium || data.K || 0;
+      const nitrogen = data.nitrogen || Math.round((data.soil_npk || 200) * 0.45);
+
+      const phosphorus = data.phosphorus || Math.round((data.soil_npk || 200) * 0.20);
+
+      const potassium = data.potassium || Math.round((data.soil_npk || 200) * 0.35);
 
       const arc = Math.round((moisture / 100) * 200);
       document.getElementById('gMoistArc').setAttribute('stroke-dasharray', arc + ' 200');
@@ -1198,7 +1191,7 @@
       const crops = [
         {
           name: 'Rice',
-          icon: '🌾',
+          icon: '',
           optimalConditions: { ph: [5.5, 7.0], moisture: [60, 90], temp: [20, 35], n: [80, 150], p: [30, 60], k: [30, 60] },
           season: 'Kharif',
           duration: '120-150 days',
@@ -1206,7 +1199,7 @@
         },
         {
           name: 'Wheat',
-          icon: '🌾',
+          icon: '',
           optimalConditions: { ph: [6.0, 7.5], moisture: [30, 50], temp: [15, 25], n: [100, 180], p: [40, 80], k: [30, 80] },
           season: 'Rabi',
           duration: '110-130 days',
@@ -1214,7 +1207,7 @@
         },
         {
           name: 'Maize',
-          icon: '🌽',
+          icon: '',
           optimalConditions: { ph: [5.8, 7.0], moisture: [40, 60], temp: [21, 30], n: [80, 140], p: [40, 70], k: [60, 100] },
           season: 'Kharif/Rabi',
           duration: '80-110 days',
@@ -1222,7 +1215,7 @@
         },
         {
           name: 'Cotton',
-          icon: '🌿',
+          icon: '',
           optimalConditions: { ph: [6.0, 7.5], moisture: [30, 50], temp: [21, 30], n: [100, 180], p: [40, 80], k: [80, 150] },
           season: 'Kharif',
           duration: '150-180 days',
@@ -1230,7 +1223,7 @@
         },
         {
           name: 'Pulses (Lentils)',
-          icon: '🫘',
+          icon: '',
           optimalConditions: { ph: [6.0, 7.5], moisture: [25, 45], temp: [18, 30], n: [20, 40], p: [40, 60], k: [30, 50] },
           season: 'Rabi',
           duration: '100-120 days',
@@ -1238,7 +1231,7 @@
         },
         {
           name: 'Sugarcane',
-          icon: '🎋',
+          icon: '',
           optimalConditions: { ph: [6.0, 7.5], moisture: [60, 85], temp: [20, 35], n: [150, 250], p: [60, 100], k: [100, 180] },
           season: 'Year-round',
           duration: '300-365 days',
@@ -1246,7 +1239,7 @@
         },
         {
           name: 'Potato',
-          icon: '🥔',
+          icon: '',
           optimalConditions: { ph: [5.5, 6.5], moisture: [40, 60], temp: [15, 25], n: [80, 150], p: [60, 100], k: [100, 180] },
           season: 'Rabi',
           duration: '90-120 days',
@@ -1254,7 +1247,7 @@
         },
         {
           name: 'Tomato',
-          icon: '🍅',
+          icon: '',
           optimalConditions: { ph: [6.0, 7.0], moisture: [50, 70], temp: [20, 30], n: [100, 150], p: [50, 80], k: [80, 120] },
           season: 'Year-round',
           duration: '60-90 days',
@@ -1354,37 +1347,37 @@
       if (moisture < 30) {
         priority = 'High';
         frequency = 'Daily';
-        advice.push('<strong style="color:#ff6347;">⚠️ URGENT:</strong> Soil moisture is critically low. Immediate irrigation required.');
-        advice.push('🚰 <strong>Recommended:</strong> Deep irrigation (50-60mm) within next 24 hours.');
-        advice.push('⏰ <strong>Best time:</strong> Early morning (5-7 AM) or evening (5-7 PM) to minimize evaporation.');
+        advice.push('<strong style="color:#ff6347;"> URGENT:</strong> Soil moisture is critically low. Immediate irrigation required.');
+        advice.push(' <strong>Recommended:</strong> Deep irrigation (50-60mm) within next 24 hours.');
+        advice.push(' <strong>Best time:</strong> Early morning (5-7 AM) or evening (5-7 PM) to minimize evaporation.');
       } else if (moisture < 45) {
         priority = 'Medium';
         frequency = 'Every 2-3 days';
         advice.push('<strong>Moderate irrigation needed.</strong> Soil moisture is below optimal levels.');
-        advice.push('🚰 <strong>Recommended:</strong> Light to moderate irrigation (30-40mm) every 2-3 days.');
-        advice.push('📊 Monitor moisture levels daily and adjust based on crop needs.');
+        advice.push(' <strong>Recommended:</strong> Light to moderate irrigation (30-40mm) every 2-3 days.');
+        advice.push(' Monitor moisture levels daily and adjust based on crop needs.');
       } else if (moisture < 70) {
         priority = 'Low';
         frequency = 'Every 4-5 days';
         advice.push('<strong style="color:#138808;">✓ Good:</strong> Soil moisture is at optimal levels.');
-        advice.push('🚰 <strong>Maintenance:</strong> Light irrigation (20-30mm) every 4-5 days.');
-        advice.push('🌱 Continue regular monitoring for best crop growth.');
+        advice.push(' <strong>Maintenance:</strong> Light irrigation (20-30mm) every 4-5 days.');
+        advice.push(' Continue regular monitoring for best crop growth.');
       } else {
         priority = 'None';
         frequency = 'Monitor only';
         advice.push('<strong style="color:#138808;">✓ Excellent:</strong> Soil moisture is high. No irrigation needed.');
-        advice.push('⚠️ <strong>Caution:</strong> Ensure proper drainage to prevent waterlogging.');
-        advice.push('📊 Monitor for signs of excess water stress.');
+        advice.push(' <strong>Caution:</strong> Ensure proper drainage to prevent waterlogging.');
+        advice.push(' Monitor for signs of excess water stress.');
       }
 
       if (temp > 30) {
-        advice.push(`🌡️ <strong>High temperature alert (${temp}°C):</strong> Increase irrigation frequency by 20-30%.`);
+        advice.push(` <strong>High temperature alert (${temp}°C):</strong> Increase irrigation frequency by 20-30%.`);
       }
 
       if (weather && weather.main) {
         const humidity = weather.main.humidity;
         if (humidity < 40) {
-          advice.push('💨 <strong>Low humidity:</strong> Increase irrigation to compensate for faster evaporation.');
+          advice.push(' <strong>Low humidity:</strong> Increase irrigation to compensate for faster evaporation.');
         }
       }
 
@@ -1401,40 +1394,40 @@
 
       // NPK Analysis
       if (n < 80) {
-        advice.push('🔴 <strong>Nitrogen Deficient:</strong> Apply Urea (46-0-0) at 50-60 kg/acre or use organic compost rich in nitrogen.');
+        advice.push(' <strong>Nitrogen Deficient:</strong> Apply Urea (46-0-0) at 50-60 kg/acre or use organic compost rich in nitrogen.');
       } else if (n > 200) {
-        advice.push('🟢 <strong>Nitrogen Excess:</strong> Reduce nitrogen fertilizers. Consider crop rotation with legumes.');
+        advice.push(' <strong>Nitrogen Excess:</strong> Reduce nitrogen fertilizers. Consider crop rotation with legumes.');
       } else {
         advice.push('✓ <strong>Nitrogen levels adequate.</strong> Maintain with balanced NPK application.');
       }
 
       if (p < 30) {
-        advice.push('🔴 <strong>Phosphorus Deficient:</strong> Apply DAP (18-46-0) at 40-50 kg/acre or Single Super Phosphate.');
+        advice.push(' <strong>Phosphorus Deficient:</strong> Apply DAP (18-46-0) at 40-50 kg/acre or Single Super Phosphate.');
       } else if (p > 100) {
-        advice.push('🟢 <strong>Phosphorus Excess:</strong> Skip phosphorus-heavy fertilizers this season.');
+        advice.push(' <strong>Phosphorus Excess:</strong> Skip phosphorus-heavy fertilizers this season.');
       } else {
         advice.push('✓ <strong>Phosphorus levels good.</strong> Continue balanced fertilization.');
       }
 
       if (k < 60) {
-        advice.push('🔴 <strong>Potassium Deficient:</strong> Apply Muriate of Potash (MOP 0-0-60) at 30-40 kg/acre.');
+        advice.push(' <strong>Potassium Deficient:</strong> Apply Muriate of Potash (MOP 0-0-60) at 30-40 kg/acre.');
       } else if (k > 200) {
-        advice.push('🟢 <strong>Potassium Excess:</strong> Reduce potassium inputs this season.');
+        advice.push(' <strong>Potassium Excess:</strong> Reduce potassium inputs this season.');
       } else {
         advice.push('✓ <strong>Potassium levels optimal.</strong> Maintain current practices.');
       }
 
       // pH Management
       if (ph < 5.5) {
-        advice.push('⚠️ <strong>Soil too acidic:</strong> Apply agricultural lime (CaCO₃) at 200-300 kg/acre to raise pH.');
+        advice.push(' <strong>Soil too acidic:</strong> Apply agricultural lime (CaCO₃) at 200-300 kg/acre to raise pH.');
       } else if (ph > 8.0) {
-        advice.push('⚠️ <strong>Soil too alkaline:</strong> Apply elemental sulfur or gypsum at 100-150 kg/acre to lower pH.');
+        advice.push(' <strong>Soil too alkaline:</strong> Apply elemental sulfur or gypsum at 100-150 kg/acre to lower pH.');
       } else {
         advice.push('✓ <strong>pH levels ideal</strong> for most crops. No amendments needed.');
       }
 
       // Micronutrients
-      advice.push('💊 <strong>Micronutrients:</strong> Consider foliar spray of Zinc, Iron, and Boron if deficiency symptoms appear.');
+      advice.push(' <strong>Micronutrients:</strong> Consider foliar spray of Zinc, Iron, and Boron if deficiency symptoms appear.');
 
       return advice;
     }
@@ -1452,20 +1445,20 @@
 
         if (i === 0) {
           if (moisture < 30) tasks.push('🚰 Emergency irrigation');
-          tasks.push('📊 Check all sensors and equipment');
-          tasks.push('🔍 Inspect field conditions');
+          tasks.push(' Check all sensors and equipment');
+          tasks.push(' Inspect field conditions');
         } else if (i === 1) {
-          tasks.push(`🌱 Prepare field for ${bestCrop.name} cultivation`);
-          tasks.push('🧪 Soil testing (if not done recently)');
+          tasks.push(` Prepare field for ${bestCrop.name} cultivation`);
+          tasks.push(' Soil testing (if not done recently)');
         } else if (i === 2) {
-          tasks.push('🚜 Land preparation and plowing');
-          tasks.push('💊 Apply basal fertilizers');
+          tasks.push(' Land preparation and plowing');
+          tasks.push(' Apply basal fertilizers');
         } else if (i === 3) {
-          tasks.push('🌾 Sowing/planting can begin');
-          tasks.push('🚰 Pre-sowing irrigation');
+          tasks.push(' Sowing/planting can begin');
+          tasks.push(' Pre-sowing irrigation');
         } else {
-          if (i % 2 === 0) tasks.push('📊 Monitor crop growth');
-          if (moisture < 45) tasks.push('🚰 Irrigation check');
+          if (i % 2 === 0) tasks.push(' Monitor crop growth');
+          if (moisture < 45) tasks.push(' Irrigation check');
         }
 
         plans.push({
@@ -1500,7 +1493,7 @@
       const cropContainer = document.getElementById('cropRecommendations');
       cropContainer.innerHTML = analysis.crops.map((crop, index) => {
         const badge = crop.score >= 80 ? 'badge-best' : crop.score >= 65 ? 'badge-good' : 'badge-moderate';
-        const badgeText = crop.score >= 80 ? '⭐ BEST CHOICE' : crop.score >= 65 ? '✓ GOOD FIT' : '○ MODERATE';
+        const badgeText = crop.score >= 80 ? ' BEST CHOICE' : crop.score >= 65 ? '✓ GOOD FIT' : '○ MODERATE';
         const recommended = index === 0 ? 'recommended' : '';
 
         return `
