@@ -1,760 +1,358 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AgriStack Crop Yield Predictor — Robust AutoFill</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crop Yield Prediction</title>
+
   <style>
-    :root {
-      --bg-primary: #04151f;
-      --bg-secondary: #0a0e1a;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --card-glow: rgba(0, 208, 132, 0.1);
-      --accent: #00d084;
-      --accent-hover: #00a86b;
-      --text-primary: #e8fff6;
-      --text-muted: #8fbfaf;
-      --border-light: rgba(255, 255, 255, 0.08);
-      --error: #ff4757;
-      --success: #00a86b;
-    }
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
     }
-    html, body {
-      height: 100%;
-      overflow-x: hidden;
-    }
+
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-      color: var(--text-primary);
-      padding: 24px;
-      position: relative;
+      background: #f4f7f4;
+      color: #222;
+      padding: 20px;
     }
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 20% 80%, rgba(0, 208, 132, 0.1) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 20%, rgba(0, 153, 255, 0.1) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: -1;
-      animation: bgShift 15s ease-in-out infinite;
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
-    @keyframes bgShift {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.05); }
-    }
-    .card {
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 32px;
-      max-width: 980px;
-      margin: 0 auto;
-      border: 1px solid var(--border-light);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-      animation: cardEntrance 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      position: relative;
-      overflow: hidden;
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, var(--card-glow), transparent);
-      transition: left 0.5s;
-    }
-    .card:hover::before {
-      left: 100%;
-    }
-    @keyframes cardEntrance {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-    h2 {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 24px;
-      background: linear-gradient(135deg, var(--accent), #00ff9d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: titleGlow 2s ease-in-out infinite alternate;
-    }
-    @keyframes titleGlow {
-      from { filter: drop-shadow(0 0 5px var(--accent)); }
-      to { filter: drop-shadow(0 0 20px var(--accent)); }
-    }
-    .input-group {
+
+    h1 {
       margin-bottom: 20px;
-      position: relative;
-      animation: fadeInUp 0.6s ease-out forwards;
-      opacity: 0;
-      transform: translateY(20px);
+      color: #2f7d32;
+      font-size: 28px;
     }
-    .input-group:nth-child(1) { animation-delay: 0.1s; }
-    .input-group:nth-child(2) { animation-delay: 0.2s; }
-    .input-group:nth-child(3) { animation-delay: 0.3s; }
-    .input-group:nth-child(4) { animation-delay: 0.4s; }
-    .input-group:nth-child(5) { animation-delay: 0.5s; }
-    .input-group:nth-child(6) { animation-delay: 0.6s; }
-    .input-group:nth-child(7) { animation-delay: 0.7s; }
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+
+    .field {
+      margin-bottom: 18px;
     }
+
     label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--text-primary);
-      transition: color 0.3s ease;
+      margin-bottom: 6px;
+      font-weight: bold;
     }
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .input-wrapper input {
-      flex: 1;
-      padding-right: 50px;
-    }
-    .mic-btn {
-      position: absolute;
-      right: 10px;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 18px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      padding: 8px;
-      border-radius: 50%;
-    }
-    .mic-btn:hover {
-      color: var(--accent);
-      background: rgba(0, 208, 132, 0.1);
-      transform: scale(1.1);
-    }
-    .mic-btn.listening {
-      color: var(--accent);
-      animation: pulse-mic 1s infinite;
-    }
-    @keyframes pulse-mic {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    input, select {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border-light);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-primary);
-      font-size: 16px;
-      font-weight: 500;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      backdrop-filter: blur(10px);
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0, 208, 132, 0.1);
-      transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.06);
-    }
+
+    input,
     select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300d084' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 20px;
-      padding-right: 40px;
-    }
-    select:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-    input::placeholder {
-      color: var(--text-muted);
-      opacity: 0.7;
-    }
-    .row {
-      display: flex;
-      gap: 16px;
-      margin-top: 12px;
-    }
-    .row > div {
-      flex: 1;
-    }
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-    }
-    .btn {
-      flex: 1;
-      padding: 14px 20px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-      color: #fff;
-      box-shadow: 0 4px 15px rgba(0, 208, 132, 0.2);
-    }
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 208, 132, 0.3);
-    }
-    .btn:active {
-      transform: translateY(-1px);
-    }
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
       width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.5s;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
     }
-    .btn:hover::before {
-      left: 100%;
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
     }
-    .invalid {
-      border-color: var(--error) !important;
-      box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.1) !important;
-      animation: shake 0.5s ease-in-out;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-    .notif {
-      position: fixed;
-      top: 20px;
-      right: -300px;
-      background: linear-gradient(135deg, var(--success), #00d084);
-      padding: 16px 20px;
-      border-radius: 12px;
-      color: white;
-      font-weight: 700;
-      font-size: 14px;
-      box-shadow: 0 10px 30px rgba(0, 208, 132, 0.3);
-      z-index: 1000;
-      animation: slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      max-width: 300px;
-    }
-    @keyframes slideInRight {
-      to {
-        right: 20px;
-      }
-    }
-    .history {
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border-light);
-    }
-    .history h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: var(--text-primary);
-    }
-    .history-list {
+
+    .buttons {
       display: flex;
-      flex-direction: column;
       gap: 12px;
-      max-height: 300px;
-      overflow-y: auto;
+      margin-top: 20px;
     }
+
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .predict-btn {
+      background: #2f7d32;
+      color: white;
+    }
+
+    .reset-btn {
+      background: #ddd;
+    }
+
+    .history {
+      margin-top: 35px;
+    }
+
     .history-item {
-      background: rgba(255, 255, 255, 0.02);
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border-light);
-      transition: all 0.3s ease;
-      animation: listItemFade 0.5s ease-out forwards;
-      opacity: 0;
-      transform: translateX(-20px);
+      background: #f7f7f7;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #2f7d32;
     }
-    .history-item:nth-child(1) { animation-delay: 0.1s; }
-    .history-item:nth-child(2) { animation-delay: 0.2s; }
-    .history-item:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes listItemFade {
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+
+    .message {
+      margin-top: 15px;
+      color: #2f7d32;
+      font-weight: bold;
     }
-    .history-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      transform: translateX(5px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-    .history-item strong {
-      color: var(--accent);
-      font-weight: 700;
-    }
-    @media (max-width: 768px) {
+
+    @media (max-width: 700px) {
       .row {
+        grid-template-columns: 1fr;
+      }
+
+      .buttons {
         flex-direction: column;
-        gap: 12px;
-      }
-      .btn-group {
-        flex-direction: column;
-      }
-      body {
-        padding: 16px;
-      }
-      .card {
-        padding: 24px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🌾 AgriStack Crop Yield Predictor — Demo Version</h2>
 
-    <div class="input-group">
-      <label>Farmer ID (11 digits) *</label>
-      <div class="input-wrapper">
-        <input id="farmerId" maxlength="20" placeholder="Type or paste 11-digit ID (e.g. 12345678901)">
-        <button id="micBtn" class="mic-btn" title="Voice Input">🎤</button>
-      </div>
+  <div class="container">
+
+    <h1>Crop Yield Prediction</h1>
+
+    <div class="field">
+      <label>Farmer ID</label>
+      <input type="text" id="farmerId" placeholder="Enter 11 digit farmer ID">
     </div>
 
     <div class="row">
-      <div class="input-group">
-        <label>State *</label>
+      <div class="field">
+        <label>State</label>
         <select id="state"></select>
       </div>
-      <div class="input-group">
-        <label>District *</label>
-        <select id="district" disabled></select>
+
+      <div class="field">
+        <label>District</label>
+        <select id="district"></select>
       </div>
     </div>
 
     <div class="row">
-      <div class="input-group">
-        <label>Block *</label>
-        <select id="block" disabled></select>
+      <div class="field">
+        <label>Block</label>
+        <select id="block"></select>
       </div>
-      <div class="input-group">
-        <label>Village *</label>
-        <select id="village" disabled></select>
+
+      <div class="field">
+        <label>Village</label>
+        <select id="village"></select>
       </div>
     </div>
 
-    <div class="input-group">
-      <label>Farm Area (e.g., 2.5 hectares) *</label>
-      <input id="farmArea" type="number" step="0.1" min="0.1" placeholder="e.g., 2.5">
+    <div class="field">
+      <label>Farm Area</label>
+      <input type="number" id="farmArea" placeholder="Enter farm area">
     </div>
 
-    <div class="input-group">
-      <label>Past Crop *</label>
-      <input id="pastCrop" placeholder="e.g., Rice">
+    <div class="field">
+      <label>Previous Crop</label>
+      <input type="text" id="pastCrop" placeholder="Example: Wheat">
     </div>
 
-    <div class="input-group">
-      <label>Past Yield (q/ha) *</label>
-      <input id="pastYield" type="number" step="0.1" min="0" placeholder="e.g., 45.2">
+    <div class="field">
+      <label>Previous Yield</label>
+      <input type="number" id="pastYield" placeholder="Example: 42">
     </div>
 
-    <div class="btn-group">
-      <button id="predictBtn" class="btn">🔮 Generate Prediction</button>
-      <button id="resetBtn" class="btn" style="background: transparent; color: var(--text-primary); border: 1px solid var(--border-light);">🔄 Reset</button>
+    <div class="buttons">
+      <button class="predict-btn" id="predictBtn">Generate Prediction</button>
+      <button class="reset-btn" id="resetBtn">Reset</button>
     </div>
+
+    <div class="message" id="message"></div>
 
     <div class="history">
-      <h3>Recent Predictions</h3>
-      <div class="history-list" id="historyList">
-        <div style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">No predictions yet. Generate one to see history here.</div>
-      </div>
+      <h2>Recent Predictions</h2>
+      <div id="historyList"></div>
     </div>
+
   </div>
 
-<script>
-/* ---------------- VOICE RECOGNITION ---------------- */
-let recognition;
-const micBtn = document.getElementById('micBtn');
-const farmerInput = document.getElementById('farmerId');
+  <script>
 
-function initVoiceRecognition() {
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    const locationData = {
+      Bihar: {
+        Patna: {
+          Danapur: ["Danapur", "Bihta"],
+          Sampatchak: ["Sampatchak", "Phulwari"]
+        }
+      },
 
-    recognition.onstart = () => {
-      micBtn.classList.add('listening');
-      micBtn.title = 'Listening...';
-    };
-
-    recognition.onend = () => {
-      micBtn.classList.remove('listening');
-      micBtn.title = 'Voice Input';
-    };
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript.trim();
-      // Extract digits only for Farmer ID
-      const digits = transcript.replace(/\D/g, '');
-      if (digits.length >= 11) {
-        farmerInput.value = digits.substring(0, 11); // Take first 11 digits
-        onFarmerInput({}); // Trigger auto-fill
-        showNotif('Voice input processed: ' + digits.substring(0, 11));
-      } else {
-        farmerInput.value = digits;
-        showNotif('Voice input: ' + transcript + ' (Extracted digits: ' + digits + ')');
+      Punjab: {
+        Ludhiana: {
+          Jagraon: ["Jagraon", "Raikot"]
+        }
       }
     };
 
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      showNotif('Voice recognition error: ' + event.error);
-      micBtn.classList.remove('listening');
+
+    const farmerData = {
+      "12345678901": {
+        state: "Bihar",
+        district: "Patna",
+        block: "Danapur",
+        village: "Danapur",
+        farmArea: 3,
+        crop: "Wheat",
+        yield: 45
+      }
     };
-  } else {
-    micBtn.style.display = 'none';
-    console.warn('Speech recognition not supported');
-  }
-}
 
-micBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  if (recognition) {
-    recognition.start();
-  }
-});
 
-/* ---------------- DATA (same as before) ---------------- */
-const locationData = {
-  "Bihar": {
-    "Sitamarhi": {
-      "Bajpatti": ["Bajpatti", "Laukahi", "Parsauni"],
-      "Pupri": ["Pupri", "Dumra", "Bathnaha"],
-      "Riga": ["Riga", "Sonbarsa", "Nanpur"]
-    },
-    "Patna": {
-      "Patna Sadar": ["Patna City", "Kankarbagh", "Rajendra Nagar"],
-      "Danapur": ["Danapur", "Khagaul", "Bihta"],
-      "Sampatchak": ["Sampatchak", "Phulwari", "Maner"]
+    const stateSelect = document.getElementById("state");
+    const districtSelect = document.getElementById("district");
+    const blockSelect = document.getElementById("block");
+    const villageSelect = document.getElementById("village");
+
+
+    function loadStates() {
+      stateSelect.innerHTML = '<option value="">Select State</option>';
+
+      Object.keys(locationData).forEach(state => {
+        const option = document.createElement("option");
+        option.value = state;
+        option.textContent = state;
+        stateSelect.appendChild(option);
+      });
     }
-  },
-  "Odisha": {
-    "Mayurbhanj": {
-      "Baripada": ["Baripada Town", "Kusumbandh", "Jamada"],
-      "Rairangpur": ["Rairangpur", "Tiring", "Bisoi"],
-      "Karanjia": ["Karanjia", "Thakurmunda", "Bangriposi"]
-    },
-    "Balasore": {
-      "Balasore Sadar": ["Balasore", "Soro", "Simulia"],
-      "Jaleswar": ["Jaleswar", "Bhograi", "Basta"],
-      "Remuna": ["Remuna", "Nilagiri", "Oupada"]
-    }
-  },
-  "Punjab": {
-    "Ludhiana": {
-      "Ludhiana East": ["Model Town", "Civil Lines", "Sarabha Nagar"],
-      "Ludhiana West": ["Haibowal", "Tibba", "Dhandari"],
-      "Jagraon": ["Jagraon", "Sidhwan", "Raikot"]
-    },
-    "Amritsar": {
-      "Amritsar-I": ["Ram Bagh", "Chheharta", "Majitha"],
-      "Amritsar-II": ["Ajnala", "Rayya", "Attari"],
-      "Tarn Taran": ["Tarn Taran", "Patti", "Khadur Sahib"]
-    }
-  }
-};
 
-const farmerDB = {
-  "12345678901": {
-    name: "Rajesh Kumar Singh", state: "Bihar", district: "Sitamarhi", block: "Bajpatti",
-    village: "Parsauni", farmArea: 3.5, areaUnit: "acres", soilType: "loamy",
-    soilPH: 6.8, irrigation: "high", prevCrop: "Wheat", prevYield: 48
-  },
-  "98765432109": {
-    name: "Sunita Devi", state: "Odisha", district: "Mayurbhanj", block: "Baripada",
-    village: "Kusumbandh", farmArea: 2.2, areaUnit: "hectares", soilType: "red",
-    soilPH: 6.2, irrigation: "medium", prevCrop: "Paddy", prevYield: 38
-  },
-  "11122233344": {
-    name: "Gurpreet Singh", state: "Punjab", district: "Ludhiana", block: "Ludhiana East",
-    village: "Model Town", farmArea: 5.0, areaUnit: "acres", soilType: "alluvial",
-    soilPH: 7.2, irrigation: "high", prevCrop: "Cotton", prevYield: 52
-  }
-};
 
-/* ---------------- HELPERS ---------------- */
-function setOptions(selectElem, items, placeholder){
-  selectElem.innerHTML = '';
-  const p = document.createElement('option');
-  p.value = '';
-  p.textContent = placeholder || 'Select';
-  selectElem.appendChild(p);
-  items.forEach(it=>{
-    const opt = document.createElement('option');
-    opt.value = String(it).trim();
-    opt.textContent = String(it).trim();
-    selectElem.appendChild(opt);
-  });
-  selectElem.disabled = items.length === 0;
-}
+    stateSelect.addEventListener("change", () => {
+      districtSelect.innerHTML = '<option value="">Select District</option>';
 
-function ensureOption(selectElem, value){
-  // if option with this value (case-insensitive) doesn't exist, add it
-  if (!value && value !== 0) return;
-  const vtrim = String(value).trim();
-  for (const o of selectElem.options){
-    if (String(o.value).trim().toLowerCase() === vtrim.toLowerCase()) return;
-  }
-  const opt = document.createElement('option');
-  opt.value = vtrim;
-  opt.textContent = vtrim;
-  selectElem.appendChild(opt);
-}
+      const districts = Object.keys(locationData[stateSelect.value] || {});
 
-function findOptionValue(selectElem, desired){
-  if (desired === undefined || desired === null) return '';
-  desired = String(desired).trim().toLowerCase();
-  for (const o of selectElem.options){
-    if (String(o.value).trim().toLowerCase() === desired) return o.value;
-    if (String(o.text).trim().toLowerCase() === desired) return o.value;
-  }
-  return '';
-}
+      districts.forEach(district => {
+        const option = document.createElement("option");
+        option.value = district;
+        option.textContent = district;
+        districtSelect.appendChild(option);
+      });
+    });
 
-function showNotif(msg){
-  const n = document.createElement('div');
-  n.className='notif';
-  n.textContent=msg;
-  document.body.appendChild(n);
-  setTimeout(()=> {
-    n.style.right = '-300px';
-    setTimeout(()=>n.remove(), 400);
-  },2500);
-}
 
-/* ---------------- AUTO-FILL (even more robust) ---------------- */
-function autoFillFarmerData(farmerId){
-  farmerId = String(farmerId || '').trim();
-  console.log('[autoFill] Requested for ID:', farmerId);
+    districtSelect.addEventListener("change", () => {
+      blockSelect.innerHTML = '<option value="">Select Block</option>';
 
-  const idClean = farmerId.replace(/\D/g,''); // remove non-digits
-  if (idClean.length !== 11){
-    document.getElementById('farmerId').classList.add('invalid');
-    console.warn('[autoFill] ID after cleaning is not 11 digits:', idClean);
-    return;
-  }
-  document.getElementById('farmerId').classList.remove('invalid');
+      const blocks = Object.keys(
+        locationData[stateSelect.value][districtSelect.value] || {}
+      );
 
-  const f = farmerDB[idClean];
-  if (!f){
-    showNotif('Farmer ID not found in local DB');
-    console.warn('[autoFill] Not found in farmerDB:', idClean);
-    return;
-  }
+      blocks.forEach(block => {
+        const option = document.createElement("option");
+        option.value = block;
+        option.textContent = block;
+        blockSelect.appendChild(option);
+      });
+    });
 
-  // Animate auto-fill with sequential highlights
-  const fields = ['state', 'district', 'block', 'village', 'farmArea', 'pastCrop', 'pastYield'];
-  let index = 0;
-  const fillInterval = setInterval(() => {
-    if (index >= fields.length) {
-      clearInterval(fillInterval);
-      showNotif('Loaded data for ' + (f.name || 'Farmer'));
-      return;
-    }
-    const field = fields[index];
-    const elem = document.getElementById(field);
-    if (elem) {
-      elem.style.transition = 'all 0.3s ease';
-      elem.style.borderColor = 'var(--accent)';
-      elem.style.boxShadow = '0 0 0 3px rgba(0, 208, 132, 0.1)';
+
+    blockSelect.addEventListener("change", () => {
+      villageSelect.innerHTML = '<option value="">Select Village</option>';
+
+      const villages =
+        locationData[stateSelect.value][districtSelect.value][blockSelect.value] || [];
+
+      villages.forEach(village => {
+        const option = document.createElement("option");
+        option.value = village;
+        option.textContent = village;
+        villageSelect.appendChild(option);
+      });
+    });
+
+
+    document.getElementById("farmerId").addEventListener("input", function () {
+      const farmerId = this.value.trim();
+
+      if (farmerData[farmerId]) {
+        const data = farmerData[farmerId];
+
+        stateSelect.value = data.state;
+        stateSelect.dispatchEvent(new Event("change"));
+
+        districtSelect.value = data.district;
+        districtSelect.dispatchEvent(new Event("change"));
+
+        blockSelect.value = data.block;
+        blockSelect.dispatchEvent(new Event("change"));
+
+        villageSelect.value = data.village;
+
+        document.getElementById("farmArea").value = data.farmArea;
+        document.getElementById("pastCrop").value = data.crop;
+        document.getElementById("pastYield").value = data.yield;
+
+        showMessage("Farmer data loaded successfully");
+      }
+    });
+
+
+    document.getElementById("predictBtn").addEventListener("click", () => {
+
+      const crop = document.getElementById("pastCrop").value;
+      const area = document.getElementById("farmArea").value;
+
+      if (!crop || !area) {
+        showMessage("Please fill all required fields");
+        return;
+      }
+
+      const predictedYield = (Math.random() * 20 + 35).toFixed(1);
+
+      const item = document.createElement("div");
+      item.className = "history-item";
+
+      item.innerHTML = `
+        <strong>${crop}</strong><br>
+        Predicted Yield: ${predictedYield} q/ha
+      `;
+
+      document.getElementById("historyList").prepend(item);
+
+      showMessage("Prediction generated successfully");
+    });
+
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+
+      document.querySelectorAll("input").forEach(input => {
+        input.value = "";
+      });
+
+      districtSelect.innerHTML = "";
+      blockSelect.innerHTML = "";
+      villageSelect.innerHTML = "";
+
+      loadStates();
+
+      showMessage("Form reset completed");
+    });
+
+
+    function showMessage(text) {
+      const message = document.getElementById("message");
+      message.textContent = text;
+
       setTimeout(() => {
-        elem.style.borderColor = '';
-        elem.style.boxShadow = '';
-      }, 500);
+        message.textContent = "";
+      }, 3000);
     }
-    index++;
-  }, 200);
 
-  // State select — ensure contains our state value; if not, add it
-  const stateSel = document.getElementById('state');
-  if (stateSel.options.length <= 1){
-    setOptions(stateSel, Object.keys(locationData), 'Select State');
-  }
-  ensureOption(stateSel, f.state);
-  stateSel.value = findOptionValue(stateSel, f.state);
 
-  // Districts: build from locationData if possible; otherwise ensure option exists
-  const distSel = document.getElementById('district');
-  if (locationData[stateSel.value]){
-    setOptions(distSel, Object.keys(locationData[stateSel.value]), 'Select District');
-  } else {
-    ensureOption(distSel, f.district);
-  }
-  ensureOption(distSel, f.district);
-  distSel.value = findOptionValue(distSel, f.district);
+    loadStates();
 
-  // Blocks
-  const blockSel = document.getElementById('block');
-  if (locationData[stateSel.value] && locationData[stateSel.value][distSel.value]){
-    setOptions(blockSel, Object.keys(locationData[stateSel.value][distSel.value]), 'Select Block');
-  } else {
-    ensureOption(blockSel, f.block);
-  }
-  ensureOption(blockSel, f.block);
-  blockSel.value = findOptionValue(blockSel, f.block);
+  </script>
 
-  // Villages
-  const villageSel = document.getElementById('village');
-  if (locationData[stateSel.value] && locationData[stateSel.value][distSel.value] && locationData[stateSel.value][distSel.value][blockSel.value]){
-    setOptions(villageSel, locationData[stateSel.value][distSel.value][blockSel.value], 'Select Village');
-  } else {
-    ensureOption(villageSel, f.village);
-  }
-  ensureOption(villageSel, f.village);
-  villageSel.value = findOptionValue(villageSel, f.village);
-
-  // Other simple fields — here we only set farmArea as demonstration
-  document.getElementById('farmArea').value = (f.farmArea != null) ? f.farmArea : '';
-  document.getElementById('pastCrop').value = (f.prevCrop != null) ? f.prevCrop : '';
-  document.getElementById('pastYield').value = (f.prevYield != null) ? f.prevYield : '';
-
-  console.log('[autoFill] Completed for', idClean, 'filled:', {
-    state: stateSel.value,
-    district: distSel.value,
-    block: blockSel.value,
-    village: villageSel.value,
-    farmArea: document.getElementById('farmArea').value,
-    pastCrop: document.getElementById('pastCrop').value,
-    pastYield: document.getElementById('pastYield').value
-  });
-}
-
-/* ---------------- EVENTS ---------------- */
-function initStates(){
-  setOptions(document.getElementById('state'), Object.keys(locationData), 'Select State');
-}
-initStates();
-
-document.getElementById('state').addEventListener('change', function(){
-  const s = this.value;
-  const districts = s && locationData[s] ? Object.keys(locationData[s]) : [];
-  setOptions(document.getElementById('district'), districts, 'Select District');
-  setOptions(document.getElementById('block'), [], 'Select Block');
-  setOptions(document.getElementById('village'), [], 'Select Village');
-});
-
-document.getElementById('district').addEventListener('change', function(){
-  const s = document.getElementById('state').value;
-  const d = this.value;
-  const blocks = (s && d && locationData[s] && locationData[s][d]) ? Object.keys(locationData[s][d]) : [];
-  setOptions(document.getElementById('block'), blocks, 'Select Block');
-  setOptions(document.getElementById('village'), [], 'Select Village');
-});
-
-document.getElementById('block').addEventListener('change', function(){
-  const s = document.getElementById('state').value;
-  const d = document.getElementById('district').value;
-  const b = this.value;
-  const villages = (s && d && b && locationData[s] && locationData[s][d] && locationData[s][d][b]) ? locationData[s][d][b] : [];
-  setOptions(document.getElementById('village'), villages, 'Select Village');
-});
-
-/* Listen on input, paste and blur to catch typing, paste, and when user leaves the field */
-farmerInput.addEventListener('input', onFarmerInput);
-farmerInput.addEventListener('paste', onFarmerInput);
-farmerInput.addEventListener('blur', onFarmerInput);
-
-function onFarmerInput(e){
-  const raw = farmerInput.value || '';
-  const digits = raw.replace(/\D/g,''); // keep digits only
-  // debug log
-  console.log('[farmerId] raw:', raw, 'digits:', digits);
-  if (digits.length === 11) {
-    // autoplay auto-fill
-    autoFillFarmerData(digits);
-  } else {
-    // visual hint when not 11 digits
-    farmerInput.classList.toggle('invalid', digits.length > 0 && digits.length !== 11);
-  }
-}
-
-/* quick reset */
-document.getElementById('resetBtn').addEventListener('click', function(){
-  farmerInput.value = '';
-  farmerInput.classList.remove('invalid');
-  setOptions(document.getElementById('state'), Object.keys(locationData), 'Select State');
-  setOptions(document.getElementById('district'), [], 'Select District');
-  setOptions(document.getElementById('block'), [], 'Select Block');
-  setOptions(document.getElementById('village'), [], 'Select Village');
-  document.getElementById('farmArea').value = '';
-  document.getElementById('pastCrop').value = '';
-  document.getElementById('pastYield').value = '';
-  showNotif('Form reset');
-});
-
-/* predict button placeholder (no heavy logic here) */
-document.getElementById('predictBtn').addEventListener('click', function(){
-  const fid = (document.getElementById('farmerId').value || '').replace(/\D/g,'');
-  if (fid.length !== 11) { showNotif('Enter valid 11-digit Farmer ID'); return; }
-  showNotif('Prediction run simulated — check console for filled values.');
-  console.log('[predict] current form values:', {
-    farmerId: fid,
-    state: document.getElementById('state').value,
-    district: document.getElementById('district').value,
-    block: document.getElementById('block').value,
-    village: document.getElementById('village').value,
-    farmArea: document.getElementById('farmArea').value,
-    pastCrop: document.getElementById('pastCrop').value,
-    pastYield: document.getElementById('pastYield').value
-  });
-  // Simulate adding to history
-  const historyList = document.getElementById('historyList');
-  const newItem = document.createElement('div');
-  newItem.className = 'history-item';
-  newItem.innerHTML = `<strong>${document.getElementById('state').value || 'Unknown'} - Yield: 45.2 q/ha (Past: ${document.getElementById('pastCrop').value || 'N/A'})</strong><br><small>${new Date().toLocaleDateString()}</small>`;
-  historyList.insertBefore(newItem, historyList.firstChild);
-  historyList.innerHTML = historyList.innerHTML.replace('<div style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">No predictions yet. Generate one to see history here.</div>', '');
-});
-
-// Initialize voice recognition on load
-initVoiceRecognition();
-</script>
 </body>
 </html>
+
+

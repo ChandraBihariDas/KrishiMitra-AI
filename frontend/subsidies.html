@@ -1,452 +1,524 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Government Subsidies</title>
 
   <style>
-    /* Light agricultural theme */
-    :root{
-      --bg:#f6fbf6;
-      --card:#ffffff;
-      --muted:#6b7a6b;
-      --accent:#1f7a20;     /* deep leaf green */
-      --accent-2:#58b36b;   /* fresh green */
-      --gold:#d4a017;
-      --glass: rgba(31,122,32,0.06);
-      --shadow: 0 10px 25px rgba(33,44,33,0.06);
-      --radius:14px;
-      --glass-2: rgba(88,179,107,0.06);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
     }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background: linear-gradient(180deg, #f6fbf6 0%, #eef7ee 100%);
-      color: #233;
-      min-height:100vh;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    body {
+      background: #f3f5f3;
+      color: #222;
     }
 
-    header{
-      padding:18px 22px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      background: linear-gradient(90deg, rgba(88,179,107,0.12), rgba(31,122,32,0.06));
-      border-bottom: 1px solid rgba(33,44,33,0.04);
-      position:sticky;
-      top:0;
-      z-index:20;
+    header {
+      background: white;
+      padding: 15px 20px;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
-    .brand{
-      display:flex;gap:12px;align-items:center;
-    }
-    .logo{
-      width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),var(--accent));
-      display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem;box-shadow:var(--shadow);
-    }
-    .brand h1{font-size:1.15rem;margin:0}
-    .brand p{margin:0;font-size:0.85rem;color:var(--muted)}
-
-    .controls{display:flex;gap:12px;align-items:center}
-    .search{
-      display:flex;align-items:center;gap:8px;background:var(--card);padding:8px 12px;border-radius:999px;box-shadow:var(--shadow);
-      border:1px solid rgba(33,44,33,0.03)
-    }
-    .search input{border:none;outline:none;background:transparent;width:260px;font-size:0.95rem;color:#223}
-    .filter{background:var(--glass);padding:8px 12px;border-radius:999px;border:1px solid rgba(33,44,33,0.03);font-size:0.95rem;color:#233}
-    .cta{background:var(--accent);color:#fff;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(31,122,32,0.12);font-weight:700}
-
-    main{
-      max-width:1200px;margin:26px auto;padding:0 18px 60px;
-      display:grid;grid-template-columns: 1fr 360px; gap:20px;
+    .topbar {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
-    /* Left column: cards grid */
-    .grid{
-      display:grid;grid-template-columns: repeat(auto-fill,minmax(320px,1fr));gap:18px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .card{
-      background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
-      transition:transform .18s ease, box-shadow .18s ease;
-      position:relative;overflow:hidden;border:1px solid rgba(33,44,33,0.03);
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      background: #2f7d32;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
     }
-    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(33,44,33,0.06)}
 
-    .card h3{margin:0 0 8px 0;color:var(--accent);display:flex;align-items:center;gap:10px}
-    .card p{color:var(--muted);margin:6px 0 12px 0;line-height:1.45}
-    .benefits{background:var(--glass-2);padding:10px;border-radius:10px;margin-bottom:10px;color:#234;font-weight:600}
-    .eligibility{font-size:.92rem;color:var(--muted);margin-bottom:12px}
-    .actions{display:flex;gap:10px;align-items:center}
-    .apply{flex:1;padding:10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#fff;font-weight:700;cursor:pointer}
-    .learn{padding:10px;border-radius:10px;border:1px solid rgba(33,44,33,0.06);background:transparent;cursor:pointer;color:var(--accent)}
-
-    /* right column: profile & info */
-    aside{
-      display:flex;flex-direction:column;gap:16px;
-      position:sticky;top:84px;
+    .brand h1 {
+      color: #2f7d32;
+      font-size: 22px;
+      margin-bottom: 4px;
     }
-    .profile{
-      background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;border:1px solid rgba(33,44,33,0.03)
+
+    .brand p {
+      color: #666;
+      font-size: 14px;
     }
-    .avatar{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem}
-    .profile h4{margin:0;font-size:1rem}
-    .profile p{margin:0;color:var(--muted);font-size:0.9rem}
 
-    .quick-links{background:var(--card);padding:12px;border-radius:12px;box-shadow:var(--shadow);border:1px solid rgba(33,44,33,0.03)}
-    .quick-links h4{margin:0 0 8px 0;color:var(--accent)}
-    .link-list{display:flex;flex-direction:column;gap:8px}
-    .link-list a{display:block;padding:8px;border-radius:8px;text-decoration:none;color:var(--accent);border:1px dashed rgba(31,122,32,0.08);background:transparent;font-weight:600}
-
-    /* modal */
-    .modal-backdrop{position:fixed;inset:0;background:rgba(10,15,10,0.35);display:none;align-items:center;justify-content:center;z-index:60}
-    .modal{width:92%;max-width:680px;background:var(--card);border-radius:12px;padding:18px;box-shadow:0 30px 80px rgba(33,44,33,0.16)}
-    .modal h3{margin:0 0 8px 0}
-    .modal .meta{color:var(--muted);margin-bottom:12px}
-    .modal .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
-    .btn-outline{padding:10px 12px;border-radius:8px;border:1px solid rgba(33,44,33,0.08);background:transparent;cursor:pointer}
-    .btn-primary{padding:10px 14px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:white;font-weight:700;cursor:pointer}
-
-    /* chips */
-    .chip{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(31,122,32,0.08);color:var(--accent);font-weight:600;margin-right:8px;font-size:0.85rem}
-
-    @media(max-width:980px){
-      main{grid-template-columns:1fr;gap:14px;padding:14px}
-      aside{position:static;top:auto}
-      .search input{width:140px}
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
+
+    input,
+    select,
+    button {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      background: #2f7d32;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+    }
+
+    .scheme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card,
+    .sidebar-box {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card h3 {
+      color: #2f7d32;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      margin-bottom: 10px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .benefit {
+      background: #f3f7f3;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .apply-btn {
+      flex: 1;
+      background: #2f7d32;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .learn-btn {
+      flex: 1;
+      background: #eee;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .sidebar-box h3 {
+      margin-bottom: 15px;
+      color: #2f7d32;
+    }
+
+    .profile {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      background: #2f7d32;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .links a {
+      display: block;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: #2f7d32;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal {
+      background: white;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .modal h2 {
+      color: #2f7d32;
+      margin-bottom: 10px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    @media(max-width: 900px) {
+
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        width: 100%;
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+      }
+    }
+
   </style>
 </head>
 <body>
+
   <header>
-    <div class="brand">
-      <div class="logo">🌿</div>
-      <div>
-        <h1>KrishiMitra-AI — Government Subsidies</h1>
-        <p>Find schemes & apply — tailored for farmers and FPOs</p>
+
+    <div class="topbar">
+
+      <div class="brand">
+
+        <div class="logo">🌿</div>
+
+        <div>
+          <h1>KrishiMitra Subsidies</h1>
+          <p>Government schemes and support for farmers</p>
+        </div>
+
       </div>
+
+
+      <div class="controls">
+
+        <input type="text" id="searchBox" placeholder="Search schemes">
+
+        <select id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="income">Income</option>
+          <option value="digital">Digital</option>
+          <option value="infrastructure">Infrastructure</option>
+          <option value="sustainable">Sustainable</option>
+        </select>
+
+        <button id="applicationBtn">My Applications</button>
+
+      </div>
+
     </div>
 
-    <div class="controls">
-      <div class="search" role="search" aria-label="Search schemes">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden style="opacity:.6"><path d="M21 21l-4.35-4.35" stroke="#3b4" stroke-width="2" stroke-linecap="round"/></svg>
-        <input id="searchBox" placeholder="Search schemes, crops, eligibility...">
-      </div>
-
-      <select id="filter" class="filter" title="Filter by category">
-        <option value="all">All categories</option>
-        <option value="income">Income support</option>
-        <option value="infrastructure">Infrastructure</option>
-        <option value="digital">Digital</option>
-        <option value="sustainable">Sustainable</option>
-        <option value="fisheries">Fisheries</option>
-      </select>
-
-      <button class="cta" id="mySchemesBtn">My Applications</button>
-    </div>
   </header>
 
-  <main>
+
+  <div class="container">
+
     <div>
-      <!-- cards grid -->
-      <div class="grid" id="cardsGrid">
-        <!-- Card template populated by JS -->
-      </div>
+
+      <div class="scheme-grid" id="schemeGrid"></div>
+
     </div>
 
-    <aside>
-      <div class="profile" id="profileCard">
-        <div class="avatar" id="avatar">RP</div>
-        <div>
-          <h4 id="farmerName">Ramesh Patel</h4>
-          <p id="farmInfo">Green Acres · 8 acres · Tomatoes</p>
-          <div style="margin-top:6px"><span class="chip">Verified Farmer</span><span class="chip">FPO: No</span></div>
+
+    <div>
+
+      <div class="sidebar-box">
+
+        <h3>Farmer Profile</h3>
+
+        <div class="profile">
+
+          <div class="avatar" id="avatar">RM</div>
+
+          <div>
+            <strong id="farmerName">Raj Mani</strong><br>
+            <small id="farmInfo">8 acres · Potato Farming</small>
+          </div>
+
         </div>
+
       </div>
 
-      <div class="quick-links">
-        <h4>Important Links</h4>
-        <div class="link-list">
-          <a href="https://pmkisan.gov.in" target="_blank" rel="noreferrer">PM Kisan (official)</a>
-          <a href="https://nfdb.gov.in/welcome/PMMSY" target="_blank" rel="noreferrer">PM Matsya (official)</a>
-          <a href="https://agriinfra.dac.gov.in/" target="_blank" rel="noreferrer">Agri-Infra portal</a>
+
+      <div class="sidebar-box">
+
+        <h3>Important Links</h3>
+
+        <div class="links">
+          <a href="https://pmkisan.gov.in" target="_blank">PM Kisan Portal</a>
+          <a href="https://agriinfra.dac.gov.in" target="_blank">Agri Infra Portal</a>
+          <a href="https://nfdb.gov.in" target="_blank">PM Matsya Portal</a>
         </div>
+
       </div>
 
-      <div class="quick-links">
-        <h4>Tips</h4>
-        <div style="color:var(--muted);font-size:0.95rem">
-          <p>• Keep Aadhar & land proofs handy when applying.</p>
-          <p>• For best results, apply via official portal links (opens in current tab).</p>
-        </div>
-      </div>
-    </aside>
-  </main>
 
-  <!-- Modal -->
-  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal" role="document" aria-labelledby="modalTitle">
-      <h3 id="modalTitle">Apply for scheme</h3>
-      <div class="meta" id="modalMeta">Loading...</div>
-      <div id="modalBody" style="color:#243;line-height:1.45"></div>
-      <div class="modal-actions">
-        <button class="btn-outline" id="modalCancel">Cancel</button>
-        <button class="btn-primary" id="modalProceed">Proceed to Apply</button>
+      <div class="sidebar-box">
+
+        <h3>Tips</h3>
+
+        <p>Keep Aadhaar card, bank details and land documents ready before applying.</p>
+
       </div>
+
     </div>
+
   </div>
 
+
+  <div class="modal-bg" id="modalBg">
+
+    <div class="modal">
+
+      <h2 id="modalTitle">Scheme Details</h2>
+
+      <p id="modalText"></p>
+
+      <div class="modal-buttons">
+
+        <button id="closeModal">Close</button>
+
+        <button id="visitBtn">Visit Portal</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
   <script>
-    /* ======= Data: schemes and URLs (edit links as needed) ======= */
+
     const schemes = [
+
       {
-        id: 'pmkisan',
-        title: 'PM Kisan Samman Nidhi',
-        short: 'Direct income support for small & marginal farmers.',
-        benefits: '₹6,000/year transferred in three installments.',
-        eligibility: 'Small/marginal farmers, tenant farmers, sharecroppers.',
-        category: 'income',
-        url: 'http://services.india.gov.in/service/detail/pm-kisan-samman-nidhi' // official
+        id: 1,
+        title: "PM Kisan Samman Nidhi",
+        category: "income",
+        description: "Income support for small and marginal farmers.",
+        benefits: "₹6000 per year directly into bank account.",
+        eligibility: "Registered farmers",
+        link: "https://pmkisan.gov.in"
       },
+
       {
-        id: 'dhan-dhaanya',
-        title: 'PM Dhan Dhaanya Krishi Yojana',
-        short: 'Enhances agricultural productivity & sustainable practices.',
-        benefits: 'Integrated support for farming, irrigation, storage.',
-        eligibility: 'Farmers in selected districts.',
-        category: 'infrastructure',
-        url: 'https://pmddky.com/'
+        id: 2,
+        title: "Digital Agriculture Mission",
+        category: "digital",
+        description: "Digital tools and farming technology support.",
+        benefits: "Advisory services and smart farming apps.",
+        eligibility: "All farmers",
+        link: "https://agriwelfare.gov.in"
       },
+
       {
-        id: 'dalhan',
-        title: 'Dalhan Atmanirbharta Mission',
-        short: 'Boosts pulse production and self-reliance.',
-        benefits: 'Expands cultivation by 35 lakh hectares; financial support.',
-        eligibility: 'Pulse farmers across India.',
-        category: 'sustainable',
-        url: 'https://www.pib.gov.in/PressReleasePage.aspx?PRID=2177847'
+        id: 3,
+        title: "Agri Infrastructure Fund",
+        category: "infrastructure",
+        description: "Support for warehouses and storage facilities.",
+        benefits: "Loans up to ₹2 crore.",
+        eligibility: "FPOs and agri entrepreneurs",
+        link: "https://agriinfra.dac.gov.in"
       },
+
       {
-        id: 'digital-agri',
-        title: 'Digital Agriculture Mission 2025',
-        short: 'Provides digital tools for modern farming.',
-        benefits: 'Free advisory, pest alerts, precision apps.',
-        eligibility: 'All registered farmers and agri-businesses.',
-        category: 'digital',
-        url: 'https://agriwelfare.gov.in/en/DigiAgriDiv'
-      },
-      {
-        id: 'sadp',
-        title: 'Sustainable Agriculture Development Programme (SADP)',
-        short: 'Promotes eco-friendly farming practices.',
-        benefits: 'Up to 70% subsidy for organics; grants up to ₹25,000/acre.',
-        eligibility: 'Farmers shifting to organics/eco-methods.',
-        category: 'sustainable',
-        url: 'https://www.sadpnepal.org/'
-      },
-      {
-        id: 'agri-infra',
-        title: 'Agri-Infra Fund',
-        short: 'Supports agricultural infrastructure development.',
-        benefits: 'Low-interest loans up to ₹2 crore for storage/warehouses.',
-        eligibility: 'FPOs, cooperatives, entrepreneurs.',
-        category: 'infrastructure',
-        url: 'https://agriinfra.dac.gov.in/'
-      },
-      {
-        id: 'matsya',
-        title: 'PM Matsya Sampada Yojana',
-        short: 'Enhances fisheries and aquaculture.',
-        benefits: 'Up to ₹1.5 lakh/unit subsidy for tech/infrastructure.',
-        eligibility: 'Fishers and aquaculture entrepreneurs.',
-        category: 'fisheries',
-        url: 'https://nfdb.gov.in/welcome/'
-      },
-      {
-        id: 'fpo-support',
-        title: 'FPO Strengthening Support',
-        short: 'Empowers Farmer Producer Organizations.',
-        benefits: 'Grants up to ₹18 lakh/FPO for credit, tech, markets.',
-        eligibility: 'Recognized FPOs.',
-        category: 'infrastructure',
-        url: 'https://www.pib.gov.in/indexd.aspx'
+        id: 4,
+        title: "Organic Farming Support",
+        category: "sustainable",
+        description: "Encourages eco-friendly farming practices.",
+        benefits: "Subsidy on organic farming methods.",
+        eligibility: "Farmers shifting to organic farming",
+        link: "https://pgsindia-ncof.gov.in"
       }
     ];
 
-    /* ======= render cards ======= */
-    const grid = document.getElementById('cardsGrid');
-    function renderCards(list){
-      grid.innerHTML = '';
-      list.forEach(s => {
-        const card = document.createElement('article');
-        card.className = 'card';
+
+    const schemeGrid = document.getElementById("schemeGrid");
+
+
+    function renderSchemes(list) {
+
+      schemeGrid.innerHTML = "";
+
+
+      list.forEach(scheme => {
+
+        const card = document.createElement("div");
+        card.className = "card";
+
         card.innerHTML = `
-          <h3>${iconFor(s.category)} ${escapeHtml(s.title)}</h3>
-          <p>${escapeHtml(s.short)}</p>
-          <div class="benefits"><strong>Benefits:</strong> ${escapeHtml(s.benefits)}</div>
-          <div class="eligibility"><strong>Eligibility:</strong> ${escapeHtml(s.eligibility)}</div>
+
+          <h3>${scheme.title}</h3>
+
+          <p>${scheme.description}</p>
+
+          <div class="benefit">
+            <strong>Benefits:</strong><br>
+            ${scheme.benefits}
+          </div>
+
+          <p>
+            <strong>Eligibility:</strong><br>
+            ${scheme.eligibility}
+          </p>
+
           <div class="actions">
-            <button class="apply" data-id="${s.id}">Apply Now</button>
-            <button class="learn" data-id="${s.id}">Learn more</button>
+
+            <button class="apply-btn" onclick="openModal(${scheme.id})">
+              Apply
+            </button>
+
+            <button class="learn-btn">
+              Learn More
+            </button>
+
           </div>
         `;
-        grid.appendChild(card);
+
+        schemeGrid.appendChild(card);
       });
-      attachCardEvents();
     }
 
-    function iconFor(cat){
-      switch(cat){
-        case 'income': return '💰';
-        case 'infrastructure': return '🏗️';
-        case 'digital': return '📱';
-        case 'sustainable': return '🌱';
-        case 'fisheries': return '🐟';
-        default: return '🌾';
+
+    function filterSchemes() {
+
+      const searchValue = document.getElementById("searchBox").value.toLowerCase();
+
+      const category = document.getElementById("categoryFilter").value;
+
+
+      const filtered = schemes.filter(scheme => {
+
+        const matchesSearch = scheme.title.toLowerCase().includes(searchValue);
+
+        const matchesCategory = category === "all" || scheme.category === category;
+
+        return matchesSearch && matchesCategory;
+      });
+
+
+      renderSchemes(filtered);
+    }
+
+
+    document.getElementById("searchBox").addEventListener("input", filterSchemes);
+
+    document.getElementById("categoryFilter").addEventListener("change", filterSchemes);
+
+
+    const modalBg = document.getElementById("modalBg");
+
+    let activeLink = "";
+
+
+    function openModal(id) {
+
+      const scheme = schemes.find(item => item.id === id);
+
+      if(!scheme) {
+        return;
       }
-    }
 
-    /* simple escape to avoid injection if content is dynamic */
-    function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+      activeLink = scheme.link;
 
-    /* ======= search & filter ======= */
-    const searchBox = document.getElementById('searchBox');
-    const filter = document.getElementById('filter');
+      document.getElementById("modalTitle").textContent = scheme.title;
 
-    function applyFilters(){
-      const q = searchBox.value.trim().toLowerCase();
-      const cat = filter.value;
-      const filtered = schemes.filter(s => {
-        const matchQ = !q || (s.title + ' ' + s.short + ' ' + s.benefits + ' ' + s.eligibility).toLowerCase().includes(q);
-        const matchCat = cat === 'all' || s.category === cat;
-        return matchQ && matchCat;
-      });
-      renderCards(filtered);
-    }
-
-    searchBox.addEventListener('input', applyFilters);
-    filter.addEventListener('change', applyFilters);
-
-    /* ======= modal & redirect logic ======= */
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMeta = document.getElementById('modalMeta');
-    const modalBody = document.getElementById('modalBody');
-    const modalCancel = document.getElementById('modalCancel');
-    const modalProceed = document.getElementById('modalProceed');
-
-    let activeScheme = null;
-
-    function attachCardEvents(){
-      document.querySelectorAll('.apply').forEach(btn=>{
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.id;
-          openApplyModal(id);
-        });
-      });
-      document.querySelectorAll('.learn').forEach(btn=>{
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.id;
-          showLearn(id);
-        });
-      });
-    }
-
-    function openApplyModal(id){
-      const scheme = schemes.find(s => s.id === id);
-      if(!scheme) return alert('Scheme not found');
-      activeScheme = scheme;
-      modalTitle.textContent = `Apply — ${scheme.title}`;
-      modalMeta.textContent = scheme.benefits;
-      modalBody.innerHTML = `
-        <p><strong>Eligibility:</strong> ${escapeHtml(scheme.eligibility)}</p>
-        <p style="margin-top:8px;color:var(--muted);font-size:0.95rem">
-          You will be redirected to the official portal to complete the application. Please ensure you have your <strong>Aadhaar</strong>, land documents and bank details ready.
-        </p>
+      document.getElementById("modalText").innerHTML = `
+        <strong>Benefits:</strong> ${scheme.benefits}<br><br>
+        <strong>Eligibility:</strong> ${scheme.eligibility}
       `;
-      modalBackdrop.style.display = 'flex';
-      modalBackdrop.setAttribute('aria-hidden','false');
-      // focus btn for accessibility
-      modalProceed.focus();
+
+      modalBg.style.display = "flex";
     }
 
-    modalCancel.addEventListener('click', () => {
-      modalBackdrop.style.display = 'none';
-      modalBackdrop.setAttribute('aria-hidden','true');
-      activeScheme = null;
+
+    document.getElementById("closeModal").addEventListener("click", () => {
+
+      modalBg.style.display = "none";
     });
 
-    modalProceed.addEventListener('click', () => {
-      if(!activeScheme) return;
-      // redirect user to the official link for that scheme (current tab)
-      // Validate URL safe format
-      let url = activeScheme.url || '';
-      try {
-        // ensure protocol is present
-        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-        window.location.href = url;
-      } catch(e){
-        alert('Unable to open the scheme link. Please try visiting the official portal: ' + url);
+
+    document.getElementById("visitBtn").addEventListener("click", () => {
+
+      if(activeLink) {
+        window.open(activeLink, "_blank");
       }
     });
 
-    /* learn more opens a simple details modal (no redirect) */
-    function showLearn(id){
-      const scheme = schemes.find(s => s.id === id);
-      if(!scheme) return;
-      activeScheme = null;
-      modalTitle.textContent = scheme.title;
-      modalMeta.textContent = scheme.benefits;
-      modalBody.innerHTML = `
-        <p><strong>About:</strong> ${escapeHtml(scheme.short)}</p>
-        <p style="margin-top:8px"><strong>Eligibility:</strong> ${escapeHtml(scheme.eligibility)}</p>
-        <p style="margin-top:8px;color:var(--muted)">Click "Proceed to Apply" if you want to go to the official portal, or close to browse other schemes.</p>
-      `;
-      modalBackdrop.style.display = 'flex';
-      modalBackdrop.setAttribute('aria-hidden','false');
-      modalProceed.focus();
-      // ensure proceed will redirect to link for this scheme if used
-      activeScheme = scheme;
-    }
 
-    /* ======= small personalization examples (profile) ======= */
-    // sample farmer data; in a real app populate from API
-    const farmer = {
-      name: 'Raj mani',
-      farmName: 'Green Acres',
-      size: '8 acres',
-      primaryCrop: 'patato',
-      verified: true
-    };
+    window.addEventListener("click", event => {
 
-    function populateProfile(){
-      document.getElementById('farmerName').textContent = farmer.name;
-      document.getElementById('farmInfo').textContent = `${farmer.farmName} · ${farmer.size} · ${farmer.primaryCrop}`;
-      const avatar = document.getElementById('avatar');
-      const initials = farmer.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
-      avatar.textContent = initials;
-    }
-
-    /* ======= init ======= */
-    renderCards(schemes);
-    populateProfile();
-
-    // simple keyboard support to close modal with Escape
-    window.addEventListener('keydown', (ev) => {
-      if(ev.key === 'Escape' && modalBackdrop.style.display === 'flex'){
-        modalBackdrop.style.display = 'none';
-        modalBackdrop.setAttribute('aria-hidden','true');
-        activeScheme = null;
+      if(event.target === modalBg) {
+        modalBg.style.display = "none";
       }
     });
+
+
+    renderSchemes(schemes);
 
   </script>
+
 </body>
 </html>

@@ -1,693 +1,404 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>FarmPro AI — Soil Analysis & Recommendations</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soil Analysis</title>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<!-- jsPDF for PDF export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-  :root{
-    --green:#2FA84F;
-    --muted:#6b6b6b;
-    --bg:#f4f7f5;
-    --card:#ffffff;
-    --radius:12px;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:Inter, "Poppins", system-ui, Arial;
-    background:var(--bg);
-    color:#1e1e1e;
-  }
+  <style>
 
-  header{
-    background:var(--card);
-    padding:14px 20px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    border-bottom:1px solid #e8e8e8;
-  }
-  .logo{color:var(--green); font-weight:700; font-size:20px}
-  nav a{margin-left:18px; text-decoration:none; color:var(--muted); font-weight:600}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
 
-  .wrap{padding:18px; max-width:1200px; margin:0 auto;}
+    body {
+      background: #f3f5f3;
+      color: #222;
+      padding: 20px;
+    }
 
-  h1{margin:18px 0 6px; font-size:28px}
-  p.lead{color:var(--muted); margin-top:0}
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
 
-  /* grid */
-  .grid{
-    display:grid;
-    grid-template-columns: 1fr 1.25fr 0.9fr;
-    gap:20px;
-    margin-top:18px;
-  }
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
 
-  .card{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:18px;
-    box-shadow:0 6px 18px rgba(20,20,20,0.04);
-  }
+    .header h1 {
+      color: #2f7d32;
+      margin-bottom: 5px;
+    }
 
-  /* Upload box */
-  .upload{
-    border:2px dashed var(--green);
-    border-radius:10px;
-    min-height:220px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    text-align:center;
-    color:var(--muted);
-    cursor:pointer;
-  }
-  .upload.dragover{background:#eefff0}
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr 320px;
+      gap: 20px;
+    }
 
-  .buttons{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap}
-  button{background:var(--green); color:white; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:700}
-  .btn-ghost{background:#f0f0f0; color:#333}
-  .btn-small{padding:8px 10px; font-size:14px}
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
 
-  /* center column */
-  .preview{
-    width:100%;
-    background:#fafafa;
-    border-radius:10px;
-    overflow:hidden;
-    position:relative;
-  }
-  .preview img{width:100%; display:block; height:300px; object-fit:cover; border-bottom:1px solid #f0f0f0}
-  .analysis-row{display:flex; gap:14px; margin-top:14px; flex-wrap:wrap}
-  .chart-card{flex:1; min-width:160px; background:#fff; border-radius:8px; padding:12px; box-shadow:none}
+    .card h2 {
+      margin-bottom: 18px;
+      color: #2f7d32;
+    }
 
-  .list{margin-top:12px}
-  .list li{margin:8px 0; font-weight:600}
-  .muted{color:var(--muted)}
-  .small{font-size:13px; color:var(--muted)}
+    .upload-box {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      background: #fafafa;
+      margin-bottom: 15px;
+    }
 
-  /* pest/soil library */
-  .pest-item{display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid #f0f0f0; cursor:pointer}
-  .pest-item img{width:70px; height:60px; object-fit:cover; border-radius:8px}
+    input,
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
 
-  /* responsive */
-  @media(max-width:1024px){
-    .grid{grid-template-columns:1fr 1.25fr;}
-    .grid > :nth-child(3){grid-column:1/-1}
-  }
-  @media(max-width:720px){
-    .grid{grid-template-columns:1fr; gap:14px;}
-    header{padding:10px}
-    h1{font-size:20px}
-    .preview img{height:220px}
-    .analysis-row{flex-direction:column}
-  }
+    button {
+      background: #2f7d32;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
 
-  input[type="text"], input[type="file"]{font-size:14px}
-  input.search{width:100%; padding:10px; border-radius:8px; border:1px solid #eee; margin-bottom:10px}
-  .tag{display:inline-block; background:#f1f1f1; padding:6px 10px; border-radius:8px; margin-right:8px; margin-bottom:8px; font-weight:700}
+    .secondary-btn {
+      background: #ddd;
+      color: #222;
+    }
 
-  .legend{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-  .legend .item{display:flex; gap:8px; align-items:center; font-size:13px}
-  .color-dot{width:12px; height:12px; border-radius:50%}
-  .compare-block{
-    background:white;
-    margin-top:25px;
-    padding:15px;
-    border-radius:10px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.08);
-  }
-  .compare-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    cursor:pointer;
-  }
-  .compare-content{
-    margin-top:15px;
-  }
-  .hidden{
-    display:none;
-  }
-  .delete-btn{
-    background:#ff4d4d;
-    padding:6px 10px;
-    border-radius:6px;
-    color:white;
-    cursor:pointer;
-  }
-  .toggle-btn{
-    background:#ddd;
-    padding:6px 10px;
-    border-radius:6px;
-    cursor:pointer;
-    margin-right:10px;
-  }
+    .preview img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
 
-</style>
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .chart-box {
+      background: #f7f7f7;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    ul {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .soil-item {
+      background: #f7f7f7;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .soil-item strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    @media(max-width: 950px) {
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .charts {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
 </head>
 <body>
 
-<header>
-  <div style="display:flex;align-items:center;gap:12px">
-    <div class="logo">FarmPro AI</div>
-    <nav>
-      <a href="test.html">Home</a>
-      <a href="login.html" onclick="alert('Please login first to access the dashboard!')">Dashboard</a>
-      <a href="#">Reports</a>
-      <a href="contact.html">Help</a>
-    </nav>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <button class="btn-ghost" id="langEn">English</button>
-    <button id="langHi">हिन्दी</button>
-  </div>
-</header>
+  <div class="container">
 
-<div class="wrap">
-  <h1>Soil Analysis & Recommendations</h1>
-  <p class="lead">Upload soil test data (PDF/CSV/TXT) or images. Interactive charts show key nutrients — dynamically generated with Chart.js.</p>
-
-  <div class="grid">
-
-    <!-- Left column: Uploads -->
-    <div class="card">
-      <h3>Upload Soil Sample Data</h3>
-
-      <div id="dropzone" class="upload" tabindex="0">
-        <div style="font-size:28px">📤</div>
-        <div><strong>Drag & Drop soil test files</strong></div>
-        <div class="muted">or click to browse • PDF / CSV / TXT / JPG</div>
-        <input id="fileInput" type="file" accept=".pdf,.csv,.txt,image/*" multiple style="display:none">
-      </div>
-
-      <div class="buttons">
-        <label class="file-label btn-small">
-          📁 <input id="fakeDataInput" type="file" accept=".csv,.txt" style="display:none"> Upload Data
-        </label>
-
-        <button id="analyzeBtn" class="btn-small">Analyze Data</button>
-        <button id="clearBtn" class="btn-small btn-ghost">Reset</button>
-      </div>
-
-      <div style="margin-top:14px; font-size:13px" class="muted">
-        Supported formats: PDF, CSV, TXT, JPG. For demo, press Analyze to populate charts.
-      </div>
+    <div class="header">
+      <h1>Soil Analysis and Recommendations</h1>
+      <p>Analyze soil nutrients and get farming suggestions</p>
     </div>
 
-    <!-- Middle column: Analysis -->
-    <div class="card">
-      <h3>Analysis Results</h3>
 
-      <div class="preview" id="previewWrap">
-        <!-- Use a safe placeholder image -->
-        <img id="previewImg" src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1400&auto=format&fit=crop" alt="Soil Analysis Preview">
-      </div>
+    <div class="layout">
 
-      <div class="analysis-row">
-        <div class="chart-card">
-          <canvas id="donutChart" style="max-height:200px"></canvas>
-          <div class="small muted">Key Nutrients Overview (NPK distribution)</div>
+      <div>
+
+        <div class="card">
+
+          <h2>Upload Soil Data</h2>
+
+          <div class="upload-box">
+            <p>Select image or soil report file</p>
+            <input type="file" id="fileInput">
+          </div>
+
+          <button id="analyzeBtn">Analyze Soil</button>
+          <button class="secondary-btn" id="resetBtn">Reset</button>
+
         </div>
 
-        <div class="chart-card">
-          <canvas id="barChart" style="max-height:200px"></canvas>
-          <div class="small muted">Micronutrient Levels</div>
-        </div>
       </div>
 
-      <div style="margin-top:14px;">
-        <h4>Personalized Recommendations</h4>
-        <ul id="recommendations" class="list">
-          <li>Upload and press Analyze to generate recommendations.</li>
-        </ul>
 
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-          <button id="downloadBtn">📄 Download Report (PDF)</button>
-          <button id="speakBtn" class="btn-ghost">🔊 Listen (Hindi)</button>
+      <div>
+
+        <div class="card">
+
+          <h2>Analysis Result</h2>
+
+          <div class="preview">
+            <img id="previewImage" src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop">
+          </div>
+
+
+          <div class="charts">
+
+            <div class="chart-box">
+              <canvas id="npkChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+              <canvas id="microChart"></canvas>
+            </div>
+
+          </div>
+
+
+          <div style="margin-top:20px">
+
+            <h2>Recommendations</h2>
+
+            <ul id="recommendations">
+              <li>Click analyze to generate recommendations.</li>
+            </ul>
+
+          </div>
+
         </div>
+
       </div>
 
-      <!-- Comparison area will be injected here -->
-      <div id="comparisonAreaContainer"></div>
+
+      <div>
+
+        <div class="card">
+
+          <h2>Soil Types</h2>
+
+          <div class="soil-item" data-soil="Clay Soil">
+            <strong>Clay Soil</strong>
+            Good water retention and fertility.
+          </div>
+
+          <div class="soil-item" data-soil="Sandy Soil">
+            <strong>Sandy Soil</strong>
+            Fast drainage and low nutrient retention.
+          </div>
+
+          <div class="soil-item" data-soil="Silt Soil">
+            <strong>Silt Soil</strong>
+            Fertile soil with smooth texture.
+          </div>
+
+          <div class="soil-item" data-soil="Peat Soil">
+            <strong>Peat Soil</strong>
+            High organic matter and moisture.
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Right column: Soil Library -->
-    <div class="card">
-      <h3>Soil Type & Characteristics</h3>
-      <input id="search" class="search" placeholder="Search soil type or property">
-
-      <!-- Real Unsplash images for soil types -->
-      <div id="soilList">
-        <div class="pest-item" data-name="Clay Loam" data-desc="Good water retention, slow drainage" data-rec="Add organic matter; deep-till to improve aeration">
-          <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=687&auto=format&fit=crop" alt="">
-          <div>
-            <div style="font-weight:700">Clay Loam</div>
-            <div class="muted" style="font-size:13px">Drainage: moderate • Water retention: good</div>
-          </div>
-        </div>
-
-        <div class="pest-item" data-name="Sandy Soil" data-desc="Fast drainage, low nutrient retention" data-rec="Incorporate compost; use mulch to conserve moisture">
-          <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=600&auto=format&fit=crop" alt="">
-          <div>
-            <div style="font-weight:700">Sandy Soil</div>
-            <div class="muted" style="font-size:13px">Drainage: fast • Retention: low</div>
-          </div>
-        </div>
-
-        <div class="pest-item" data-name="Peat Soil" data-desc="High organic matter, acidic" data-rec="Raise pH with lime; balance with compost">
-          <img src="https://images.unsplash.com/photo-1666204629747-dcf45c4290e1?q=80&w=1170&auto=format&fit=crop" alt="">
-          <div>
-            <div style="font-weight:700">Peat Soil</div>
-            <div class="muted" style="font-size:13px">Acidity: high • Organic matter: high</div>
-          </div>
-        </div>
-
-        <div class="pest-item" data-name="Silt Soil" data-desc="Fertile and retains moisture" data-rec="Maintain drainage; add gypsum if needed">
-          <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1170&auto=format&fit=crop" alt="">
-          <div>
-            <div style="font-weight:700">Silt Soil</div>
-            <div class="muted" style="font-size:13px">Texture: smooth • Fertility: good</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
   </div>
 
-</div>
 
-<script>
-  // Elements
-  const dropzone = document.getElementById('dropzone');
-  const fileInput = document.getElementById('fileInput');
-  const fakeDataInput = document.getElementById('fakeDataInput');
-  const previewImg = document.getElementById('previewImg');
-  const analyzeBtn = document.getElementById('analyzeBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const recommendationsEl = document.getElementById('recommendations');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const speakBtn = document.getElementById('speakBtn');
-  const soilList = document.getElementById('soilList');
-  const search = document.getElementById('search');
+  <script>
 
-  // Charts: donut & bar using Chart.js
-  let donutChart, barChart;
-  function createCharts(donutData, barLabels, barValues){
-    // destroy if exists
-    try { if(donutChart && donutChart.destroy) donutChart.destroy(); } catch(e){}
-    try { if(barChart && barChart.destroy) barChart.destroy(); } catch(e){}
+    const fileInput = document.getElementById("fileInput");
+    const previewImage = document.getElementById("previewImage");
 
-    const dtxEl = document.getElementById('donutChart');
-    if(dtxEl){
-      const dtx = dtxEl.getContext('2d');
-      donutChart = new Chart(dtx, {
-        type: 'doughnut',
+
+    let npkChart;
+    let microChart;
+
+
+    function createCharts(npkData, microData) {
+
+      if(npkChart) {
+        npkChart.destroy();
+      }
+
+      if(microChart) {
+        microChart.destroy();
+      }
+
+
+      const npkContext = document.getElementById("npkChart");
+
+      npkChart = new Chart(npkContext, {
+        type: "doughnut",
+
         data: {
-          labels: ['Nitrogen (N)','Phosphorus (P)','Potassium (K)'],
+          labels: ["Nitrogen", "Phosphorus", "Potassium"],
+
           datasets: [{
-            data: donutData,
-            backgroundColor: ['#2FA84F','#FF9F1C','#4C9AFF']
+            data: npkData
           }]
-        },
-        options: {
-          plugins: {
-            legend: {position:'bottom'},
-            tooltip: {enabled:true}
-          },
-          responsive:true,
-          maintainAspectRatio:false
         }
       });
-    }
 
-    const btxEl = document.getElementById('barChart');
-    if(btxEl){
-      const btx = btxEl.getContext('2d');
-      barChart = new Chart(btx, {
-        type: 'bar',
+
+      const microContext = document.getElementById("microChart");
+
+      microChart = new Chart(microContext, {
+        type: "bar",
+
         data: {
-          labels: barLabels,
+          labels: ["Iron", "Magnesium", "Zinc", "Copper"],
+
           datasets: [{
-            label: 'ppm',
-            data: barValues,
-            backgroundColor: '#2FA84F'
+            data: microData
           }]
         },
+
         options: {
-          plugins:{legend:{display:false}},
-          responsive:true,
-          maintainAspectRatio:false,
-          scales:{
-            y:{beginAtZero:true}
+          scales: {
+            y: {
+              beginAtZero: true
+            }
           }
         }
       });
     }
-  }
 
-  // Setup initial blank charts
-  createCharts([40,30,30], ['Iron','Magnesium','Zinc','Copper'], [12,6,3,2.8]);
 
-  // Drag & drop area
-  ['dragenter','dragover'].forEach(ev=>{
-    dropzone.addEventListener(ev, e=>{
-      e.preventDefault(); e.stopPropagation();
-      dropzone.classList.add('dragover');
-    });
-  });
-  ['dragleave','drop'].forEach(ev=>{
-    dropzone.addEventListener(ev, e=>{
-      e.preventDefault(); e.stopPropagation();
-      dropzone.classList.remove('dragover');
-    });
-  });
-  dropzone.addEventListener('click', ()=> fileInput.click());
-  dropzone.addEventListener('drop', (e)=>{
-    const f = e.dataTransfer.files && e.dataTransfer.files[0];
-    if(!f) return;
-    handleFileForPreview(f);
-  });
+    createCharts([40, 30, 30], [12, 7, 4, 2]);
 
-  fileInput.addEventListener('change', (e)=>{
-    const f = e.target.files && e.target.files[0];
-    if(!f) return;
-    handleFileForPreview(f);
-  });
 
-  fakeDataInput.addEventListener('change', (e)=>{
-    // For demo: when a data file is chosen, call analyze
-    analyze();
-  });
+    fileInput.addEventListener("change", event => {
 
-  function handleFileForPreview(file){
-    // if image, preview; if other file types, show placeholder preview
-    if(file.type && file.type.startsWith('image')){
-      previewImg.src = URL.createObjectURL(file);
-    } else {
-      // show a generic data-preview picture (fallback placeholder)
-      previewImg.src = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1400&auto=format&fit=crop';
-    }
-  }
+      const file = event.target.files[0];
 
-  // Analyze button: in production send file to backend -> model. Here we simulate analysis and update charts.
-  analyzeBtn.addEventListener('click', analyze);
+      if(file && file.type.startsWith("image")) {
 
-  function analyze(){
-    // Simulated analysis results - in real system, call backend and use returned numeric values.
-    // We'll randomize a little to mimic different analyses.
-    const N = Math.floor(20 + Math.random()*60); // nitrogen %
-    const P = Math.floor(10 + Math.random()*50);
-    const K = Math.max(5, 100 - N - P);
+        const reader = new FileReader();
 
-    // micronutrients ppm example
-    const iron = +(5 + Math.random()*20).toFixed(1);
-    const mag = +(3 + Math.random()*10).toFixed(1);
-    const zinc = +(0.5 + Math.random()*6).toFixed(1);
-    const copper = +(0.3 + Math.random()*3).toFixed(1);
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+        };
 
-    // Update charts
-    createCharts([N,P,K], ['Iron','Magnesium','Zinc','Copper'], [iron, mag, zinc, copper]);
-
-    // Populate recommendations based on thresholds (simple rule-based demo)
-    const recs = [];
-    if(N < 40) recs.push('Apply a nitrogen-rich fertilizer (example: 20-20-0) at recommended dosage.');
-    else recs.push('Nitrogen levels adequate; maintain with organic mulch.');
-
-    if(P < 20) recs.push('Add phosphate fertilizer (e.g., 10-20-10) or bone meal to improve P.');
-    else recs.push('Phosphorus levels okay.');
-
-    if(K < 30) recs.push('Apply potassium fertilizer (e.g., muriate of potash) as needed.');
-    else recs.push('Potassium adequate.');
-
-    // Micronutrient suggestions
-    if(iron < 8) recs.push('Iron is low — consider chelated iron foliar spray.');
-    if(zinc < 1) recs.push('Zinc is low — use zinc sulfate at recommended dose.');
-
-    // generic suggestions
-    recs.push('Add organic matter (compost) to improve soil structure and water retention.');
-    recs.push('Perform pH test; add lime if soil is too acidic.');
-
-    // Show recommendations (safe HTML)
-    recommendationsEl.innerHTML = recs.map(r => `<li>${escapeHtml(r)}</li>`).join('');
-  }
-
-  // Reset
-  clearBtn.addEventListener('click', ()=>{
-    previewImg.src = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1400&auto=format&fit=crop';
-    createCharts([40,30,30], ['Iron','Magnesium','Zinc','Copper'], [12,6,3,2.8]);
-    recommendationsEl.innerHTML = '<li>Upload and press Analyze to generate recommendations.</li>';
-  });
-
-  // Combined soil list click handler - shows details in recommendations and adds comparison block
-  soilList.addEventListener('click', (ev)=>{
-    const item = ev.target.closest('.pest-item');
-    if(!item) return;
-    const name = item.dataset.name || 'Soil';
-    const desc = item.dataset.desc || '';
-    const rec = item.dataset.rec || '';
-    const img = item.querySelector('img') ? item.querySelector('img').src : previewImg.src;
-
-    // Update recommendation list
-    recommendationsEl.innerHTML = `<li><strong>${escapeHtml(name)}:</strong> ${escapeHtml(desc)}</li><li>${escapeHtml(rec)}</li>`;
-    previewImg.src = img;
-
-    // NEW GRAPH DATA FOR COMPARISON MODE
-    const soilGraphData = {
-      "Clay Loam":[55,25,20],
-      "Sandy Soil":[20,15,10],
-      "Peat Soil":[40,20,12],
-      "Silt Soil":[35,28,20]
-    };
-
-    const micronutrients = {
-      "Clay Loam":[18,9,2.5,1.1],
-      "Sandy Soil":[4,3,1,0.5],
-      "Peat Soil":[14,7,2,1],
-      "Silt Soil":[10,6,2.3,1.2]
-    };
-
-    const npk = soilGraphData[name] || [35,30,35];
-    const micro = ["Iron","Magnesium","Zinc","Copper"];
-    const microVal = micronutrients[name] || [8,4,1.5,0.8];
-
-    addComparisonBlock(name, img, npk, micro, microVal);
-  });
-
-  // Search for soil types
-  search.addEventListener('input', ()=>{
-    const q = (search.value || '').toLowerCase();
-    Array.from(soilList.children).forEach(item=>{
-      const name = (item.dataset.name || '').toLowerCase();
-      const desc = (item.dataset.desc || '').toLowerCase();
-      item.style.display = (name.includes(q) || desc.includes(q)) ? 'flex' : 'none';
-    });
-  });
-
-  // Speak recommendations (Hindi short demo)
-  speakBtn.addEventListener('click', ()=>{
-    const text = Array.from(recommendationsEl.querySelectorAll('li')).map(li=>li.textContent).join('. ');
-    // simple Hindi demo translation: for production use a proper i18n/translation pipeline
-    const hi = 'सुझाव: ' + text;
-    try{
-      const utter = new SpeechSynthesisUtterance(hi);
-      utter.lang = 'hi-IN';
-      window.speechSynthesis.speak(utter);
-    }catch(e){
-      alert('SpeechSynthesis not supported in this browser');
-    }
-  });
-
-  // PDF export (jsPDF)
-  downloadBtn.addEventListener('click', async ()=>{
-    const { jsPDF } = window.jspdf || window.jspdf || {};
-    if(!jsPDF){
-      alert('PDF library not available');
-      return;
-    }
-    const doc = new jsPDF({ unit:'pt', format:'a4' });
-    doc.setFontSize(18);
-    doc.text('FarmPro AI — Soil Analysis Report', 40, 50);
-    doc.setFontSize(12);
-    doc.text('Generated: ' + new Date().toLocaleString(), 40, 70);
-
-    // Capture current chart canvases as images
-    try{
-      const donutCanvas = document.getElementById('donutChart');
-      const barCanvas = document.getElementById('barChart');
-      if(donutCanvas) {
-        const dImg = donutCanvas.toDataURL('image/png', 0.9);
-        doc.addImage(dImg, 'PNG', 40, 90, 240, 140);
-      }
-      if(barCanvas) {
-        const bImg = barCanvas.toDataURL('image/png', 0.9);
-        doc.addImage(bImg, 'PNG', 300, 90, 240, 140);
-      }
-    }catch(e){ console.warn('chart capture failed', e); }
-
-    // Add recommendations
-    doc.setFontSize(14);
-    doc.text('Recommendations:', 40, 250);
-    doc.setFontSize(12);
-    let y = 270;
-    Array.from(recommendationsEl.querySelectorAll('li')).forEach(li=>{
-      const lines = doc.splitTextToSize('- ' + li.textContent, 520);
-      doc.text(lines, 40, y);
-      y += lines.length * 14 + 6;
-    });
-
-    // Add preview image (scaled)
-    try{
-      const img = previewImg;
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth || img.width;
-      canvas.height = img.naturalHeight || img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-      if(y < 650) doc.addImage(dataUrl, 'JPEG', 40, y + 10, 500, 240);
-    }catch(e){ /* ignore */ }
-
-    doc.save('farmpro_soil_report.pdf');
-  });
-
-  // Ensure charts resize responsively
-  window.addEventListener('resize', ()=>{
-    try{ if(donutChart) donutChart.resize(); }catch(e){}
-    try{ if(barChart) barChart.resize(); }catch(e){}
-  });
-
-  // small initialization: if preview image loaded, nothing special
-  previewImg.addEventListener('load', ()=>{
-    // no-op for now
-  });
-
-  // Safe HTML escape
-  function escapeHtml(str){
-    if(!str) return '';
-    return String(str).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
-  }
-
-  /* -------------------------
-     Comparison Block helpers
-     ------------------------- */
-  function addComparisonBlock(soilName, imgURL, npk, micro, microVal) {
-    // create container if not present
-    let container = document.getElementById("comparisonArea");
-    if(!container){
-      const wrapper = document.getElementById("comparisonAreaContainer");
-      container = document.createElement("div");
-      container.id = "comparisonArea";
-      wrapper.appendChild(container);
-    }
-
-    const id = Date.now();
-
-    const block = document.createElement("div");
-    block.className = "compare-block";
-    block.id = "block_" + id;
-
-    block.innerHTML = `
-      <div class="compare-header">
-        <div><b>${escapeHtml(soilName)}</b> — Comparison Graph</div>
-        <div>
-          <button class="toggle-btn" id="toggleBtn_${id}">▼</button>
-          <button class="delete-btn" id="deleteBtn_${id}">🗑</button>
-        </div>
-      </div>
-
-      <div class="compare-content" id="content_${id}">
-        <img src="${escapeHtml(imgURL)}" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:15px">
-
-        <div style="display:flex; gap:20px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:250px;"><canvas id="donut_${id}"></canvas></div>
-          <div style="flex:1; min-width:250px;"><canvas id="bar_${id}"></canvas></div>
-        </div>
-      </div>
-    `;
-
-    container.appendChild(block);
-
-    // wire up toggle & delete
-    const toggleBtn = document.getElementById(`toggleBtn_${id}`);
-    const deleteBtn = document.getElementById(`deleteBtn_${id}`);
-    const content = document.getElementById(`content_${id}`);
-
-    toggleBtn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      if(content.classList.contains('hidden')){
-        content.classList.remove('hidden');
-        toggleBtn.innerText = '▼';
-      } else {
-        content.classList.add('hidden');
-        toggleBtn.innerText = '►';
+        reader.readAsDataURL(file);
       }
     });
 
-    deleteBtn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      const el = document.getElementById(`block_${id}`);
-      if(el) el.remove();
+
+    document.getElementById("analyzeBtn").addEventListener("click", () => {
+
+      const nitrogen = Math.floor(Math.random() * 50) + 20;
+      const phosphorus = Math.floor(Math.random() * 40) + 10;
+      const potassium = 100 - nitrogen - phosphorus;
+
+
+      const micronutrients = [
+        Math.floor(Math.random() * 15) + 5,
+        Math.floor(Math.random() * 10) + 3,
+        Math.floor(Math.random() * 5) + 1,
+        Math.floor(Math.random() * 3) + 1
+      ];
+
+
+      createCharts(
+        [nitrogen, phosphorus, potassium],
+        micronutrients
+      );
+
+
+      const recommendationList = document.getElementById("recommendations");
+
+      recommendationList.innerHTML = "";
+
+
+      const recommendations = [
+        "Add compost to improve soil fertility.",
+        "Use balanced fertilizer for better crop growth.",
+        "Maintain proper irrigation.",
+        "Test soil regularly for nutrient balance."
+      ];
+
+
+      recommendations.forEach(text => {
+
+        const li = document.createElement("li");
+        li.textContent = text;
+
+        recommendationList.appendChild(li);
+      });
     });
 
-    // Create NEW charts (use getContext)
-    const donutEl = document.getElementById(`donut_${id}`);
-    const barEl = document.getElementById(`bar_${id}`);
-    try{
-      if(donutEl){
-        const ctxD = donutEl.getContext('2d');
-        new Chart(ctxD, {
-          type: "doughnut",
-          data: {
-            labels: ["Nitrogen", "Phosphorus", "Potassium"],
-            datasets: [{
-              data: npk,
-              backgroundColor: ["#2FA84F", "#FF9F1C", "#4C9AFF"]
-            }]
-          },
-          options: { responsive:true, maintainAspectRatio:false }
-        });
-      }
 
-      if(barEl){
-        const ctxB = barEl.getContext('2d');
-        new Chart(ctxB, {
-          type: "bar",
-          data: {
-            labels: micro,
-            datasets: [{
-              data: microVal,
-              backgroundColor: "#2FA84F"
-            }]
-          },
-          options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
-        });
-      }
-    }catch(e){
-      console.warn('Failed to create comparison charts', e);
-    }
-  }
+    document.getElementById("resetBtn").addEventListener("click", () => {
 
-  // small entrance animation for cards
-  window.addEventListener('load', ()=>{
-    document.querySelectorAll('.card').forEach((c,i)=>{
-      setTimeout(()=>{
-        c.style.transition="all .6s ease";
-        c.style.opacity="1";
-        c.style.transform="translateY(0)";
-      },80*i);
+      previewImage.src = "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop";
+
+      createCharts([40, 30, 30], [12, 7, 4, 2]);
+
+
+      document.getElementById("recommendations").innerHTML = `
+        <li>Click analyze to generate recommendations.</li>
+      `;
     });
-  });
-</script>
+
+
+    document.querySelectorAll(".soil-item").forEach(item => {
+
+      item.addEventListener("click", () => {
+
+        const soil = item.dataset.soil;
+
+        alert(soil + " selected");
+      });
+    });
+
+  </script>
 
 </body>
 </html>

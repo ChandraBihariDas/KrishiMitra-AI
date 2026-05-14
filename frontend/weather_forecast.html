@@ -1,490 +1,370 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Agricultural Weather Forecast</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Forecast</title>
+
   <style>
-    :root{
-      --bg1: #0a0e1a; --bg2:#0a1a1a; --card:#e6f7ff; --accent:#00b4d8; --muted:#90c9e6; 
-      --success:#00ff9d; --warning:#ffa500; --error:#ff4757; --sunny:#ffd700; --rainy:#4682b4;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;overflow-x:hidden}
-    body{
-      font-family:Inter,system-ui,sans-serif; 
-      background: radial-gradient(ellipse 1400px 600px at 20% 10%, #0a2d3d 0%, #041520 40%, var(--bg1) 100%);
-      color:var(--card); 
-      -webkit-font-smoothing:antialiased;
-      position:relative;
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
     }
 
-    .bg-animation{position:fixed;width:100%;height:100%;top:0;left:0;pointer-events:none;z-index:0;overflow:hidden}
-    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.12;animation: float 20s infinite ease-in-out}
-    .orb1{width:500px;height:500px;background:#00b4d8;top:10%;left:-10%;animation-delay:0s}
-    .orb2{width:400px;height:400px;background:#0096c7;bottom:10%;right:-5%;animation-delay:7s}
-    .orb3{width:350px;height:350px;background:#48cae4;top:50%;left:50%;animation-delay:14s}
-    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-50px) scale(1.1)}66%{transform:translate(-40px,30px) scale(0.9)}}
-
-    .stage{max-width:1400px;margin:0 auto;padding:20px 16px;position:relative;z-index:1}
-    
-    .header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding:20px;background:linear-gradient(135deg, rgba(0,180,216,0.12), rgba(72,202,228,0.08));border-radius:20px;border:1px solid rgba(0,180,216,0.15);backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
-    .logo{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg, #00b4d8, #0096c7);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 12px 40px rgba(0,180,216,0.5);animation:pulse 3s infinite}
-    @keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 12px 40px rgba(0,180,216,0.5)}50%{transform:scale(1.05);box-shadow:0 16px 50px rgba(0,180,216,0.7)}}
-    h1{font-size:clamp(20px, 5vw, 32px);letter-spacing:-0.5px;font-weight:900;line-height:1.2}
-    .subtitle{color:var(--muted);font-size:clamp(12px, 3vw, 15px);margin-top:8px;font-weight:600}
-
-    .grid{display:grid;grid-template-columns:380px 1fr;gap:20px}
-    @media(max-width:1200px){.grid{grid-template-columns:1fr}}
-    @media(max-width:600px){.stage{padding:12px 8px}.header{padding:16px;gap:12px}.grid{gap:16px}}
-
-    .card{background:linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));border-radius:20px;padding:20px;border:1px solid rgba(0,180,216,0.1);box-shadow:0 12px 48px rgba(0,0,0,0.5);backdrop-filter:blur(10px);transition:transform 0.3s ease, box-shadow 0.3s ease}
-    .card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.6)}
-    .card h3{font-size:18px;margin-bottom:16px;font-weight:800;color:var(--accent)}
-    @media(max-width:600px){.card{padding:16px;border-radius:16px}}
-
-    .input-group{margin-bottom:20px}
-    label{display:block;color:var(--card);font-weight:700;margin-bottom:8px;font-size:14px;letter-spacing:0.3px}
-    .label-required::after{content:' *';color:var(--error)}
-    
-    input,select{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(0,180,216,0.15);background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));color:var(--card);outline:none;font-weight:600;font-size:15px;transition:all 0.3s ease}
-    select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300b4d8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:20px;padding-right:40px}
-    select option{background:#1a2332;color:#e6f7ff;padding:12px;font-weight:600}
-    input::placeholder{color:rgba(255,255,255,0.3)}
-    input:focus, select:focus{border-color:var(--accent);box-shadow:0 8px 24px rgba(0,180,216,0.25);transform:translateY(-2px)}
-
-    .location-display{display:flex;align-items:center;gap:12px;padding:16px;background:rgba(0,180,216,0.08);border-radius:12px;border:1px solid rgba(0,180,216,0.2);margin-bottom:20px}
-    .location-icon{font-size:32px}
-    .location-text{flex:1}
-    .location-name{font-weight:800;font-size:16px;color:var(--accent)}
-    .location-coords{font-size:12px;color:var(--muted);margin-top:4px}
-
-    .btn{width:100%;padding:14px 24px;border-radius:12px;border:none;font-weight:800;font-size:15px;cursor:pointer;transition:all 0.3s ease;letter-spacing:0.3px;background:linear-gradient(135deg, #00b4d8, #0096c7);color:white;box-shadow:0 8px 24px rgba(0,180,216,0.4)}
-    .btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,180,216,0.6)}
-    .btn:disabled{opacity:0.5;cursor:not-allowed}
-
-    .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* Current Weather */
-    .current-weather{background:linear-gradient(135deg, rgba(0,180,216,0.12), rgba(72,202,228,0.08));border-radius:20px;padding:24px;border:1px solid rgba(0,180,216,0.2);margin-bottom:20px}
-    .current-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:16px}
-    .weather-icon-large{font-size:clamp(48px, 12vw, 80px);text-shadow:0 4px 20px rgba(0,0,0,0.3)}
-    .temp-display{text-align:right}
-    .temp-main{font-size:clamp(40px, 10vw, 72px);font-weight:900;line-height:1;background:linear-gradient(135deg, #00b4d8, #48cae4);-webkit-background-clip:text;background-clip:text;color:transparent}
-    .temp-feels{font-size:clamp(12px, 3vw, 14px);color:var(--muted);margin-top:8px}
-    .weather-desc{font-size:clamp(18px, 4vw, 24px);font-weight:700;color:var(--card);margin-bottom:16px}
-    .current-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media(max-width:600px){
-      .current-weather{padding:16px}
-      .current-stats{grid-template-columns:1fr;gap:10px}
-      .current-top{flex-direction:column;text-align:center}
-      .temp-display{text-align:center}
+    body {
+      background: #eef3ee;
+      padding: 20px;
+      color: #222;
     }
-    .stat-item{background:rgba(255,255,255,0.04);padding:16px;border-radius:12px;text-align:center;border:1px solid rgba(255,255,255,0.05)}
-    .stat-icon{font-size:24px;margin-bottom:8px}
-    .stat-value{font-size:20px;font-weight:800;color:var(--card);margin-bottom:4px}
-    .stat-label{font-size:12px;color:var(--muted);font-weight:700}
 
-    /* Forecast */
-    .forecast-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;margin-bottom:20px}
-    @media(max-width:600px){.forecast-grid{grid-template-columns:repeat(2, 1fr);gap:10px}}
-    .forecast-card{background:rgba(255,255,255,0.03);border-radius:16px;padding:16px;border:1px solid rgba(0,180,216,0.1);text-align:center;transition:all 0.3s ease;cursor:pointer}
-    .forecast-card:hover{transform:translateY(-8px);background:rgba(0,180,216,0.08);border-color:var(--accent)}
-    .forecast-day{font-size:13px;font-weight:800;color:var(--muted);margin-bottom:10px}
-    .forecast-icon{font-size:40px;margin:10px 0}
-    .forecast-temp{font-size:20px;font-weight:900;color:var(--card);margin-bottom:6px}
-    .forecast-condition{font-size:12px;color:var(--muted);font-weight:600}
-    .forecast-rain{font-size:11px;color:#4682b4;margin-top:6px;font-weight:700}
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
 
-    /* Farm Alerts */
-    .alerts-section{background:rgba(255,165,0,0.08);border-radius:16px;padding:24px;border:1px solid rgba(255,165,0,0.2);margin-bottom:24px}
-    .alert-title{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800;color:#ffa500;margin-bottom:16px}
-    .alert-list{display:flex;flex-direction:column;gap:12px}
-    .alert-item{display:flex;align-items:start;gap:12px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border-left:3px solid #ffa500}
-    .alert-icon{font-size:20px;margin-top:2px}
-    .alert-content{flex:1}
-    .alert-text{font-size:14px;font-weight:600;line-height:1.5;color:var(--card)}
-    .alert-time{font-size:12px;color:var(--muted);margin-top:4px}
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
 
-    /* Farm Recommendations */
-    .recommendations{background:rgba(0,255,157,0.05);border-radius:16px;padding:24px;border:1px solid rgba(0,255,157,0.2)}
-    .reco-title{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800;color:#00ff9d;margin-bottom:16px}
-    .reco-list{list-style:none;display:flex;flex-direction:column;gap:12px}
-    .reco-list li{padding:12px 16px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid #00ff9d;font-weight:600;font-size:14px}
-    .reco-list li::before{content:'✓';margin-right:10px;color:#00ff9d}
+    .header h1 {
+      color: #2d7a2d;
+      margin-bottom: 5px;
+    }
 
-    /* Hourly Forecast */
-    .hourly-forecast{overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch}
-    .hourly-scroll{display:flex;gap:10px;padding:4px;min-width:min-content}
-    .hourly-item{min-width:90px;flex-shrink:0;background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(0,180,216,0.1);transition:all 0.3s ease}
-    .hourly-item:hover{background:rgba(0,180,216,0.08);transform:translateY(-4px)}
-    .hourly-time{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px}
-    .hourly-icon{font-size:28px;margin:8px 0}
-    .hourly-temp{font-size:16px;font-weight:800;color:var(--card)}
-    .hourly-rain{font-size:10px;color:#4682b4;margin-top:6px;font-weight:700}
+    .grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+    }
 
-    footer{text-align:center;margin-top:40px;color:var(--muted);font-size:13px;font-weight:600}
-    .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+      color: #2d7a2d;
+      font-size: 20px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #2d7a2d;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .weather-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .temp {
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat-box {
+      background: #f5f5f5;
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .forecast {
+      margin-top: 25px;
+    }
+
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+    }
+
+    .forecast-item {
+      background: #f7f7f7;
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .recommendations {
+      margin-top: 25px;
+    }
+
+    .recommendations ul {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    @media(max-width: 850px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
-  <div class="bg-animation">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-  </div>
 
-  <div class="stage">
+  <div class="container">
+
     <div class="header">
-      <div class="logo">🌤️</div>
-      <div>
-        <h1>Agricultural Weather Forecast</h1>
-        <p class="subtitle">Real-time weather updates & farming recommendations • 7-day forecast with hourly breakdown</p>
-      </div>
+      <h1>Agricultural Weather Forecast</h1>
+      <p>Weather details and farming suggestions</p>
     </div>
 
+
     <div class="grid">
-      <!-- LEFT: Location Input -->
+
       <div>
+
         <div class="card">
-          <h3>Location Settings</h3>
-          
-          <div class="location-display" id="currentLocation">
-            <div class="location-icon">📍</div>
-            <div class="location-text">
-              <div class="location-name" id="locationName">Detecting...</div>
-              <div class="location-coords" id="locationCoords">—</div>
-            </div>
+          <h2>Location Details</h2>
+
+          <div class="field">
+            <label>Location</label>
+            <input type="text" id="location" placeholder="Enter city or village name">
           </div>
 
-          <div class="input-group">
-            <label class="label-required">Search Location</label>
-            <input type="text" id="locationInput" placeholder="Enter city or village name">
-          </div>
-
-          <div class="input-group">
+          <div class="field">
             <label>Crop Type</label>
             <select id="cropType">
-              <option value="rice">Rice</option>
-              <option value="wheat">Wheat</option>
-              <option value="maize">Maize</option>
-              <option value="cotton">Cotton</option>
-              <option value="sugarcane">Sugarcane</option>
-              <option value="vegetables">Vegetables</option>
+              <option>Rice</option>
+              <option>Wheat</option>
+              <option>Maize</option>
+              <option>Cotton</option>
             </select>
           </div>
 
-          <div class="input-group">
-            <label>Farm Operation</label>
-            <select id="farmOperation">
-              <option value="irrigation">Irrigation</option>
-              <option value="spraying">Pesticide Spraying</option>
-              <option value="harvesting">Harvesting</option>
-              <option value="sowing">Sowing</option>
-              <option value="fertilizer">Fertilizer Application</option>
+          <div class="field">
+            <label>Farm Activity</label>
+            <select id="activity">
+              <option>Irrigation</option>
+              <option>Harvesting</option>
+              <option>Spraying</option>
+              <option>Sowing</option>
             </select>
           </div>
 
-          <button class="btn" id="fetchWeatherBtn">
-            <span id="btnText">🌦️ Get Weather Forecast</span>
-          </button>
+          <button id="weatherBtn">Get Forecast</button>
         </div>
 
-        <div class="card" style="margin-top:24px">
-          <h3>Weather Stats</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="stat-item">
-              <div class="stat-icon">🌡️</div>
-              <div class="stat-value" id="avgTemp">—</div>
-              <div class="stat-label">Avg Temp</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-icon">💧</div>
-              <div class="stat-value" id="totalRain">—</div>
-              <div class="stat-label">Total Rain</div>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <!-- RIGHT: Weather Display -->
+
       <div>
-        <div id="weatherDisplay" style="display:none">
-          <!-- Current Weather -->
-          <div class="current-weather">
-            <div class="current-top">
-              <div class="weather-icon-large" id="currentIcon">☀️</div>
-              <div class="temp-display">
-                <div class="temp-main" id="currentTemp">28°</div>
-                <div class="temp-feels">Feels like <span id="feelsLike">30°</span></div>
-              </div>
+
+        <div class="card" id="weatherCard" style="display:none">
+
+          <div class="weather-top">
+            <div>
+              <h2 id="cityName">Bhopal</h2>
+              <p id="condition">Cloudy</p>
             </div>
-            <div class="weather-desc" id="weatherDesc">Clear Sky</div>
-            <div class="current-stats">
-              <div class="stat-item">
-                <div class="stat-icon">💨</div>
-                <div class="stat-value" id="windSpeed">—</div>
-                <div class="stat-label">Wind Speed</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">💧</div>
-                <div class="stat-value" id="humidity">—</div>
-                <div class="stat-label">Humidity</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">🌧️</div>
-                <div class="stat-value" id="rainfall">—</div>
-                <div class="stat-label">Rainfall</div>
-              </div>
-            </div>
+
+            <div class="temp" id="temperature">29°C</div>
           </div>
 
-          <!-- Farm Alerts -->
-          <div class="alerts-section">
-            <div class="alert-title">
-              <span>⚠️</span>
-              <span>Farm Alerts</span>
+          <div class="stats">
+
+            <div class="stat-box">
+              <h3 id="humidity">70%</h3>
+              <p>Humidity</p>
             </div>
-            <div class="alert-list" id="alertList"></div>
+
+            <div class="stat-box">
+              <h3 id="wind">12 km/h</h3>
+              <p>Wind Speed</p>
+            </div>
+
+            <div class="stat-box">
+              <h3 id="rain">4 mm</h3>
+              <p>Rainfall</p>
+            </div>
+
           </div>
 
-          <!-- 7-Day Forecast -->
-          <div class="card">
-            <h3>7-Day Forecast</h3>
+
+          <div class="forecast">
+            <h2>7 Day Forecast</h2>
+
             <div class="forecast-grid" id="forecastGrid"></div>
           </div>
 
-          <!-- Hourly Forecast -->
-          <div class="card">
-            <h3>Today's Hourly Forecast</h3>
-            <div class="hourly-forecast">
-              <div class="hourly-scroll" id="hourlyForecast"></div>
-            </div>
-          </div>
 
-          <!-- Recommendations -->
           <div class="recommendations">
-            <div class="reco-title">
-              <span>🌾</span>
-              <span>Farming Recommendations</span>
-            </div>
-            <ul class="reco-list" id="recoList"></ul>
+            <h2>Recommendations</h2>
+
+            <ul id="recommendationList"></ul>
           </div>
+
         </div>
 
-        <div id="emptyState" class="empty-state">
-          <div style="font-size:64px;margin-bottom:16px">🌤️</div>
-          <div style="font-weight:700;font-size:16px;margin-bottom:8px">No Weather Data</div>
-          <div style="font-size:14px">Enter location and get forecast</div>
-        </div>
       </div>
+
     </div>
 
-    <footer>Real-time weather data • Agricultural recommendations • Government meteorological integration</footer>
   </div>
 
+
   <script>
-    const $ = id => document.getElementById(id);
 
-    const weatherIcons = {
-      clear: '☀️', clouds: '☁️', rain: '🌧️', thunderstorm: '⛈️',
-      drizzle: '🌦️', snow: '❄️', mist: '🌫️', fog: '🌫️'
-    };
+    const weatherBtn = document.getElementById("weatherBtn");
 
-    function getWeatherIcon(condition) {
-      const lower = condition.toLowerCase();
-      if (lower.includes('clear') || lower.includes('sunny')) return weatherIcons.clear;
-      if (lower.includes('cloud')) return weatherIcons.clouds;
-      if (lower.includes('rain')) return weatherIcons.rain;
-      if (lower.includes('thunder')) return weatherIcons.thunderstorm;
-      if (lower.includes('drizzle')) return weatherIcons.drizzle;
-      if (lower.includes('snow')) return weatherIcons.snow;
-      if (lower.includes('mist') || lower.includes('fog')) return weatherIcons.mist;
-      return '🌤️';
-    }
 
-    function generateMockWeatherData() {
-      const conditions = ['Clear', 'Partly Cloudy', 'Cloudy', 'Light Rain', 'Heavy Rain', 'Thunderstorm'];
-      const currentTemp = 25 + Math.floor(Math.random() * 10);
-      
+    function randomWeather() {
+
+      const conditions = [
+        "Sunny",
+        "Cloudy",
+        "Rainy",
+        "Partly Cloudy"
+      ];
+
       return {
-        current: {
-          temp: currentTemp,
-          feelsLike: currentTemp + Math.floor(Math.random() * 3),
-          condition: conditions[Math.floor(Math.random() * conditions.length)],
-          windSpeed: (5 + Math.random() * 15).toFixed(1),
-          humidity: (50 + Math.floor(Math.random() * 40)),
-          rainfall: Math.floor(Math.random() * 20)
-        },
-        forecast: Array.from({length: 7}, (_, i) => ({
-          day: ['Today', 'Tomorrow', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-          temp: 22 + Math.floor(Math.random() * 12),
-          condition: conditions[Math.floor(Math.random() * conditions.length)],
-          rainfall: Math.floor(Math.random() * 30)
-        })),
-        hourly: Array.from({length: 12}, (_, i) => ({
-          time: `${(8 + i) % 24}:00`,
-          temp: 20 + Math.floor(Math.random() * 15),
-          condition: conditions[Math.floor(Math.random() * 3)],
-          rainfall: Math.floor(Math.random() * 15)
-        }))
+        temp: Math.floor(Math.random() * 10) + 25,
+        humidity: Math.floor(Math.random() * 40) + 40,
+        wind: Math.floor(Math.random() * 15) + 5,
+        rain: Math.floor(Math.random() * 10),
+        condition: conditions[Math.floor(Math.random() * conditions.length)]
       };
     }
 
-    function generateAlerts(weather, operation) {
-      const alerts = [];
-      
-      if (weather.current.rainfall > 10) {
-        alerts.push({
-          icon: '🌧️',
-          text: 'Heavy rainfall expected. Postpone spraying and harvesting operations.',
-          time: 'Next 6 hours'
-        });
-      }
-      
-      if (weather.current.windSpeed > 15) {
-        alerts.push({
-          icon: '💨',
-          text: 'High wind speed detected. Avoid pesticide spraying to prevent drift.',
-          time: 'Current'
-        });
-      }
-      
-      if (weather.current.temp > 35) {
-        alerts.push({
-          icon: '🌡️',
-          text: 'High temperature alert. Increase irrigation frequency.',
-          time: 'Today'
-        });
-      }
-      
-      if (weather.current.humidity > 80) {
-        alerts.push({
-          icon: '💧',
-          text: 'High humidity may increase fungal disease risk. Monitor crops closely.',
-          time: 'Next 24 hours'
-        });
-      }
 
-      if (alerts.length === 0) {
-        alerts.push({
-          icon: '✅',
-          text: 'Weather conditions are favorable for farming operations.',
-          time: 'Current'
-        });
-      }
-      
-      return alerts;
+    function generateForecast() {
+
+      const days = [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ];
+
+      const grid = document.getElementById("forecastGrid");
+      grid.innerHTML = "";
+
+      days.forEach(day => {
+
+        const data = randomWeather();
+
+        const item = document.createElement("div");
+        item.className = "forecast-item";
+
+        item.innerHTML = `
+          <strong>${day}</strong><br><br>
+          ${data.condition}<br>
+          ${data.temp}°C
+        `;
+
+        grid.appendChild(item);
+      });
     }
 
-    function generateRecommendations(weather, crop, operation) {
-      const reco = [];
-      
-      if (weather.current.rainfall < 5 && operation === 'irrigation') {
-        reco.push('Ideal conditions for irrigation. Water early morning or evening.');
+
+    function updateRecommendations(weather) {
+
+      const list = document.getElementById("recommendationList");
+      list.innerHTML = "";
+
+      const recommendations = [];
+
+      if(weather.rain > 5) {
+        recommendations.push("Heavy rainfall expected. Avoid spraying.");
       }
-      
-      if (weather.current.windSpeed < 10 && operation === 'spraying') {
-        reco.push('Perfect conditions for pesticide application. Wind speed is optimal.');
+
+      if(weather.temp > 32) {
+        recommendations.push("Temperature is high. Increase irrigation.");
       }
-      
-      if (weather.current.condition.includes('Clear') && operation === 'harvesting') {
-        reco.push('Excellent weather for harvesting. Proceed with operations.');
+
+      if(weather.wind > 15) {
+        recommendations.push("Strong wind detected. Delay pesticide spray.");
       }
-      
-      if (weather.current.temp < 30 && weather.current.humidity < 70) {
-        reco.push('Good conditions for field work. Proceed with scheduled tasks.');
-      }
-      
-      reco.push('Check soil moisture before irrigation.');
-      reco.push('Monitor weather updates every 3 hours for changes.');
-      
-      return reco;
+
+      recommendations.push("Check soil moisture regularly.");
+      recommendations.push("Monitor weather updates during the day.");
+
+
+      recommendations.forEach(text => {
+
+        const li = document.createElement("li");
+        li.textContent = text;
+
+        list.appendChild(li);
+      });
     }
 
-    function displayWeather(weather, crop, operation) {
-      $('emptyState').style.display = 'none';
-      $('weatherDisplay').style.display = 'block';
-      
-      // Current weather
-      $('currentIcon').textContent = getWeatherIcon(weather.current.condition);
-      $('currentTemp').textContent = weather.current.temp + '°';
-      $('feelsLike').textContent = weather.current.feelsLike + '°';
-      $('weatherDesc').textContent = weather.current.condition;
-      $('windSpeed').textContent = weather.current.windSpeed + ' km/h';
-      $('humidity').textContent = weather.current.humidity + '%';
-      $('rainfall').textContent = weather.current.rainfall + ' mm';
-      
-      // Stats
-      const avgTemp = Math.round(weather.forecast.reduce((sum, d) => sum + d.temp, 0) / weather.forecast.length);
-      const totalRain = weather.forecast.reduce((sum, d) => sum + d.rainfall, 0);
-      $('avgTemp').textContent = avgTemp + '°C';
-      $('totalRain').textContent = totalRain + ' mm';
-      
-      // Alerts
-      const alerts = generateAlerts(weather, operation);
-      $('alertList').innerHTML = alerts.map(a => `
-        <div class="alert-item">
-          <div class="alert-icon">${a.icon}</div>
-          <div class="alert-content">
-            <div class="alert-text">${a.text}</div>
-            <div class="alert-time">${a.time}</div>
-          </div>
-        </div>
-      `).join('');
-      
-      // 7-day forecast
-      $('forecastGrid').innerHTML = weather.forecast.map(day => `
-        <div class="forecast-card">
-          <div class="forecast-day">${day.day}</div>
-          <div class="forecast-icon">${getWeatherIcon(day.condition)}</div>
-          <div class="forecast-temp">${day.temp}°C</div>
-          <div class="forecast-condition">${day.condition}</div>
-          ${day.rainfall > 0 ? `<div class="forecast-rain">🌧️ ${day.rainfall}mm</div>` : ''}
-        </div>
-      `).join('');
-      
-      // Hourly forecast
-      $('hourlyForecast').innerHTML = weather.hourly.map(hour => `
-        <div class="hourly-item">
-          <div class="hourly-time">${hour.time}</div>
-          <div class="hourly-icon">${getWeatherIcon(hour.condition)}</div>
-          <div class="hourly-temp">${hour.temp}°</div>
-          ${hour.rainfall > 0 ? `<div class="hourly-rain">${hour.rainfall}mm</div>` : ''}
-        </div>
-      `).join('');
-      
-      // Recommendations
-      const recommendations = generateRecommendations(weather, crop, operation);
-      $('recoList').innerHTML = recommendations.map(r => `<li>${r}</li>`).join('');
-    }
 
-    $('fetchWeatherBtn').addEventListener('click', () => {
-      const location = $('locationInput').value || 'Baripada, Odisha';
-      const crop = $('cropType').value;
-      const operation = $('farmOperation').value;
-      
-      const btnText = $('btnText');
-      btnText.innerHTML = '<span class="spinner"></span> Loading...';
-      $('fetchWeatherBtn').disabled = true;
-      
-      setTimeout(() => {
-        const weather = generateMockWeatherData();
-        displayWeather(weather, crop, operation);
-        
-        btnText.textContent = '🌦️ Get Weather Forecast';
-        $('fetchWeatherBtn').disabled = false;
-      }, 1500);
+    weatherBtn.addEventListener("click", () => {
+
+      const location = document.getElementById("location").value || "Bhopal";
+
+      const weather = randomWeather();
+
+      document.getElementById("weatherCard").style.display = "block";
+
+      document.getElementById("cityName").textContent = location;
+      document.getElementById("condition").textContent = weather.condition;
+      document.getElementById("temperature").textContent = weather.temp + "°C";
+
+      document.getElementById("humidity").textContent = weather.humidity + "%";
+      document.getElementById("wind").textContent = weather.wind + " km/h";
+      document.getElementById("rain").textContent = weather.rain + " mm";
+
+      generateForecast();
+      updateRecommendations(weather);
     });
 
-    // Initialize with user location
-    setTimeout(() => {
-      $('locationName').textContent = 'Baripada, Odisha';
-      $('locationCoords').textContent = '21.93°N, 86.73°E';
-      $('locationInput').value = 'Baripada, Odisha';
-    }, 500);
   </script>
+
 </body>
 </html>

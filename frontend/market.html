@@ -1,822 +1,531 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title data-key="pageTitle">KrishiMitra Market </title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KrishiMitra Market</title>
 
-  <!-- Bootstrap & icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    :root{
-      --accent:#FF9933; --accent-2:#138808; --glass: rgba(255,255,255,0.06);
-      --card-bg: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      --glass-2: rgba(255,255,255,0.03);
-      --header-h: 48px;
-    }
-    html,body{height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial; background:linear-gradient(180deg,#f7fbf7, #eef7ee);}
-    .container-wide{max-width:1320px}
 
-    /* Fixed top language header */
-    .site-header {
-      height: var(--header-h);
-      position: fixed;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f3f5f3;
+      color: #222;
+    }
+
+    .topbar {
+      background: white;
+      padding: 12px 0;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
       top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1060;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(4px);
-      border-bottom: 1px solid rgba(0,0,0,0.04);
+      z-index: 1000;
+    }
+
+    .logo-box {
       display: flex;
       align-items: center;
-    }
-    .site-header .container { display:flex; justify-content:flex-end; align-items:center; gap:.5rem; }
-
-    /* Topbar (placed under language header) */
-    .market-topbar{backdrop-filter: blur(6px); background:linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7)); border-bottom:1px solid rgba(0,0,0,0.04); margin-top: var(--header-h);}
-    .search-input{border-radius:999px; box-shadow:0 6px 20px rgba(17,24,39,0.06);}
-
-    /* Layout */
-    .sidebar{min-height:72vh; border-radius:14px; background:var(--card-bg); padding:18px; border:1px solid rgba(0,0,0,0.04);}
-    .category-title{font-weight:700; font-size:0.95rem}
-    .cat-badge{background:rgba(19,136,8,0.09); color:var(--accent-2); font-weight:700; padding:6px 10px; border-radius:999px}
-
-    /* Product grid */
-    .products-grid{display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:20px}
-    .prod-card{border-radius:16px; overflow:hidden; position:relative; background:white; box-shadow:0 8px 28px rgba(7,18,14,0.06); transition:transform .35s cubic-bezier(.2,.9,.2,1), box-shadow .35s;}
-    .prod-card:hover{transform:translateY(-10px) scale(1.02); box-shadow:0 20px 60px rgba(7,18,14,0.12)}
-    .prod-media{height:170px; background:linear-gradient(135deg, rgba(255,153,51,0.08), rgba(19,136,8,0.06)); display:flex;align-items:center;justify-content:center}
-    .prod-media img{width:100%;height:100%;object-fit:cover; transition:transform .7s ease}
-    .prod-card:hover .prod-media img{transform:scale(1.15) rotate(-2deg)}
-
-    .prod-body{padding:14px}
-    .prod-title{font-weight:700; font-size:1rem; min-height:44px}
-    .prod-desc{font-size:0.86rem; color:#5b6b5a}
-    .price-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-    .price{font-weight:800;color:#153b16}
-    .old-price{font-size:.85rem;color:#9aa69a;text-decoration:line-through;margin-left:8px}
-
-    /* Labels and badges */
-    .ribbon{position:absolute;left:12px;top:12px;background:var(--accent);color:white;padding:6px 10px;border-radius:10px;font-weight:700;font-size:.8rem;transform:skew(-8deg);box-shadow:0 6px 18px rgba(255,153,51,0.16)}
-    .fav-btn{position:absolute;right:12px;top:12px;background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,255,255,0.85));border-radius:10px;padding:8px;box-shadow:0 6px 20px rgba(0,0,0,0.06)}
-
-    /* CTA */
-    .btn-buy{background:linear-gradient(90deg,var(--accent),var(--accent-2)); border:none;color:white;border-radius:10px;padding:8px 12px;font-weight:800; box-shadow:0 8px 24px rgba(19,136,8,0.12)}
-    .btn-cart{background:transparent;border:1px solid rgba(19,136,8,0.14); color:var(--accent-2);border-radius:10px;padding:6px 10px}
-
-    /* Quick view modal style */
-    .quick-img{height:340px; border-radius:12px; overflow:hidden;}
-    .thumbnail{height:64px;width:64px;border-radius:8px;object-fit:cover;margin-right:8px;cursor:pointer;border:2px solid transparent}
-    .thumbnail.active{border-color:var(--accent)}
-
-    /* Cart drawer */
-    .cart-drawer{position:fixed;right:20px;top:120px;width:360px;background:white;border-radius:14px;padding:14px;box-shadow:0 30px 70px rgba(3,6,4,0.12);transform:translateX(120%);transition:transform .45s cubic-bezier(.2,.9,.2,1);z-index:1200}
-    .cart-drawer.open{transform:translateX(0)}
-
-    /* micro-animations */
-    @keyframes popIn{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
-    .pop{animation:popIn .36s ease}
-
-    /* Filters chip */
-    .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--glass-2);border:1px solid rgba(0,0,0,0.04);margin-right:8px}
-
-    /* empty state */
-    .empty-state{padding:50px;text-align:center;color:#6b786b}
-
-    /* responsive tweaks */
-    @media (max-width:991px){.sidebar{order:2}.products-col{order:1;}
-      .cart-drawer{top:auto; bottom:20px; right:20px; width:320px}
+      gap: 10px;
     }
 
-    /* ensure content below fixed header */
-    main { padding-top: 16px; }
+    .logo-box img {
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .logo-box h4 {
+      margin: 0;
+      color: #2f7d32;
+      font-size: 20px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-box input {
+      border-radius: 6px;
+    }
+
+    .sidebar,
+    .content-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .sidebar h5 {
+      margin-bottom: 15px;
+      color: #2f7d32;
+    }
+
+    .filter-link {
+      display: block;
+      text-decoration: none;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .filter-link:hover {
+      color: #2f7d32;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .product-body {
+      padding: 15px;
+    }
+
+    .product-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      min-height: 45px;
+    }
+
+    .product-category {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2f7d32;
+    }
+
+    .old-price {
+      text-decoration: line-through;
+      color: #888;
+      font-size: 14px;
+      margin-left: 8px;
+    }
+
+    .product-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-buy {
+      flex: 1;
+      background: #2f7d32;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .btn-details {
+      flex: 1;
+      background: #eee;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .cart-box {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 320px;
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: none;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .language-select {
+      width: 140px;
+    }
+
+    @media(max-width: 900px) {
+
+      .sidebar {
+        margin-bottom: 20px;
+      }
+
+      .cart-box {
+        width: calc(100% - 40px);
+      }
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- Top language header (fixed) -->
-  <header class="site-header" role="banner" aria-hidden="false">
-    <div class="container container-wide">
-      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
-        <div class="dropdown">
-          <button id="langBtn" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-key="languageButtonLabel">
-            Language
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langBtn">
-            <li><a class="dropdown-item lang-option" href="#" data-lang="en">English</a></li>
-            <li><a class="dropdown-item lang-option" href="#" data-lang="hi">हिन्दी (Hindi)</a></li>
-            <li><a class="dropdown-item lang-option" href="#" data-lang="bn">বাংলা (Bengali)</a></li>
-            <li><a class="dropdown-item lang-option" href="#" data-lang="te">తెలుగు (Telugu)</a></li>
-            <li><a class="dropdown-item lang-option" href="#" data-lang="mr">मराठी (Marathi)</a></li>
-            <li><a class="dropdown-item lang-option" href="#" data-lang="ta">தமிழ் (Tamil)</a></li>
-            <li><a class="dropdown-item lang-option" href="#" data-lang="or">ଓଡ଼ିଆ (Odia)</a></li>
-          </ul>
+  <div class="topbar">
+
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+      <div class="logo-box">
+        <img src="kishan.jpg" alt="logo">
+
+        <div>
+          <h4>KrishiMitra Market</h4>
+          <small>Farm products and equipment</small>
         </div>
       </div>
-    </div>
-  </header>
 
-  <!-- Top bar -->
-  <div class="market-topbar py-3 shadow-sm">
-    <div class="container container-wide d-flex align-items-center gap-3">
-      <div class="d-flex align-items-center gap-3 me-3">
-        <a href="test.html" class="d-flex align-items-center text-decoration-none text-dark">
-          <img src="kishan.jpg" width="48" height="48" alt="logo" style="border-radius:10px;object-fit:cover">
-          <div class="ms-2">
-            <div style="font-weight:800" data-key="siteName">KrishiMitra Market</div>
-            <small style="color:#6b786b" data-key="tagline">Farm-to-farm KrishiMitra ka e-mart</small>
-          </div>
-        </a>
+
+      <div class="search-box flex-grow-1">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search products">
+
+        <button class="btn btn-success" id="searchBtn">
+          <i class="fa fa-search"></i>
+        </button>
       </div>
 
-      <div class="flex-grow-1">
-        <div class="input-group shadow-sm">
-          <span class="input-group-text bg-white border-0"><i class="fa fa-search"></i></span>
-          <input id="searchInput" type="search" class="form-control search-input" placeholder="" data-key="searchPlaceholder">
-          <button id="searchBtn" class="btn btn-outline-secondary" data-key="searchBtn">Search</button>
-        </div>
-      </div>
 
       <div class="d-flex align-items-center gap-2">
-        <div class="chip" id="filterSummary" data-key="showing">Showing <strong id="matchCount">0</strong> items</div>
-        <button id="openCart" class="btn btn-sm btn-outline-success" data-key="cartBtn"> <i class="fa fa-shopping-cart"></i> Cart <span id="cartCount" class="badge bg-success ms-2">0</span></button>
+
+        <select id="language" class="form-select language-select">
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="or">Odia</option>
+        </select>
+
+        <button class="btn btn-outline-success" id="cartBtn">
+          <i class="fa fa-shopping-cart"></i>
+          Cart
+          <span class="badge bg-success" id="cartCount">0</span>
+        </button>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- Main content -->
-  <main class="container container-wide my-5">
+
+  <div class="container my-4">
+
     <div class="row g-4">
-      <div class="col-lg-3 products-col">
-        <div class="sidebar sticky-top">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="category-title" data-key="categoriesTitle">Categories</div>
-            <div class="cat-badge" data-key="shopBadge">Shop</div>
-          </div>
 
-          <!-- Accordion categories -->
-          <div class="accordion" id="categoryAccordion">
-            <!-- Seeds -->
-            <div class="accordion-item mb-2">
-              <h2 class="accordion-header" id="headingSeeds">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeeds" aria-expanded="false">Seeds</button>
-              </h2>
-              <div id="collapseSeeds" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
-                <div class="accordion-body">
-                  <ul class="list-unstyled mb-0">
-                    <li><a href="#" class="filter-link" data-filter-category="Seeds" data-filter-sub="Crop Seeds">Crop Seeds</a></li>
-                    <li><a href="#" class="filter-link" data-filter-category="Seeds" data-filter-sub="Plant Seeds">Plant Seeds</a></li>
-                    <li><a href="#" class="filter-link" data-filter-category="Seeds" data-filter-sub="Vegetable Seeds">Vegetable Seeds</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+      <div class="col-lg-3">
 
-            <!-- Fertilizers -->
-            <div class="accordion-item mb-2">
-              <h2 class="accordion-header" id="headingFert">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFert">Fertilizers</button>
-              </h2>
-              <div id="collapseFert" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
-                <div class="accordion-body">
-                  <div class="row">
-                    <div class="col-12">
-                      <ul class="list-unstyled small">
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Organic">Organic</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Inorganic">Inorganic</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Nitrogenous">Nitrogenous</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Phosphorus">Phosphorus</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Multi-Nutrient">Multi-Nutrient</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Liquid">Liquid</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Granular">Granular</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Fertilizers" data-filter-sub="Slow Release">Slow Release</a></li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div class="sidebar">
 
-            <!-- Pesticides -->
-            <div class="accordion-item mb-2">
-              <h2 class="accordion-header" id="headingPest">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePest">Pesticides</button>
-              </h2>
-              <div id="collapsePest" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
-                <div class="accordion-body">
-                  <ul class="list-unstyled small">
-                    <li><a href="#" class="filter-link" data-filter-category="Pesticides" data-filter-sub="Insecticides">Insecticides</a></li>
-                    <li><a href="#" class="filter-link" data-filter-category="Pesticides" data-filter-sub="Herbicides">Herbicides</a></li>
-                    <li><a href="#" class="filter-link" data-filter-category="Pesticides" data-filter-sub="Fungicides">Fungicides</a></li>
-                    <li><a href="#" class="filter-link" data-filter-category="Pesticides" data-filter-sub="Rodenticides">Rodenticides</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+          <h5>Categories</h5>
 
-            <!-- Equipments -->
-            <div class="accordion-item mb-2">
-              <h2 class="accordion-header" id="headingEquip">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEquip">Equipments</button>
-              </h2>
-              <div id="collapseEquip" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
-                <div class="accordion-body small">
-                  <div class="row">
-                    <div class="col-6">
-                      <ul class="list-unstyled">
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Tractor">Tractor</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Plough">Plough</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Sprayer">Sprayer</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Seed Drill">Seed Drill</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Combine Harvester">Combine Harvester</a></li>
-                      </ul>
-                    </div>
-                    <div class="col-6">
-                      <ul class="list-unstyled">
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Baler">Baler</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Rotavator">Rotavator</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Fertilizer Spreaders">Fertilizer Spreaders</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Irrigation Systems">Irrigation Systems</a></li>
-                        <li><a href="#" class="filter-link" data-filter-category="Equipments" data-filter-sub="Auger">Auger</a></li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
+          <a href="#" class="filter-link" data-category="Seeds">Seeds</a>
+          <a href="#" class="filter-link" data-category="Fertilizers">Fertilizers</a>
+          <a href="#" class="filter-link" data-category="Pesticides">Pesticides</a>
+          <a href="#" class="filter-link" data-category="Equipments">Equipments</a>
 
           <hr>
-          <div class="mb-2">
-            <div class="fw-bold mb-2" data-key="priceRangeLabel">Price Range</div>
-            <input type="range" min="0" max="200000" step="100" id="priceRange">
-            <div class="small mt-2">Up to ₹ <span id="priceVal">200000</span></div>
-          </div>
 
-          <hr>
-          <div class="mb-2">
-            <div class="fw-bold mb-2" data-key="sortByLabel">Sort By</div>
-            <select id="sortSelect" class="form-select form-select-sm">
-              <option value="popular" data-key="sortPopular">Most Popular</option>
-              <option value="new" data-key="sortNew">Newest</option>
-              <option value="low" data-key="sortLow">Price: Low to High</option>
-              <option value="high" data-key="sortHigh">Price: High to Low</option>
-            </select>
-          </div>
+          <label class="mb-2"><strong>Price Range</strong></label>
 
-          <div class="mt-3 text-center">
-            <button id="clearFilters" class="btn btn-outline-secondary btn-sm" data-key="clearFilters">Clear Filters</button>
-          </div>
+          <input type="range" min="0" max="500000" value="500000" id="priceRange" class="form-range">
+
+          <p>Up to ₹ <span id="priceValue">500000</span></p>
 
         </div>
+
       </div>
+
 
       <div class="col-lg-9">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <h4 class="mb-0" data-key="exploreTitle">Explore Products</h4>
-            <small class="text-muted" data-key="exploreSubtitle">Thousands of items across seeds, fertilizers, pesticides & equipment</small>
-          </div>
 
-          <div class="d-flex gap-2 align-items-center">
-            <div class="d-none d-md-block" data-key="sortInfo">Sort & Filters visible on left</div>
+        <div class="content-card">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+
             <div>
-              <button id="gridViewBtn" class="btn btn-sm btn-outline-dark">Grid</button>
-              <button id="listViewBtn" class="btn btn-sm btn-outline-dark">List</button>
+              <h4>Products</h4>
+              <small id="productCount">0 items found</small>
             </div>
-          </div>
-        </div>
 
-        <!-- products grid -->
-        <div id="productsArea">
-          <div id="productsGrid" class="products-grid">
-            <!-- JS will populate product cards here -->
           </div>
 
-          <div id="emptyState" class="empty-state d-none">
-            <h5 data-key="noProductsTitle">No products found</h5>
-            <p data-key="noProductsText">Try changing filters or search terms.</p>
-          </div>
-        </div>
 
-        <div class="text-center mt-4">
-          <button id="loadMore" class="btn btn-outline-success" data-key="loadMore">Load more</button>
+          <div class="product-grid" id="productGrid"></div>
+
         </div>
 
       </div>
+
     </div>
-  </main>
 
-  <!-- Quick view modal -->
-  <div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body p-4">
-          <div class="row g-4">
-            <div class="col-md-6">
-              <div class="quick-img mb-3">
-                <img id="quickMainImg" src="https://via.placeholder.com/800x500?text=Product+Image" style="width:100%;height:100%;object-fit:cover;border-radius:12px">
-              </div>
-              <div id="quickThumbs" class="d-flex"></div>
-            </div>
-            <div class="col-md-6">
-              <h3 id="quickTitle">Product Title</h3>
-              <div class="d-flex align-items-center gap-3 mt-2">
-                <div class="price" id="quickPrice">₹0</div>
-                <div class="old-price" id="quickOld">₹0</div>
-                <div class="ms-auto"><span class="badge bg-success" data-key="inStock">In stock</span></div>
-              </div>
-
-              <p class="mt-3 text-muted" id="quickDesc">Product description will be shown here. Specifications, best uses and user ratings.</p>
-
-              <div class="d-flex gap-2 mt-4">
-                <button id="quickAdd" class="btn-buy" data-key="addToCart">Add to cart</button>
-                <button class="btn-cart" data-bs-dismiss="modal" data-key="viewDetails">View details</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-key="closeBtn">Close</button>
-        </div>
-      </div>
-    </div>
   </div>
 
-  <!-- Cart drawer -->
-  <div id="cartDrawer" class="cart-drawer" aria-hidden="true">
+
+  <div class="cart-box" id="cartBox">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="mb-0" data-key="yourCart">Your Cart</h5>
-      <small class="text-muted" id="cartSummaryCount">0 items</small>
+      <h5>Your Cart</h5>
+
+      <button class="btn-close" id="closeCart"></button>
     </div>
-    <div id="cartItems" style="max-height:340px;overflow:auto"></div>
+
+
+    <div id="cartItems"></div>
+
+
     <hr>
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <div class="small text-muted" data-key="estTotal">Estimated total</div>
-        <div style="font-weight:800; font-size:1.1rem">₹<span id="cartTotal">0</span></div>
-      </div>
-      <div>
-        <button class="btn btn-success" data-key="checkout">Checkout</button>
-      </div>
-    </div>
+
+    <h6>Total: ₹ <span id="cartTotal">0</span></h6>
+
+    <button class="btn btn-success w-100 mt-2">Checkout</button>
+
   </div>
 
-  <!-- ======= Scripts ======= -->
+
   <script>
-    // Sample products (small dataset for demo)
-    const PRODUCTS = [
-      {id:1,title:'Golden Wheat Seeds (5kg)',category:'Seeds',price:450,old:520,img:'./images/wheat.jpg'},
-      {id:2,title:'Hybrid Maize Seeds (2kg)',category:'Seeds',price:320,old:380,img:'./images/maize.jpg'},
-      {id:3,title:'Tomato Vegetable Seeds',category:'Seeds',price:120,img:'./images/tomato.jpg'},
-      {id:4,title:'Organic Compost (20kg)',category:'Fertilizers',price:850,img:'./images/organic.jpg'},
-      {id:5,title:'Urea (50kg)',category:'Fertilizers',price:1450,img:'./images/urea.jpg'},
-      {id:6,title:'Sprayer Backpack 15L',category:'Equipments',price:2200,img:'./images/spray.jpg'},
-      {id:7,title:'Tractor TX-45',category:'Equipments',price:450000,img:'./images/tractor.jpg'},
-      {id:8,title:'Rodenticide Bait (500g)',category:'Pesticides',price:240,img:'./images/bait.jpg'},
+
+    const products = [
+
+      {
+        id: 1,
+        title: "Wheat Seeds",
+        category: "Seeds",
+        price: 450,
+        oldPrice: 520,
+        image: "./images/wheat.jpg"
+      },
+
+      {
+        id: 2,
+        title: "Organic Fertilizer",
+        category: "Fertilizers",
+        price: 1200,
+        image: "./images/organic.jpg"
+      },
+
+      {
+        id: 3,
+        title: "Pesticide Spray",
+        category: "Pesticides",
+        price: 850,
+        image: "./images/pesticide.jpg"
+      },
+
+      {
+        id: 4,
+        title: "Farm Tractor",
+        category: "Equipments",
+        price: 450000,
+        image: "./images/tractor.jpg"
+      }
     ];
 
-    let CART = [];
-    const $ = (s)=>document.querySelector(s);
-    const $$ = (s)=>Array.from(document.querySelectorAll(s));
 
-    // --- Product rendering ---
-    function renderProducts(list=PRODUCTS){
-      const grid = $('#productsGrid');
-      grid.innerHTML='';
-      if(!list || list.length===0){ $('#emptyState').classList.remove('d-none'); $('#matchCount').innerText = 0; return; }
-      $('#emptyState').classList.add('d-none');
-      $('#matchCount').innerText = list.length;
-      list.forEach(p=>{
-        const card = document.createElement('div');
-        card.className = 'prod-card';
+    let cart = [];
+
+
+    function renderProducts(list) {
+
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+
+      document.getElementById("productCount").textContent = `${list.length} items found`;
+
+
+      list.forEach(product => {
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+
         card.innerHTML = `
-          <div class="prod-media"><img src="${p.img}" alt="${p.title}"></div>
-          <div class="prod-body">
-            <div class="prod-title">${p.title}</div>
-            <div class="prod-desc">${p.category}</div>
-            <div class="d-flex justify-content-between align-items-center mt-2">
-              <div>
-                <span class="price">₹${p.price.toLocaleString()}</span>
-                ${p.old?`<span class="old-price">₹${p.old}</span>`:''}
-              </div>
-              <div class="d-flex gap-2">
-                <button class="btn-cart" data-id="${p.id}" aria-label="View details">Details</button>
-                <button class="btn-buy" data-id="${p.id}">Add</button>
-              </div>
+
+          <img src="${product.image}" alt="${product.title}">
+
+          <div class="product-body">
+
+            <div class="product-title">${product.title}</div>
+
+            <div class="product-category">${product.category}</div>
+
+            <div>
+              <span class="price">₹${product.price}</span>
+
+              ${product.oldPrice ? `<span class="old-price">₹${product.oldPrice}</span>` : ""}
             </div>
+
+            <div class="product-buttons">
+
+              <button class="btn-buy" onclick="addToCart(${product.id})">
+                Add
+              </button>
+
+              <button class="btn-details">
+                Details
+              </button>
+
+            </div>
+
           </div>
         `;
+
         grid.appendChild(card);
       });
     }
 
-    // --- Cart ---
-    function addToCart(id){
-      const p = PRODUCTS.find(x=>x.id===id);
-      if(!p) return;
-      const existing = CART.find(x=>x.id===id);
-      if(existing) existing.qty++;
-      else CART.push({...p, qty:1});
+
+    function addToCart(id) {
+
+      const product = products.find(item => item.id === id);
+
+      if(!product) {
+        return;
+      }
+
+      const existing = cart.find(item => item.id === id);
+
+      if(existing) {
+        existing.qty += 1;
+      }
+
+      else {
+        cart.push({
+          ...product,
+          qty: 1
+        });
+      }
+
       renderCart();
-      openCart(true);
     }
 
-    function renderCart(){
-      const wrap = $('#cartItems'); wrap.innerHTML='';
-      let total=0;
-      CART.forEach(it=>{
-        total+=it.price*it.qty;
-        wrap.insertAdjacentHTML('beforeend',`
-          <div class="d-flex align-items-center mb-2">
-            <img src="${it.img}" width="60" height="50" class="me-2 rounded" alt="${it.title}">
-            <div class="flex-grow-1">
-              <div class="fw-bold">${it.title}</div>
-              <div class="small text-muted">₹${it.price} x ${it.qty}</div>
-            </div>
-            <div>
-              <button class="btn btn-sm btn-outline-secondary" data-id="${it.id}" data-delta="-1">-</button>
-              <button class="btn btn-sm btn-outline-secondary" data-id="${it.id}" data-delta="1">+</button>
-            </div>
+
+    function renderCart() {
+
+      const cartItems = document.getElementById("cartItems");
+      cartItems.innerHTML = "";
+
+      let total = 0;
+      let count = 0;
+
+
+      cart.forEach(item => {
+
+        total += item.price * item.qty;
+        count += item.qty;
+
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+
+        div.innerHTML = `
+          <div>
+            <strong>${item.title}</strong><br>
+            ₹${item.price} x ${item.qty}
           </div>
-        `);
+
+          <div>
+            ₹${item.price * item.qty}
+          </div>
+        `;
+
+        cartItems.appendChild(div);
       });
-      $('#cartTotal').innerText=total.toLocaleString();
-      $('#cartCount').innerText=CART.reduce((s,i)=>s+i.qty,0);
-      $('#cartSummaryCount').innerText = `${CART.reduce((s,i)=>s+i.qty,0)} items`;
+
+
+      document.getElementById("cartTotal").textContent = total;
+      document.getElementById("cartCount").textContent = count;
     }
 
-    function updateQty(id,delta){
-      const it=CART.find(x=>x.id===id);
-      if(!it) return;
-      it.qty+=delta;
-      if(it.qty<=0) CART=CART.filter(x=>x.id!==id);
-      renderCart();
-    }
 
-    function openCart(open){
-      const drawer=$('#cartDrawer');
-      if(open===true) drawer.style.transform='translateX(0)';
-      else if(open===false) drawer.style.transform='translateX(120%)';
-      else drawer.style.transform = drawer.style.transform==='translateX(0)'?'translateX(120%)':'translateX(0)';
-    }
+    document.getElementById("searchBtn").addEventListener("click", () => {
 
-    // event delegation for cart buttons in cart drawer
-    document.addEventListener('click', function(e){
-      const addBtn = e.target.closest('.btn-buy');
-      if(addBtn && addBtn.dataset && addBtn.dataset.id){
-        addToCart(parseInt(addBtn.dataset.id,10));
-      }
-      const cartBtn = e.target.closest('#openCart');
-      if(cartBtn) { openCart(); }
+      const value = document.getElementById("searchInput").value.toLowerCase();
 
-      const qtyBtn = e.target.closest('#cartItems button[data-id]');
-      if(qtyBtn){
-        const id = parseInt(qtyBtn.getAttribute('data-id'),10);
-        const delta = parseInt(qtyBtn.getAttribute('data-delta'),10);
-        updateQty(id,delta);
-      }
+      const filtered = products.filter(product => {
 
-      // quick details (open modal)
-      const detailsBtn = e.target.closest('.btn-cart');
-      if(detailsBtn && detailsBtn.dataset && detailsBtn.dataset.id){
-        const id = parseInt(detailsBtn.dataset.id,10);
-        const p = PRODUCTS.find(x=>x.id===id);
-        if(p){
-          $('#quickMainImg').src = p.img;
-          $('#quickTitle').innerText = p.title;
-          $('#quickPrice').innerText = `₹${p.price.toLocaleString()}`;
-          $('#quickOld').innerText = p.old?`₹${p.old}`:'';
-          $('#quickDesc').innerText = `${p.category} — Good quality product for farm use.`;
-          const modal = new bootstrap.Modal(document.getElementById('quickViewModal'));
-          modal.show();
-          $('#quickAdd').onclick = ()=>{ addToCart(id); modal.hide(); };
-        }
-      }
+        return product.title.toLowerCase().includes(value) ||
+               product.category.toLowerCase().includes(value);
+      });
 
-      // filter-link clicks handled below separately
+      renderProducts(filtered);
     });
 
-    // search handler
-    $('#searchBtn').addEventListener('click',()=>{
-      const q = ($('#searchInput').value || '').toLowerCase().trim();
-      const results = PRODUCTS.filter(p=>p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
-      renderProducts(results);
-    });
 
-    // price range display
-    $('#priceRange').addEventListener('input', (e)=> { $('#priceVal').innerText = e.target.value; });
+    document.querySelectorAll(".filter-link").forEach(link => {
 
-    // load initial
-    renderProducts();
+      link.addEventListener("click", event => {
 
-    // wire filter links (toggle active and filter)
-    $$('.filter-link').forEach(a=>{
-      a.addEventListener('click', (ev)=>{
-        ev.preventDefault();
-        a.classList.toggle('active');
-        // derive active filters
-        const active = $$('a.filter-link.active').map(el=>({cat: el.dataset.filterCategory, sub: el.dataset.filterSub}));
-        if(active.length===0){ renderProducts(PRODUCTS); return; }
-        const filtered = PRODUCTS.filter(p => active.some(ac => p.category === ac.cat ));
+        event.preventDefault();
+
+        const category = link.dataset.category;
+
+        const filtered = products.filter(product => {
+          return product.category === category;
+        });
+
         renderProducts(filtered);
       });
     });
 
-    // clear filters
-    $('#clearFilters').addEventListener('click', ()=>{
-      $$('.filter-link.active').forEach(el=>el.classList.remove('active'));
-      renderProducts(PRODUCTS);
+
+    document.getElementById("priceRange").addEventListener("input", event => {
+
+      const maxPrice = Number(event.target.value);
+
+      document.getElementById("priceValue").textContent = maxPrice;
+
+      const filtered = products.filter(product => {
+        return product.price <= maxPrice;
+      });
+
+      renderProducts(filtered);
     });
 
-    // cart open button
-    $('#openCart').addEventListener('click', ()=> openCart(true));
 
-    // --- Translations: self-contained and includes Odia ("or") ---
-    (function(){
-      const translations = {
-        en: {
-          pageTitle: "KrishiMitra Market — Masterpiece",
-          languageButtonLabel: "Language",
-          siteName: "KrishiMitra Market",
-          tagline: "Farm-to-farm KrishiMitra ka e-mart",
-          searchPlaceholder: "Search seeds, fertilizers, tools, tractors...",
-          searchBtn: "Search",
-          showing: "Showing <strong id='matchCount'>0</strong> items",
-          cartBtn: "Cart",
-          categoriesTitle: "Categories",
-          shopBadge: "Shop",
-          priceRangeLabel: "Price Range",
-          sortByLabel: "Sort By",
-          sortPopular: "Most Popular",
-          sortNew: "Newest",
-          sortLow: "Price: Low to High",
-          sortHigh: "Price: High to Low",
-          clearFilters: "Clear Filters",
-          exploreTitle: "Explore Products",
-          exploreSubtitle: "Thousands of items across seeds, fertilizers, pesticides & equipment",
-          noProductsTitle: "No products found",
-          noProductsText: "Try changing filters or search terms.",
-          loadMore: "Load more",
-          inStock: "In stock",
-          addToCart: "Add to cart",
-          viewDetails: "View details",
-          closeBtn: "Close",
-          yourCart: "Your Cart",
-          estTotal: "Estimated total",
-          checkout: "Checkout"
-        },
-        hi: {
-          pageTitle: "कृषि मित्र बाज़ार — मास्टरपीस",
-          languageButtonLabel: "भाषा",
-          siteName: "कृषि मित्र मार्केट",
-          tagline: "खेत से खेत तक — कृषिमित्र का ई-मार्ट",
-          searchPlaceholder: "बीज, खाद, उपकरण, ट्रैक्टर खोजें...",
-          searchBtn: "खोजें",
-          showing: "प्रदर्शित <strong id='matchCount'>0</strong> आइटम",
-          cartBtn: "कार्ट",
-          categoriesTitle: "श्रेणियाँ",
-          shopBadge: "दुकान",
-          priceRangeLabel: "मूल्य सीमा",
-          sortByLabel: "क्रमबद्ध करें",
-          sortPopular: "सबसे लोकप्रिय",
-          sortNew: "नया",
-          sortLow: "किमत: कम से अधिक",
-          sortHigh: "किमत: अधिक से कम",
-          clearFilters: "फ़िल्टर साफ़ करें",
-          exploreTitle: "उत्पादों को देखें",
-          exploreSubtitle: "बीज, खाद, कीटनाशक और उपकरणों में हजारों आइटम",
-          noProductsTitle: "कोई उत्पाद नहीं मिला",
-          noProductsText: "कृपया फ़िल्टर बदलें या खोज शब्द बदल कर देखें।",
-          loadMore: "और लोड करें",
-          inStock: "स्टॉक में",
-          addToCart: "कार्ट में जोड़ें",
-          viewDetails: "विवरण देखें",
-          closeBtn: "बंद करें",
-          yourCart: "आपका कार्ट",
-          estTotal: "अनुमानित कुल",
-          checkout: "चेकआउट"
-        },
-        bn: {
-          pageTitle: "কৃষি মিত্র মার্কেটে — মাস্টারপিস",
-          languageButtonLabel: "ভাষা",
-          siteName: "কৃষি মিত্র মার্কেট",
-          tagline: "খেত থেকে খেত — কৃষিমিত্রের ই-মার্ট",
-          searchPlaceholder: "বীজ, সার, সরঞ্জাম, ট্র্যাক্টর খুঁজুন...",
-          searchBtn: "অনুসন্ধান",
-          showing: "দেখানো হচ্ছে <strong id='matchCount'>0</strong> আইটেম",
-          cartBtn: "কার্ট",
-          categoriesTitle: "বিভাগ",
-          shopBadge: "শপ",
-          priceRangeLabel: "মূল্য সীমা",
-          sortByLabel: "সাজান",
-          sortPopular: "সবচেয়ে জনপ্রিয়",
-          sortNew: "নতুন",
-          sortLow: "মূল্য: কম থেকে বেশি",
-          sortHigh: "মূল্য: বেশি থেকে কম",
-          clearFilters: "ফিল্টার মুছুন",
-          exploreTitle: "পণ্য ব্রাউজ করুন",
-          exploreSubtitle: "বীজ, সার, কীটনাশক ও সরঞ্জামে হাজার হাজার আইটেম",
-          noProductsTitle: "কোন পণ্য পাওয়া যায়নি",
-          noProductsText: "ফিল্টার বা অনুসন্ধান পরিবর্তন করে দেখুন।",
-          loadMore: "আর লোড করুন",
-          inStock: "স্টকে আছে",
-          addToCart: "কার্টে যোগ করুন",
-          viewDetails: "বিস্তারিত দেখুন",
-          closeBtn: "বন্ধ করুন",
-          yourCart: "আপনার কার্ট",
-          estTotal: "অনুমানিক মোট",
-          checkout: "চেকআউট"
-        },
-        te: {
-          pageTitle: "కృషిమిత్ర్ మార్కెట్ — మాస్టర్‌పీస్",
-          languageButtonLabel: "భాష",
-          siteName: "కృషిమిత్ర్ మార్కెట్",
-          tagline: "పంటదరి నుంచి పంటదరికి — కృషిమిత్ర్ ఇ-మార్ట్",
-          searchPlaceholder: "బీజం, ఎరువులు, పరికరాలు, ట్రాక్టర్లు వెతకండి...",
-          searchBtn: "శోధించండి",
-          showing: "ప్రదర్శించబడుతున్నది <strong id='matchCount'>0</strong> ఐటెమ్స్",
-          cartBtn: "కార్ట్",
-          categoriesTitle: "వర్గాలు",
-          shopBadge: "షాప్",
-          priceRangeLabel: "ధర పరిధి",
-          sortByLabel: "క్రమం",
-          sortPopular: "ఇట్లలో ప్రముఖంగా",
-          sortNew: "తాజా",
-          sortLow: "క ధర: తక్కువ నుంచి ఎక్కువ",
-          sortHigh: "ధర: ఎక్కువ నుంచి తక్కువ",
-          clearFilters: "ఫిల్టర్లను క్లియర్ చేయండి",
-          exploreTitle: "ఉత్పత్తులను అన్వేషించండి",
-          exploreSubtitle: "బీజులు, ఎరువులు, పesticides & పరికరాల వెయ్యి ఐటెమ్స్",
-          noProductsTitle: "ఉత్పత్తులు కనుగొనబడటం లేదు",
-          noProductsText: "ఫిల్టర్‌లు లేదా శోధన పదాలు మార్చి పర్యవేక్షించండి.",
-          loadMore: "ఇంకా లోడ్ చేయండి",
-          inStock: "స్టాక్‌లో ఉంది",
-          addToCart: "కార్టులో జోడించండి",
-          viewDetails: "వివరాలు చూపు",
-          closeBtn: "બંધ చేయి",
-          yourCart: "మీ కార్ట్",
-          estTotal: "అంచనా మొత్తం",
-          checkout: "చెకౌట్"
-        },
-        mr: {
-          pageTitle: "कृषि मित्र मार्केट — मास्टरपीस",
-          languageButtonLabel: "भाषा",
-          siteName: "कृषि मित्र मार्केट",
-          tagline: "शेतापासून शेतापर्यंत — कृषिमित्रचा ई-मार्ट",
-          searchPlaceholder: "बियाणे, खते, साधने, ट्रॅक्टर शोधा...",
-          searchBtn: "शोधा",
-          showing: "दाखवत आहे <strong id='matchCount'>0</strong> आयटम",
-          cartBtn: "कार्ट",
-          categoriesTitle: "वर्ग",
-          shopBadge: "शॉप",
-          priceRangeLabel: "किंमत श्रेणी",
-          sortByLabel: "क्रम लावा",
-          sortPopular: "सर्वाधिक लोकप्रिय",
-          sortNew: "नवीन",
-          sortLow: "किंमत: कमी ते जास्त",
-          sortHigh: "किंमत: जास्त ते कमी",
-          clearFilters: "फिल्टर साफ करा",
-          exploreTitle: "उत्पादने एक्स्प्लोर करा",
-          exploreSubtitle: "बियाणे, खते, कीटकनाशके आणि उपकरणे यातील हजारो आयटम",
-          noProductsTitle: "कोणतेही उत्पादने सापडले नाहीत",
-          noProductsText: "कृपया फिल्टर किंवा शोध अटी बदला.",
-          loadMore: "अधिक लोड करा",
-          inStock: "स्टॉक मध्ये",
-          addToCart: "कार्ट मध्ये जोडा",
-          viewDetails: "तपशील पहा",
-          closeBtn: "बंद करा",
-          yourCart: "तुमचा कार्ट",
-          estTotal: "अनुमानित एकूण",
-          checkout: "चेकआउट"
-        },
-        ta: {
-          pageTitle: "கிரிஷி மித்ர் மார்க்கெட் — மாஸ்டர்பீஸ்",
-          languageButtonLabel: "மொழி",
-          siteName: "கிரிஷி மித்ர் மார்க்கெட்",
-          tagline: "விவசாயியிலிருந்து விவசாயிக்கு — கிரிஷிமித்ர் ஈ-மார்ட்",
-          searchPlaceholder: "விதைகள், உரங்கள், கருவிகள், டிராக்டர்கள் ஐ தேடவும்...",
-          searchBtn: "தேடு",
-          showing: "காட்சி <strong id='matchCount'>0</strong> பொருட்கள்",
-          cartBtn: "கார்ட்",
-          categoriesTitle: "வகைகள்",
-          shopBadge: "கடை",
-          priceRangeLabel: "விலை வரம்பு",
-          sortByLabel: "வரிசைப்படுத்து",
-          sortPopular: "மிகப் பிரபலம்",
-          sortNew: "புது",
-          sortLow: "விலை: குறைந்தது முதல்",
-          sortHigh: "விலை: அதிகம் முதல்",
-          clearFilters: "வடிகட்டுதலை சுட்டிக்காண்",
-          exploreTitle: "தயாரிப்புகளை ஆராயுங்கள்",
-          exploreSubtitle: "விதைகள், உரங்கள், பூச்சிகரம் & கருவிகளின் ஆயிரக்கணக்கான பொருட்கள்",
-          noProductsTitle: "பொருட்கள் கிடைக்கவில்லை",
-          noProductsText: "வடிகட்டிகள் அல்லது தேடல் உரையை மாற்றி முயற்சிக்கவும்.",
-          loadMore: "மேலும் ஏற்றுக",
-          inStock: "க Indo களில் உள்ளது",
-          addToCart: "கார்ட்டில் சேர்க்க",
-          viewDetails: "விவரங்கள் காண்க",
-          closeBtn: "மூடு",
-          yourCart: "உங்கள் கார்ட்",
-          estTotal: "கணிக்கப்பட்ட மொத்தம்",
-          checkout: "கட்டணம்"
-        },
-        // Odia (or)
-        or: {
-          pageTitle: "କୃଷିମିତ୍ର ବଜାର — ମାଷ୍ଟରପିସ୍",
-          languageButtonLabel: "ଭାଷା",
-          siteName: "କୃଷିମିତ୍ର ବଜାର",
-          tagline: "ଫାର୍ମ-ଟୁ-ଫାର୍ମ — କୃଷିମିତ୍ରର ଇ-ମାର୍ଟ",
-          searchPlaceholder: "ଚାଷ ବୀଜ, ଉର୍ବରକ, ଉପକରଣ, ଟ୍ରାକ୍ଟର ଖୋଜନ୍ତୁ...",
-          searchBtn: "ଖୋଜନ୍ତୁ",
-          showing: "ଦର୍ଶାଯାଉଛି <strong id='matchCount'>0</strong> ପଦାର୍ଥ",
-          cartBtn: "କାର୍ଟ",
-          categoriesTitle: "ଶ୍ରେଣୀଗୁଡିକ",
-          shopBadge: "ଦୋକାନ",
-          priceRangeLabel: "ମୂଲ୍ୟ ଶ୍ରେଣୀ",
-          sortByLabel: "କ୍ରମିକରଣ",
-          sortPopular: "ସର୍ବାଧିକ ପ୍ରଚଳିତ",
-          sortNew: "ନୂତନ",
-          sortLow: "ମୂଲ୍ୟ: କମ୍ ଠାରୁ ଅଧିକ",
-          sortHigh: "ମୂଲ୍ୟ: ଅଧିକ ଠାରୁ କମ୍",
-          clearFilters: "ଫିଲ୍ଟର ଚାଳନା କଲେ",
-          exploreTitle: "ପ୍ରଡକ୍ଟ୍‌ଗୁଡିକ ଅନୁସନ୍ଧାନ କରନ୍ତୁ",
-          exploreSubtitle: "ବୀଜ, ଉର୍ବରକ, କୀଟନାଶକ ଏବଂ ଉପକରଣରେ ହଜାର ଆଇଟମ୍‌ସ୍",
-          noProductsTitle: "କୌଣସି ପ୍ରଡକ୍ଟ୍ ମିଳିଲା ନାହିଁ",
-          noProductsText: "ଫିଲ୍ଟର ବା ଖୋଜ ଶବ୍ଦ ପରିବର୍ତ୍ତନ କରନ୍ତୁ।",
-          loadMore: "ଅଧିକ ଲୋଡ୍ କରନ୍ତୁ",
-          inStock: "ସ୍ଟକ୍‌ରେ ଅଛି",
-          addToCart: "କାର୍ଟ୍‌କୁ ଯୋଗ କରନ୍ତୁ",
-          viewDetails: "ବିବରଣୀ ଦେଖନ୍ତୁ",
-          closeBtn: "ବନ୍ଦ କରନ୍ତୁ",
-          yourCart: "ଆପଣଙ୍କର କାର୍ଟ",
-          estTotal: "ଅନୁମାନିତ ମୋଟ",
-          checkout: "ଚେକଅାଉଟ୍"
-        }
-      };
+    document.getElementById("cartBtn").addEventListener("click", () => {
 
-      // Expose translations
-      window.translations = translations;
+      document.getElementById("cartBox").style.display = "block";
+    });
 
-      function applyLanguage(lang){
-        const T = translations[lang];
-        if(!T) return console.warn('No translations for', lang);
 
-        // update all [data-key]
-        document.querySelectorAll('[data-key]').forEach(el=>{
-          const key = el.getAttribute('data-key');
-          if(!key) return;
-          const val = T[key];
-          if(typeof val === 'undefined') return;
-          if(el.tagName.toLowerCase() === 'title'){
-            document.title = val;
-            el.textContent = val;
-          } else {
-            el.innerHTML = val;
-          }
-        });
+    document.getElementById("closeCart").addEventListener("click", () => {
 
-        // placeholders (inputs that use data-key for placeholder)
-        const sp = T['searchPlaceholder'];
-        if(sp) $('#searchInput').placeholder = sp;
-        // update html lang attribute
-        document.documentElement.lang = lang;
-        // update lang button label
-        const langBtn = document.getElementById('langBtn');
-        if(langBtn){ langBtn.textContent = T['languageButtonLabel'] || 'Language'; langBtn.classList.add('dropdown-toggle'); }
-        try{ localStorage.setItem('site_language', lang); }catch(e){}
-      }
+      document.getElementById("cartBox").style.display = "none";
+    });
 
-      // Delegated handler for language option clicks
-      document.addEventListener('click', function(e){
-        const opt = e.target.closest('.lang-option');
-        if(!opt) return;
-        e.preventDefault();
-        const lang = opt.getAttribute('data-lang') || 'en';
-        if(typeof window.setLanguage === 'function'){
-          try { window.setLanguage(lang); return; } catch(err){ console.warn('setLanguage failed', err); }
-        }
-        applyLanguage(lang);
-      });
 
-      // Apply saved language on load (or default to en)
-      document.addEventListener('DOMContentLoaded', function(){
-        const saved = localStorage.getItem('site_language') || 'en';
-        if(typeof window.setLanguage === 'function'){
-          try { window.setLanguage(saved); return; } catch(err){ console.warn('window.setLanguage failed', err); }
-        }
-        applyLanguage(saved);
-        // Ensure search placeholder updated (fallback)
-        if(!$('#searchInput').placeholder) $('#searchInput').placeholder = translations[saved].searchPlaceholder || translations.en.searchPlaceholder;
-      });
-    })();
+    renderProducts(products);
+
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

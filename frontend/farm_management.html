@@ -1,546 +1,407 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Farm Management — KrishiMitra-AI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm Management</title>
 
-  <!-- Poppins font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    :root{
-      --bg: #d1f2e7;
-      --panel: #8ED8C6;
-      --primary: #2e7d32;
-      --muted: #2a4b3d;
-      --card: #ffffff;
-      --soft-shadow: 0 10px 24px rgba(18,45,31,0.06);
-      --radius: 12px;
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:'Poppins',sans-serif;background:var(--bg);color:var(--muted);-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}
+    body {
+      background: #f3f5f3;
+      color: #222;
+      padding: 20px;
+    }
 
-    /* NAVBAR */
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      color: #2f7d32;
+      margin-bottom: 5px;
+    }
+
     .nav {
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding:12px 18px;
-      background: rgba(255,255,255,0.95); border-bottom:1px solid rgba(0,0,0,0.04);
-      position:sticky; top:0; z-index:100;
-    }
-    .brand { display:flex; align-items:center; gap:12px; }
-    .logo {
-      width:46px; height:46px; border-radius:8px; object-fit:cover; box-shadow:0 6px 14px rgba(0,0,0,0.06);
-    }
-    .brand h1{ margin:0; font-size:18px; font-weight:700; color:var(--primary) }
-    .nav-links { display:flex; gap:14px; align-items:center; }
-    .nav-links a { padding:8px 10px; border-radius:8px; font-weight:600; color:rgba(0,0,0,0.6) }
-    .nav-links a.active { background:transparent; color:var(--primary) }
-    .nav-actions { display:flex; gap:8px; align-items:center; }
-
-    .btn {
-      background: linear-gradient(90deg,var(--primary),#1b5a28);
-      color: white; border: 0; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:700;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
     }
 
-    /* mobile menu toggle */
-    .hamburger { display:none; width:40px; height:40px; border-radius:8px; background:#fff; border:1px solid rgba(0,0,0,0.04); align-items:center; justify-content:center; cursor:pointer }
-    @media(max-width:880px){ .nav-links{ display:none } .hamburger{ display:flex } }
-
-    /* page layout */
-    .wrap { max-width:1200px; margin:18px auto; padding:0 16px; }
-    .page-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px; }
-    .page-head h2 { margin:0; font-size:26px; color:var(--muted); font-weight:800 }
-    .sub { color:rgba(0,0,0,0.55); font-weight:600 }
-
-    /* grid */
-    .grid { display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; }
-    @media(max-width:1000px){ .grid{ grid-template-columns:1fr } }
-
-    /* card */
-    .card { background:var(--card); border-radius:var(--radius); padding:14px; box-shadow:var(--soft-shadow); border:1px solid rgba(0,0,0,0.04) }
-
-    /* overview */
-    .overview { display:flex; gap:12px; align-items:flex-start; }
-    .farm-image { width:160px; height:110px; border-radius:8px; overflow:hidden; flex-shrink:0; }
-    .farm-image img{ width:100%; height:100%; object-fit:cover }
-    .farm-meta h3 { margin:0; color:var(--primary); font-size:18px; font-weight:800 }
-    .farm-meta p { margin:8px 0 0; color:rgba(0,0,0,0.6) }
-
-    .metrics { margin-top:12px; display:flex; gap:12px; flex-wrap:wrap }
-    .metric { background:#f7fff9; border-radius:10px; padding:10px 12px; min-width:140px; display:flex; justify-content:space-between; font-weight:700; color:var(--muted) }
-
-    /* tasks & calendar */
-    .tasks-grid { display:grid; grid-template-columns:1fr 320px; gap:12px }
-    @media(max-width:900px){ .tasks-grid{ grid-template-columns:1fr } }
-
-    .task-list { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
-    .task-item { display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; background:#fbfff9; border:1px solid rgba(0,0,0,0.03); }
-    .task-item .text { flex:1; font-weight:600 }
-
-    .calendar { padding:10px; border-radius:10px; background:#fbfff9; border:1px solid rgba(0,0,0,0.03) }
-    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-top:8px }
-    .cal-cell { background:#fff; border-radius:8px; padding:8px; text-align:center; font-weight:700; box-shadow:0 6px 12px rgba(0,0,0,0.03) }
-
-    /* right column inventory */
-    .inventory .item { display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px; background:#fbfff9; margin-bottom:10px; border:1px solid rgba(0,0,0,0.03) }
-    .icon { width:40px; height:40px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; background:linear-gradient(90deg,#f4f8f6,#e9fbf0); color:var(--primary); font-weight:800 }
-    .mini-stats { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap }
-    .stat { background:#fff; padding:8px 10px; border-radius:8px; min-width:140px; font-weight:700; box-shadow:0 6px 12px rgba(0,0,0,0.03) }
-
-    .chart-wrap { margin-top:10px }
-
-    /* footer */
-    .footer-small { margin-top:18px; text-align:center; color:rgba(0,0,0,0.45); font-size:13px }
-
-    /* mobile adjustments */
-    @media(max-width:480px){
-      .brand h1{ font-size:16px }
-      .metric{ min-width:120px; font-size:14px }
-      .farm-image{ width:110px; height:80px }
+    .nav a {
+      text-decoration: none;
+      color: #444;
+      font-weight: bold;
     }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+      color: #2f7d32;
+    }
+
+    .overview {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .overview img {
+      width: 180px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .metric {
+      background: #f7f7f7;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .task-item,
+    .inventory-item,
+    .activity-item {
+      background: #f7f7f7;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #2f7d32;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .calendar div {
+      background: #f7f7f7;
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .chart-box {
+      margin-top: 20px;
+    }
+
+    @media(max-width: 900px) {
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .overview {
+        flex-direction: column;
+      }
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <header class="nav">
-    <div style="display:flex;align-items:center;gap:12px">
-      <a class="brand" href="test.html">
-        <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=400&auto=format&fit=crop" class="logo" alt="KrishiMitra logo">
-        <div style="line-height:1">
-          <h1>KrishiMitra-AI</h1>
-          <div class="sub" style="font-size:12px">Farm Management</div>
-        </div>
-      </a>
-    </div>
+  <div class="container">
 
-    <div style="display:flex;align-items:center;gap:12px">
-      <nav class="nav-links" id="navLinks">
-        <a href="test.html" class="active">Home</a>
-        <a href="login.html" onclick="alert('Please login first to access the dashboard!')">Dashboard</a>
-        <a href="#">Reports</a>
-        <a href="contact.html">Help</a>
-      </nav>
+    <div class="header">
 
-      <div class="nav-actions">
-        <button class="btn" id="addRecordTop">Add New Record</button>
-        <div class="hamburger" id="hamburger" title="Menu">
-          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect y="1" width="18" height="2" rx="1" fill="#2e7d32"/><rect y="6" width="18" height="2" rx="1" fill="#2e7d32"/><rect y="11" width="18" height="2" rx="1" fill="#2e7d32"/></svg>
-        </div>
+      <div>
+        <h1>Farm Management Dashboard</h1>
+        <p>Track farm operations and activities</p>
       </div>
-    </div>
-  </header>
 
-  <!-- MOBILE NAV POPUP -->
-  <div id="mobileNav" style="display:none;position:fixed;top:64px;right:12px;background:white;padding:12px;border-radius:10px;box-shadow:0 14px 30px rgba(0,0,0,0.12);z-index:200">
-    <a href="test.html" style="display:block;padding:8px 4px">Home</a>
-    <a href="login.html"onclick="alert('Please login first to access the dashboard!')" style="display:block;padding:8px 4px">Dashboard</a>
-    <a href="#" style="display:block;padding:8px 4px">Reports</a>
-    <a href="contact.html" style="display:block;padding:8px 4px">Help</a>
-    <div style="height:8px"></div>
-    <button class="btn" id="mobileAdd">Add New Record</button>
-  </div>
+      <div class="nav">
+        <a href="#">Home</a>
+        <a href="#">Dashboard</a>
+        <a href="#">Reports</a>
+        <a href="#">Help</a>
+      </div>
 
-  <main class="wrap">
-    <div class="page-head">
-      <h2>Farm Management & Operations Dashboard</h2>
-      <div class="sub">Overview • Tasks • Inventory</div>
     </div>
 
-    <div class="grid">
 
-      <!-- LEFT -->
+    <div class="layout">
+
       <div>
 
-        <!-- Overview -->
-        <section class="card overview">
-          <div class="farm-image">
-            <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1000&auto=format&fit=crop" alt="Farm">
-          </div>
-          <div class="farm-meta">
-            <h3>Shivam's Farm — Block A</h3>
-            <p>Coordinates: 23.344°N, 85.309°E • 250 acres active • Last soil test: 2025-03-02</p>
+        <div class="card">
 
-            <div class="metrics">
-              <div class="metric"><span>Acres Planted</span><span id="acresVal">250</span></div>
-              <div class="metric"><span>Current Season</span><span id="seasonVal">7</span></div>
-              <div class="metric"><span>Active Tasks</span><span id="activeCount">0</span></div>
-            </div>
-          </div>
-        </section>
+          <h2>Farm Overview</h2>
 
-        <!-- Tasks & Schedule -->
-        <section class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:800">Tasks & Schedule</div>
-            <div class="muted">Week View</div>
-          </div>
+          <div class="overview">
 
-          <div class="tasks-grid" style="margin-top:12px">
-            <div>
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div style="font-weight:700">Pending Tasks</div>
-                <div class="muted" id="taskCountLabel">0 tasks</div>
-              </div>
-
-              <div class="task-list" id="taskList"></div>
-
-              <div style="display:flex;gap:8px;margin-top:12px">
-                <input id="newTask" placeholder="Add task e.g. Fertilize Field A" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
-                <button class="btn" id="addTask">Add</button>
-              </div>
-            </div>
+            <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop">
 
             <div>
-              <div style="font-weight:700">Calendar</div>
-              <div class="calendar" style="margin-top:8px">
-                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-                  <button class="btn" id="prevWeek">Prev</button>
-                  <button class="btn" id="nextWeek">Next</button>
-                  <div style="flex:1"></div>
-                  <button class="btn" id="gotoToday">Today</button>
+              <h3>Shivam's Farm</h3>
+              <p>250 acres active farming area</p>
+
+              <div class="metrics">
+
+                <div class="metric">
+                  <strong>250</strong><br>
+                  Acres
                 </div>
-                <div class="cal-grid" id="calendarGrid"></div>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        <!-- Activity log -->
-        <section class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:800">Recent Activity</div>
-            <div class="muted">Latest updates</div>
+                <div class="metric">
+                  <strong>7</strong><br>
+                  Active Fields
+                </div>
+
+                <div class="metric">
+                  <strong>12</strong><br>
+                  Pending Tasks
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
-          <ul id="activityLog" style="margin-top:12px;padding-left:16px;color:rgba(0,0,0,0.65)"></ul>
-        </section>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Task Management</h2>
+
+          <div id="taskList">
+
+            <div class="task-item">Fertilize Field A</div>
+            <div class="task-item">Repair irrigation pipe</div>
+            <div class="task-item">Check pest activity</div>
+
+          </div>
+
+
+          <input type="text" id="taskInput" placeholder="Add new task">
+
+          <button id="addTaskBtn">Add Task</button>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Calendar</h2>
+
+          <div class="calendar" id="calendar"></div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Recent Activity</h2>
+
+          <div id="activityList">
+
+            <div class="activity-item">Dashboard opened</div>
+            <div class="activity-item">Soil report uploaded</div>
+            <div class="activity-item">Irrigation completed</div>
+
+          </div>
+
+        </div>
 
       </div>
 
-      <!-- RIGHT -->
-      <aside>
 
-        <section class="card inventory">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:800">Inventory & Equipment</div>
-            <div class="muted">Status snapshot</div>
+      <div>
+
+        <div class="card">
+
+          <h2>Inventory</h2>
+
+          <div class="inventory-item">
+            Tractor - Active
           </div>
 
-          <div style="margin-top:12px">
-            <div class="item">
-              <div class="icon">🚜</div>
-              <div style="flex:1"><div style="font-weight:700">Tractor</div><div class="muted">Online • Battery 95%</div></div>
-              <div style="font-weight:800;color:var(--primary)" id="tractorStatus">Active</div>
-            </div>
-
-            <div class="item">
-              <div class="icon">🌾</div>
-              <div style="flex:1"><div style="font-weight:700">Seeder</div><div class="muted">Idle</div></div>
-              <div style="font-weight:800;color:#555" id="seederStatus">Idle</div>
-            </div>
-
-            <div class="item">
-              <div class="icon">🧪</div>
-              <div style="flex:1"><div style="font-weight:700">Fertilizer</div><div class="muted">500 lbs</div></div>
-              <div style="font-weight:800;color:#555" id="fertStatus">Stock</div>
-            </div>
+          <div class="inventory-item">
+            Seeder - Idle
           </div>
 
-          <div class="mini-stats">
-            <div class="stat">Total Revenue<div style="font-weight:900;margin-top:6px">$55K</div></div>
-            <div class="stat">Total Expenses<div style="font-weight:900;margin-top:6px">$32K</div></div>
+          <div class="inventory-item">
+            Fertilizer Stock - 500 kg
           </div>
 
-          <div class="chart-wrap">
-            <canvas id="revChart" style="width:100%;height:140px"></canvas>
-          </div>
-        </section>
+        </div>
 
-        <section class="card" style="margin-top:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:800">Quick Actions</div>
-            <div class="muted">One-click</div>
+
+        <div class="card">
+
+          <h2>Revenue Overview</h2>
+
+          <div class="chart-box">
+            <canvas id="revenueChart"></canvas>
           </div>
 
-          <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
-            <button class="btn" id="scheduleIrrigation">Schedule Irrigation</button>
-            <button class="btn" id="runPestScan" style="background:linear-gradient(90deg,#ffb74d,#e88819)">Run Pest Scan</button>
-            <button class="btn" id="exportReport" style="background:linear-gradient(90deg,#4caf50,#2e7d32)">Export Report</button>
-          </div>
-        </section>
+        </div>
 
-      </aside>
+
+        <div class="card">
+
+          <h2>Quick Actions</h2>
+
+          <button id="irrigationBtn">Schedule Irrigation</button>
+          <button id="pestBtn">Run Pest Scan</button>
+          <button id="reportBtn">Export Report</button>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="footer-small">Copyright © KrishiMitra • Privacy • Terms</div>
-  </main>
+  </div>
+
 
   <script>
-    /*************************
-     * Responsive nav toggle
-     *************************/
-    const hamburger = document.getElementById('hamburger');
-    const mobileNav = document.getElementById('mobileNav');
-    if (hamburger && mobileNav) {
-      hamburger.addEventListener('click', ()=> {
-        mobileNav.style.display = mobileNav.style.display === 'none' || mobileNav.style.display === '' ? 'block' : 'none';
-      });
-      document.getElementById('mobileAdd').addEventListener('click', ()=> { mobileNav.style.display='none'; addNewRecord(); });
-    }
 
-    /*************************
-     * TASKS & ACTIVITY
-     *************************/
-    let tasks = [
-      {id:1, text:'Fertilize Field A', done:false},
-      {id:2, text:'Pest Inspection - Zone B', done:false},
-      {id:3, text:'Repair Sprinkler System', done:true},
-      {id:4, text:'Order Seeds - Corn', done:false}
-    ];
+    const taskInput = document.getElementById("taskInput");
+    const taskList = document.getElementById("taskList");
 
-    let activity = [
-      new Date().toLocaleString() + ' — Dashboard opened',
-      'Soil test uploaded (2025-03-02)',
-      'Tractor firmware updated (v1.2)'
-    ];
 
-    const taskList = document.getElementById('taskList');
-    const activityLog = document.getElementById('activityLog');
-    const activeCountEl = document.getElementById('activeCount');
-    const taskCountLabel = document.getElementById('taskCountLabel');
+    document.getElementById("addTaskBtn").addEventListener("click", () => {
 
-    // safe escape function (coerces to string)
-    function escapeHtml(unsafe) {
-      const s = String(unsafe || '');
-      return s.replace(/[&<"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','"':'&quot;',"'":'&#039;'})[m]; });
-    }
+      const value = taskInput.value.trim();
 
-    function renderTasks(){
-      if(!taskList) return;
-      taskList.innerHTML = '';
-      tasks.forEach(t=>{
-        const el = document.createElement('div');
-        el.className = 'task-item';
-        el.innerHTML = `
-          <input type="checkbox" data-id="${t.id}" ${t.done ? 'checked' : ''}>
-          <div class="text" style="${t.done ? 'text-decoration:line-through;color:rgba(0,0,0,0.45)' : ''}">${escapeHtml(t.text)}</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <button title="Edit" data-edit="${t.id}" style="background:transparent;border:0;cursor:pointer;color:#2e7d32;font-weight:800">✎</button>
-            <button title="Delete" data-del="${t.id}" style="background:transparent;border:0;cursor:pointer;color:#c94b4b;font-weight:800">✕</button>
-          </div>
-        `;
-        taskList.appendChild(el);
-      });
+      if(!value) {
+        alert("Enter task name");
+        return;
+      }
 
-      // update counters
-      const activeCount = tasks.filter(x=>!x.done).length;
-      if(activeCountEl) activeCountEl.textContent = activeCount;
-      if(taskCountLabel) taskCountLabel.textContent = tasks.length + ' tasks';
+      const task = document.createElement("div");
+      task.className = "task-item";
+      task.textContent = value;
 
-      // handlers (re-bind)
-      taskList.querySelectorAll('input[type=checkbox]').forEach(cb=>{
-        cb.addEventListener('change', (e)=>{
-          const id = Number(e.target.dataset.id);
-          const t = tasks.find(x=>x.id===id);
-          if(!t) return;
-          t.done = e.target.checked;
-          renderTasks();
-          addActivity((e.target.checked ? 'Completed' : 'Marked incomplete') + ' task — ' + t.text);
-        });
-      });
-      taskList.querySelectorAll('button[data-del]').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          const id = Number(b.dataset.del);
-          const idx = tasks.findIndex(x=>x.id===id);
-          if(idx>-1){
-            const removed = tasks.splice(idx,1)[0];
-            renderTasks();
-            addActivity('Deleted task — ' + removed.text);
-          }
-        });
-      });
-      taskList.querySelectorAll('button[data-edit]').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          const id = Number(b.dataset.edit);
-          const t = tasks.find(x=>x.id===id);
-          if(!t) return;
-          const nv = prompt('Edit task', t.text);
-          if(nv!==null && nv.trim()!==''){ t.text = nv.trim(); renderTasks(); addActivity('Edited task — ' + t.text); }
-        });
-      });
-    }
+      taskList.prepend(task);
 
-    const addTaskBtn = document.getElementById('addTask');
-    if(addTaskBtn){
-      addTaskBtn.addEventListener('click', ()=>{
-        const input = document.getElementById('newTask');
-        if(!input) return;
-        const val = input.value.trim();
-        if(!val) return alert('Enter a task');
-        const id = Date.now();
-        tasks.unshift({id, text:val, done:false});
-        input.value = '';
-        renderTasks();
-        addActivity('Added task — ' + val);
-      });
-    }
+      taskInput.value = "";
+    });
 
-    // support Enter key on newTask input
-    const newTaskInput = document.getElementById('newTask');
-    if(newTaskInput){
-      newTaskInput.addEventListener('keypress', (e)=>{
-        if(e.key === 'Enter') {
-          const addBtn = document.getElementById('addTask');
-          if(addBtn) addBtn.click();
-        }
-      });
-    }
 
-    /*************************
-     * Activity log
-     *************************/
-    function renderActivity(){
-      if(!activityLog) return;
-      activityLog.innerHTML = '';
-      activity.slice(0,20).forEach(a=>{
-        const li = document.createElement('li'); li.textContent = a; activityLog.appendChild(li);
-      });
-    }
-    function addActivity(text){
-      activity.unshift(new Date().toLocaleString() + ' — ' + text);
-      if(activity.length>50) activity.length = 50;
-      renderActivity();
-    }
+    function createCalendar() {
 
-    /*************************
-     * Calendar (simple week view)
-     *************************/
-    let calendarStart = new Date();
-    function buildCalendar(){
-      const cal = document.getElementById('calendarGrid');
-      if(!cal) return;
-      cal.innerHTML = '';
-      const start = new Date(calendarStart);
-      for(let i=0;i<7;i++){
-        const d = new Date(start);
-        d.setDate(start.getDate() + i);
-        const cell = document.createElement('div');
-        cell.className = 'cal-cell';
-        const day = d.toLocaleDateString(undefined, {weekday:'short'});
-        const date = d.getDate();
-        cell.innerHTML = '<div style="font-size:12px;color:rgba(0,0,0,0.6)">' + day + '</div><div style="font-size:18px;font-weight:800">' + date + '</div>';
-        cal.appendChild(cell);
+      const calendar = document.getElementById("calendar");
+
+      for(let i = 1; i <= 30; i++) {
+
+        const day = document.createElement("div");
+        day.textContent = i;
+
+        calendar.appendChild(day);
       }
     }
-    const prevWeekBtn = document.getElementById('prevWeek');
-    const nextWeekBtn = document.getElementById('nextWeek');
-    const gotoTodayBtn = document.getElementById('gotoToday');
-    if(prevWeekBtn) prevWeekBtn.addEventListener('click', ()=>{ calendarStart.setDate(calendarStart.getDate() - 7); buildCalendar(); addActivity('Moved to previous week');});
-    if(nextWeekBtn) nextWeekBtn.addEventListener('click', ()=>{ calendarStart.setDate(calendarStart.getDate() + 7); buildCalendar(); addActivity('Moved to next week');});
-    if(gotoTodayBtn) gotoTodayBtn.addEventListener('click', ()=>{ calendarStart = new Date(); buildCalendar(); addActivity('Returned to current week'); });
 
-    /*************************
-     * Charts (Revenue vs Expenses)
-     *************************/
-    try{
-      const revCtx = document.getElementById('revChart')?.getContext('2d');
-      if(revCtx){
-        const revChart = new Chart(revCtx, {
-          type: 'line',
-          data: {
-            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-            datasets: [
-              { label:'Revenue', data:[20,28,35,40,48,55,60,62,58,54,50,55], borderColor:'#2e7d32', tension:0.3, fill:false, borderWidth:2 },
-              { label:'Expenses', data:[12,18,20,22,28,32,36,38,36,34,32,32], borderColor:'#c96f2d', tension:0.3, fill:false, borderWidth:2 }
-            ]
+
+    createCalendar();
+
+
+    const revenueChart = new Chart(document.getElementById("revenueChart"), {
+
+      type: "line",
+
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+
+        datasets: [
+          {
+            label: "Revenue",
+            data: [20, 30, 40, 35, 50, 60]
           },
-          options:{ plugins:{legend:{display:false}}, scales:{x:{display:true}, y:{display:false}} }
-        });
-      }
-    }catch(e){ console.warn('Revenue chart init failed', e); }
 
-    /*************************
-     * Quick actions
-     *************************/
-    const scheduleBtn = document.getElementById('scheduleIrrigation');
-    const pestBtn = document.getElementById('runPestScan');
-    const exportBtn = document.getElementById('exportReport');
-
-    if(scheduleBtn){
-      scheduleBtn.addEventListener('click', ()=>{
-        addActivity('Irrigation scheduled for Field A (demo)');
-        alert('Irrigation scheduled (demo).');
-      });
-    }
-    if(pestBtn){
-      pestBtn.addEventListener('click', ()=>{
-        addActivity('Pest scan initiated (demo)');
-        alert('Pest scan started (demo).');
-      });
-    }
-
-    if(exportBtn){
-      exportBtn.addEventListener('click', ()=>{
-        addActivity('Exported farm report (demo)');
-        alert('Report exported (demo).');
-      });
-    }
-
-    /*************************
-     * Add record top and mobile
-     *************************/
-    function addNewRecord(){
-      const name = prompt('Enter record title');
-      if(name && name.trim()!==''){ addActivity('Added record — ' + name.trim()); alert('Record added: ' + name.trim()); }
-    }
-    const addRecordTop = document.getElementById('addRecordTop');
-    if(addRecordTop) addRecordTop.addEventListener('click', addNewRecord);
-
-    /*************************
-     * Export CSV (example for tasks)
-     *************************/
-    if(exportBtn){
-      exportBtn.addEventListener('click', ()=>{
-        try{
-          const csv = tasks.map(t=> [t.id, `"${String(t.text).replace(/"/g,'""')}"`, t.done ? 'done' : 'pending'].join(',')).join('\n');
-          const blob = new Blob([csv], {type:'text/csv'});
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a'); a.href = url; a.download = 'tasks_export.csv'; document.body.appendChild(a); a.click(); a.remove();
-          URL.revokeObjectURL(url);
-        }catch(e){ console.warn('CSV export failed', e); }
-      }, { once: true }); // only attach once
-    }
-
-    /*************************
-     * Initial render
-     *************************/
-    renderTasks();
-    renderActivity();
-    buildCalendar();
-
-    // small accessibility: keyboard focus for hamburger close on ESC
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') mobileNav.style.display='none'; });
-
-    // set initial counters
-    const acresEl = document.getElementById('acresVal');
-    const seasonEl = document.getElementById('seasonVal');
-    if(acresEl) acresEl.textContent = 250;
-    if(seasonEl) seasonEl.textContent = 7;
-
-    // Mobile nav close when clicking outside
-    document.addEventListener('click', (e)=>{
-      if(!mobileNav) return;
-      if(!mobileNav.contains(e.target) && !hamburger.contains(e.target)){
-        mobileNav.style.display = 'none';
+          {
+            label: "Expenses",
+            data: [10, 15, 18, 22, 25, 30]
+          }
+        ]
       }
     });
+
+
+    document.getElementById("irrigationBtn").addEventListener("click", () => {
+      alert("Irrigation scheduled");
+    });
+
+
+    document.getElementById("pestBtn").addEventListener("click", () => {
+      alert("Pest scan started");
+    });
+
+
+    document.getElementById("reportBtn").addEventListener("click", () => {
+      alert("Report exported");
+    });
+
   </script>
+
 </body>
 </html>
