@@ -931,26 +931,3 @@ Yes — see <a href="#-installation">Installation</a> and <a href="#-environment
 
 ---
 
-## 👤 Author
-
-<div align="center">
-
-<img src="https://github.com/ChandraBihariDas.png" width="110" style="border-radius:50%" alt="Chandra Bihari Das" />
-
-### Chandra Bihari Das
-
-[![GitHub](https://img.shields.io/badge/GitHub-ChandraBihariDas-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ChandraBihariDas)
-[![Repository](https://img.shields.io/badge/Repo-KrishiMitra--AI-2E7D32?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ChandraBihariDas/KrishiMitra-AI)
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://krishimitra-ai-app.vercel.app/)
-
-</div>
-
----
-
-<div align="center">
-
-**⭐ If this project is useful to you, consider starring the repository!**
-
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:FFC107,100:2E7D32&height=120&section=footer" alt="footer wave"/>
-
-</div>
